@@ -13,15 +13,22 @@ public struct Tuple {
 	}
 }
 
+public enum Condition {VBW=0, V=1, RW1=2, RW4=3}
+
 public class ExperimentManager : MonoBehaviour {
 
 	public GameObject[] paths;
 	public int part, blck, trial;
 	//public GameObject proxy;
 
+	TrialManager trialManager;
+	ScreenManager screenManager;
+
 	List<Trial> trials;
 	Trial currentTrial;
 	int currentTrialIndex;
+
+	int step = 0;
 
 	void Start () {
 		currentTrialIndex = part +
@@ -39,41 +46,49 @@ public class ExperimentManager : MonoBehaviour {
 			currentTrialIndex = tmp.second;
 		}
 		currentTrial = tmp.first;
-		printCurrentTrial();
-		applyTrial();
+
+		trialManager = GetComponent<TrialManager>();
+		screenManager = GetComponent<ScreenManager>();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown("space")) {	// If user reached end of trial
+		switch(step) {
+			case 0:
+				// show introduction text
+				break;
+			case 1:
+				// Start experiment
+				trialManager.enabled = true;
+				break;
+		}
+		/*if (Input.GetKeyDown("space")) {	// If user reached end of trial
             nextTrial();
 			resetTrial();
 			applyTrial();
 			printCurrentTrial();
-        }
+        }*/
 	}
 
-	void applyTrial() {
-		GameObject path;
-		int pathIndex;
-		if (Int32.TryParse(currentTrial.parameters[5], out pathIndex)) {
-			path = Instantiate(paths[pathIndex-1], new Vector3(4.5f, -4.5f, 5f), Quaternion.identity);
-			path.transform.parent = this.transform;
-		} else {
-			print("Unmanaged trial path parameter: " + currentTrial.parameters[5] + " --> Can't parse or NaN");
-		}
+	void NextTrial() {
+		currentTrialIndex++;
+		currentTrial=trials[currentTrialIndex];
+	}
 
+	void ApplyTrial(TrialManager m) {
+		// Condition
 		switch(currentTrial.parameters[4]) {
-		case "I":
-
+		case "VBW":
+			m.condition = (int)Condition.VBW;
 			break;
-		case "T":
-
+		case "V":
+			m.condition = (int)Condition.V;
 			break;
-		case "B":
-
+		case "RW1":
+			m.condition = (int)Condition.RW1;
 			break;
-		case "null":	// No group change
+		case "RW4":
+			m.condition = (int)Condition.RW4;
 			break;
 		default:
 			print("Unmanaged group parameter: " + currentTrial.parameters[4]);
@@ -82,14 +97,7 @@ public class ExperimentManager : MonoBehaviour {
 	}
 
 	void resetTrial() {
-		 foreach (Transform child in this.transform) {
-			 Destroy(child.gameObject);
-		 }
-	}
 
-	void nextTrial() {
-		currentTrialIndex++;
-		currentTrial=trials[currentTrialIndex];
 	}
 
 	public Tuple find(int id) {
