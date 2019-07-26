@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SceneReset : MonoBehaviour
-{
+public class SceneReset : MonoBehaviour {
 
     GameObject[] grabbables;
     GameObject[] phantoms;
@@ -14,10 +13,12 @@ public class SceneReset : MonoBehaviour
     Vector3[] phantomPosition;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
 		grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
 	    phantoms = GameObject.FindGameObjectsWithTag("Phantom");
+
+	    grabbablesPosition = new Vector3[grabbables.Length];
+	    phantomPosition = new Vector3[phantoms.Length];
 
 	    for(int i=0; i<grabbables.Length; i++) {
 	    	grabbablesPosition[i] = grabbables[i].transform.position;
@@ -41,5 +42,6 @@ public class SceneReset : MonoBehaviour
 	    foreach(Transform clone in transform) {
 	    	Destroy(clone.gameObject);
 	    }
+	    print("RESET::SceneReset::DONE");
     }
 }

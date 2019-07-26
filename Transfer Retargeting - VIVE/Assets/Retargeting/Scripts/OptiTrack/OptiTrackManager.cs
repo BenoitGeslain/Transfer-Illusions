@@ -11,7 +11,7 @@ public class OptiTrackManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
-            print("Calibrating");
+            print("INIT::OptiTrackManager::Calibrated");
             this.transform.position = tableMarkers.position;
             this.transform.rotation = tableMarkers.rotation;
         }

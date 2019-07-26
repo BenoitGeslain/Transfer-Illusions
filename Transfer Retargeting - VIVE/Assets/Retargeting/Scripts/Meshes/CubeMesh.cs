@@ -5,20 +5,17 @@ using UnityEngine;
 
 [RequireComponent(typeof (MeshFilter))]
 [RequireComponent(typeof (MeshRenderer))]
-public class CubeMesh : MonoBehaviour
-{
+public class CubeMesh : MonoBehaviour {
 	public float size;
 
 	public Material[] materials;
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
     	createCube();
     }
 
     // Update is called once per frame
-    void createCube()
-    {
+    void createCube() {
         Vector3[] vertices = {
 			new Vector3(-0.5f, -0.5f, -0.5f)*size,
 			new Vector3(0.5f, -0.5f, -0.5f)*size,

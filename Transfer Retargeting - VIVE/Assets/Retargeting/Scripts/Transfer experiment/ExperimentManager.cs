@@ -31,7 +31,7 @@ public class ExperimentManager : MonoBehaviour {
 	int step = 0;
 
 	void Start () {
-		currentTrialIndex = part +
+		/*currentTrialIndex = part +
 							blck*Parameters.blockFactor +
 							trial*Parameters.trialFactor;
 		trials = GetComponent<CSVParser>().GetTrials();
@@ -45,21 +45,27 @@ public class ExperimentManager : MonoBehaviour {
 			tmp = find(0);
 			currentTrialIndex = tmp.second;
 		}
-		currentTrial = tmp.first;
+		currentTrial = tmp.first;*/
 
 		trialManager = GetComponent<TrialManager>();
 		screenManager = GetComponent<ScreenManager>();
+
+        print("INIT::ExperimentManager::DONE");
 	}
 
 	// Update is called once per frame
 	void Update () {
 		switch(step) {
 			case 0:
-				// show introduction text
+				if (screenManager.index==6) {
+					step++;
+					print("EXEC::ExperimentManager::Intro Over");
+				}
 				break;
 			case 1:
 				// Start experiment
 				trialManager.enabled = true;
+				trialManager.condition = (int)Condition.VBW;
 				break;
 		}
 		/*if (Input.GetKeyDown("space")) {	// If user reached end of trial
@@ -78,21 +84,21 @@ public class ExperimentManager : MonoBehaviour {
 	void ApplyTrial(TrialManager m) {
 		// Condition
 		switch(currentTrial.parameters[4]) {
-		case "VBW":
-			m.condition = (int)Condition.VBW;
-			break;
-		case "V":
-			m.condition = (int)Condition.V;
-			break;
-		case "RW1":
-			m.condition = (int)Condition.RW1;
-			break;
-		case "RW4":
-			m.condition = (int)Condition.RW4;
-			break;
-		default:
-			print("Unmanaged group parameter: " + currentTrial.parameters[4]);
-			break;
+			case "VBW":
+				m.condition = (int)Condition.VBW;
+				break;
+			case "V":
+				m.condition = (int)Condition.V;
+				break;
+			case "RW1":
+				m.condition = (int)Condition.RW1;
+				break;
+			case "RW4":
+				m.condition = (int)Condition.RW4;
+				break;
+			default:
+				print("Unmanaged group parameter: " + currentTrial.parameters[4]);
+				break;
 		}
 	}
 

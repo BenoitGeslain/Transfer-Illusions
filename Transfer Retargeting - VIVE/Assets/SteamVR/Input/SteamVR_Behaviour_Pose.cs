@@ -68,28 +68,6 @@ namespace Valve.VR
 
         protected SteamVR_HistoryBuffer historyBuffer = new SteamVR_HistoryBuffer(30);
 
-        public GameObject world;
-        public Vector3 wOrigin, wTargetReal, wTargetVirtual;
-
-        GameObject fixedPoint;
-        public bool warping;
-        float warpRatio = 0.15f;
-
-        Vector3 BodyWarp(Vector3 wOrigin, Vector3 wTargetReal, Vector3 wTargetVirtual) {
-            Vector3 realHandPos = origin.transform.TransformPoint(poseAction[inputSource].localPosition);
-            Vector3 d = realHandPos - wTargetReal;
-            Vector3 D = wOrigin - wTargetReal;
-
-            if (d.magnitude > D.magnitude)
-                return realHandPos;
-
-            Vector3 lambda = wTargetVirtual - wTargetReal;
-
-            Vector3 virtHandPos = realHandPos + (D.magnitude - d.magnitude) / D.magnitude * lambda;
-
-            return virtHandPos;
-        }
-
         protected virtual void Start()
         {
             if (poseAction == null)
@@ -102,10 +80,6 @@ namespace Valve.VR
 
             if (origin == null)
                 origin = this.transform.parent;
-
-            fixedPoint = GameObject.Find("Fixed Point");
-            if (fixedPoint == null)
-                print("Fixed object not found!");
 
         }
 
@@ -154,16 +128,11 @@ namespace Valve.VR
         protected virtual void UpdateTransform()
         {
             CheckDeviceIndex();
-
+ 
             if (origin != null)
             {
-                if (warping) {
-                    transform.localPosition = BodyWarp(wOrigin, wTargetReal, wTargetVirtual);
-                    transform.rotation = origin.rotation * poseAction[inputSource].localRotation;
-                } else {
-                    transform.position = origin.transform.TransformPoint(poseAction[inputSource].localPosition);
-                    transform.rotation = origin.rotation * poseAction[inputSource].localRotation;
-                }
+                transform.position = origin.transform.TransformPoint(poseAction[inputSource].localPosition);
+                transform.rotation = origin.rotation * poseAction[inputSource].localRotation;
                 
             }
             else
