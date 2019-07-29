@@ -10,16 +10,17 @@ public class ScreenManager : MonoBehaviour {
 	string[] entries;
     DateTime tic;
 
+    string scoreText = "Score : ";
+
     void Start() {
         entries = new string[8];
         entries[0] = "Lors de cette expérience,\nvous allez devoir saisir des cubes\net les placer à l'endroit indiqué";
         entries[1] = "Les cubes bleux représentent\nles cubes que vous pouvez manipuler";
         entries[2] = "Les cubes rouges translucides\nsont les cibles où vous devez poser\nles cubes bleus.";
-        entries[3] = "Les obstacles sont transparents\npour que vous puissiez voir au travers,\nvous ne devez pas les toucher où ils deviendront rouges et vous perdrez des points";
-        entries[4] = "Tendez les bras. Vous pouvez les voir\ntout au long de l'expérience,\nvous pouvez également saisir le cube bleu devant vous.";
-        entries[5] = "Prenez le temps de vous familiariser\navec l'environment, lorsque vous serez prêt,\nappuyez sur le bouton vert.";
-        entries[6] = "Prener le cube bleu et superposé\nle au cube rouge.";
-        entries[7] = "Touchez la sphère vert pour continuer.";
+        entries[3] = "Les obstacles sont transparents\npour que vous puissiez voir\nau travers,vous ne devez pas\nles toucher où ils deviendront\nrouges et vous perdrez des points";
+        entries[4] = "Tendez les bras. Vous pouvez les\nvoir tout au long de\nl'expérience, vous pouvez\négalement saisir le cube bleu\ndevant vous.";
+        entries[5] = "Prenez le temps de vous familiariser\navec l'environment, lorsque vous\nserez prêt, appuyez sur\nle bouton vert.";
+        entries[6] = "\n\nPrenez le cube bleu et superposez\nle au cube rouge.\nPuis touchez la sphère verte\npour continuer.";
         tvText.GetComponent<TextMesh>().text = entries[0];
     }
 
@@ -27,11 +28,17 @@ public class ScreenManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space) && step == 0) {
             tvText.GetComponent<TextMesh>().text = entries[index];
             index++;
-            if (index == 6)
+            print("EXEC::ScreenManager::Next message");
+            if (index == 7) {
                 step++;
-                print("EXEC::ScreenManager::Next message");
+                print("EXEC::ScreenManager::Intro Over");
+            }
         } else if (step == 1) {
-            tvText.GetComponent<TextMesh>().text = entries[6];
+            tvText.GetComponent<TextMesh>().text = scoreText + 0 + entries[6];
         }
+    }
+
+    public void UpdateScore(int score) {
+        tvText.GetComponent<TextMesh>().text = scoreText + score + entries[6];
     }
 }

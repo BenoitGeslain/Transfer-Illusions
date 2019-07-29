@@ -24,11 +24,14 @@ public class ExperimentManager : MonoBehaviour {
 	TrialManager trialManager;
 	ScreenManager screenManager;
 
+	CSVSaver csvSaver;
+
 	List<Trial> trials;
 	Trial currentTrial;
 	int currentTrialIndex;
 
 	int step = 0;
+	int score = 0;
 
 	void Start () {
 		/*currentTrialIndex = part +
@@ -50,6 +53,8 @@ public class ExperimentManager : MonoBehaviour {
 		trialManager = GetComponent<TrialManager>();
 		screenManager = GetComponent<ScreenManager>();
 
+		csvSaver = GetComponent<CSVSaver>();
+
         print("INIT::ExperimentManager::DONE");
 	}
 
@@ -64,7 +69,7 @@ public class ExperimentManager : MonoBehaviour {
 				break;
 			case 1:
 				// Start experiment
-				trialManager.enabled = true;
+				trialManager.start = true;
 				trialManager.condition = (int)Condition.VBW;
 				break;
 		}
@@ -74,6 +79,14 @@ public class ExperimentManager : MonoBehaviour {
 			applyTrial();
 			printCurrentTrial();
         }*/
+	}
+
+	public void LogContinous(int index, Vector3 position, Vector3 orientation) {
+		csvSaver.writeContinousEntry(currentTrial, index, position, orientation);
+	}
+
+	public void LogDiscrete(int index, Vector3 positionError, Vector3 orientationError, int obstaclesHit) {
+		csvSaver.writeDiscreteEntry(currentTrial, index, positionError, orientationError, obstaclesHit);
 	}
 
 	void NextTrial() {

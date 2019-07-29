@@ -10,8 +10,7 @@ public class TrialManager : MonoBehaviour {
     public GameObject trackedCube;
     public GameObject cubePrefab;
 
-    public Material activeCube, passiveCube;
-    public Material activePhantom, passivePhantom, activePhantomRight, buttonMatActive, buttonMatIdle;
+    public Material phantomLogo;
 
     public int condition;
 
@@ -32,14 +31,13 @@ public class TrialManager : MonoBehaviour {
 
     Vector3 initPos;
 
-    int step = 0, prevStep = -1;
+    public int step = 0, prevStep = -1;
     int index = 0;
 
-    bool start = false;
+    public bool start = false;
 
-    Color activePhantomColor, passivePhantomColor;
+    Color phantomColor = new Color(255f, 70f, 70f), phantomRightColor = new Color(30f, 255f, 30f);
     
-    public bool a;
     void Start() {
         grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
         phantoms = GameObject.FindGameObjectsWithTag("Phantom");
@@ -52,7 +50,8 @@ public class TrialManager : MonoBehaviour {
         }
         for (int i = 0; i < phantoms.Length; i++)
         {
-            phantomsM[i] = phantoms[i].GetComponent<Renderer>().materials[1];
+            phantomsM[i] = phantoms[i].GetComponent<Renderer>().materials[0];
+            phantoms[i].GetComponent<Renderer>().enabled = false;
         }
 
         /*foreach (Renderer r in phantomsR)
@@ -74,17 +73,6 @@ public class TrialManager : MonoBehaviour {
     }
     
     void Update() {
-        if (a) {
-            print("!");
-            phantomsM[0].color = Color.red;
-        } else {
-            phantomsM[0].color = Color.green;
-        }
-        if (Input.GetKeyDown(KeyCode.Return)) {
-            start = true;
-            print("EXEC::TrialManager::Starting trials | Condition " + condition);
-        }
-
         if (start)
         {
             switch (step)
@@ -99,7 +87,7 @@ public class TrialManager : MonoBehaviour {
                     if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.1f) ||
                         !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) {
                         step = 0;
-                        //phantomsR[index].materials[1] = activePhantom;
+                        phantomsM[index].color = phantomColor;
                     } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.05f) {
                         step = 2;
                     }
@@ -121,10 +109,10 @@ public class TrialManager : MonoBehaviour {
                     if (prevStep == -1) {
                         initPos = trackedCube.transform.position;
                         warpedCube.GetComponent<Renderer>().enabled = true;
-                        //phantomsR[index].enabled = true;
+                        phantoms[index].GetComponent<Renderer>().enabled = true;
                         prevStep = 0;
                     } else if (prevStep == 1) {
-                        //phantomsR[index].materials[1] = activePhantom;
+                        phantomsM[index].color = phantomColor;
                         prevStep = 0;
                     }
                     //print(initPos + ", " + grabbables[index+1].transform.position + ", " + phantoms[index].transform.position);
@@ -137,7 +125,7 @@ public class TrialManager : MonoBehaviour {
                 case 1:
                     if (prevStep == 0) {
                         initPos = fixedPoint.transform.position;
-                        //phantomsR[index].materials[1] = activePhantomRight;
+                        phantomsM[index].color = phantomRightColor;
                         prevStep = 1;
                     }
                     if (condition == (int)Condition.VBW) {
@@ -150,7 +138,7 @@ public class TrialManager : MonoBehaviour {
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube
                             warpedCube.GetComponent<Renderer>().enabled = false;
-                            //phantomsR[index].enabled = false;
+                            phantoms[index].GetComponent<Renderer>().enabled = false;
 
                             GameObject tmp = Instantiate(cubePrefab, warpedCube.transform.position, warpedCube.transform.rotation);
                             tmp.transform.parent = clones;

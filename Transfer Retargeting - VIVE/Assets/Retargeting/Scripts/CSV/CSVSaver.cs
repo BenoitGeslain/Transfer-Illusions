@@ -31,31 +31,22 @@ public class CSVSaver : MonoBehaviour {
 		extractor = new DataExtractor();
         extractor.leftHand = leftHand;
         extractor.rightHand = rightHand;
-
-		InvokeRepeating("writeTracebackEntry", 0f, Parameters.tracebackRepeatRate);
-		InvokeRepeating("writeExperimentEntry", 0f, Parameters.experimentRepeatRate);
 	}
 
 	void Update () {
 
 	}
 
-	void writeTracebackEntry() {
-		string[] data = extractor.GetTracebackData();
-		if (data.Length!=tracebackLength) {
-			print("/!\\ Error: Wrong number of parameters to write");
-			return;
-		}
-
+	public void writeContinousEntry(Trial trial, int index, Vector3 position, Vector3 orientation) {
 		writer = new StreamWriter(tracebackPath, true);
 
-		write(data);
+		write(new string[] {trial.parameters[0]; });
 
 		writer.Flush();
 		writer.Close();
 	}
 
-	void writeExperimentEntry() {
+	public void writeDiscreteEntry(Trial trial, int index, Vector3 positionError, Vector3 orientationError, int obstaclesHit) {
 		string[] data = extractor.GetExperimentData();
 		if (data.Length!=experimentLength) {
 			print("/!\\ Error: Wrong number of parameters to write");
