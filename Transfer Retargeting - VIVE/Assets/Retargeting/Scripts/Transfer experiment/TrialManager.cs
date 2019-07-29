@@ -22,7 +22,11 @@ public class TrialManager : MonoBehaviour {
     Material[] phantomsM;
 
     GameObject warpedCube;
+
+    //  Reset variables
     Transform clones;
+    Vector3[] grabbablesPosition;
+    Vector3[] phantomPosition;
 
     public GameObject fixedPoint;
     Renderer fixedPointR;
@@ -54,10 +58,6 @@ public class TrialManager : MonoBehaviour {
             phantoms[i].GetComponent<Renderer>().enabled = false;
         }
 
-        /*foreach (Renderer r in phantomsR)
-        {
-            r.enabled = false;
-        }*/
         foreach (Renderer r in grabbablesR)
         {
             r.enabled = false;
@@ -68,6 +68,18 @@ public class TrialManager : MonoBehaviour {
         bwScript = this.GetComponent<BodyWarping>();
 
         warpedCube = trackedCube.transform.GetChild(0).gameObject;
+
+        clones = GameObject.Find("/World/Clones").transform;
+
+        grabbablesPosition = new Vector3[grabbables.Length];
+        phantomPosition = new Vector3[phantoms.Length];
+
+        for(int i=0; i<grabbables.Length; i++) {
+            grabbablesPosition[i] = grabbables[i].transform.position;
+        }
+        for(int i=0; i<phantoms.Length; i++) {
+            phantomPosition[i] = phantoms[i].transform.position;
+        }
 
         print("INIT::TrialManager::DONE");
     }
@@ -93,10 +105,6 @@ public class TrialManager : MonoBehaviour {
                     }
                     break;
                 case 2:
-                    if (index==grabbables.Length) {
-                        index = 0;
-                        step = 0;
-                    }
                     step = 0;
                     break;
             }
@@ -154,9 +162,32 @@ public class TrialManager : MonoBehaviour {
 
                         index++;
                         prevStep = 2;
+
+                        if (index==grabbables.Length) {
+                            experimentManager.EndTrial();
+                        }
                     }
                     break;
             }
         }
+    }
+
+    public void ResetScene() {
+        step = 0; prevStep = -1; index = 0;
+
+        Material[] tmpMat = phantoms[0].GetComponent<Renderer>().materials;
+        tmpMat[1] = phantomMat;
+        
+        for(int i=0; i<phantoms.Length; i++) {
+            phantoms[i].GetComponent<Renderer>().materials = tmpMat;
+            phantoms[i].GetComponent<Renderer>().enabled = false;
+        }
+
+        // Détruit tous les clones du cube tracké
+        foreach(Transform c in clones) {
+            Destroy(c.gameObject);
+        }
+
+        print("RESET::SceneReset::DONE");
     }
 }

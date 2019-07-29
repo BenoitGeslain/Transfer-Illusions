@@ -17,12 +17,11 @@ public enum Condition {VBW=0, V=1, RW1=2, RW4=3}
 
 public class ExperimentManager : MonoBehaviour {
 
-	public GameObject[] paths;
+	// Participant, block and trial ID to continue experiment
 	public int part, blck, trial;
-	//public GameObject proxy;
 
-	TrialManager trialManager;
-	ScreenManager screenManager;
+	TrialManager trialManager;		// Handles all the trial computation and state machine
+	ScreenManager screenManager;	// Handles what is displayed on the screen
 
 	CSVSaver csvSaver;
 
@@ -89,25 +88,25 @@ public class ExperimentManager : MonoBehaviour {
 		csvSaver.writeDiscreteEntry(currentTrial, index, positionError, orientationError, obstaclesHit);
 	}
 
-	void NextTrial() {
+	void nextTrial() {
 		currentTrialIndex++;
 		currentTrial=trials[currentTrialIndex];
 	}
 
-	void ApplyTrial(TrialManager m) {
+	void applyTrial() {
 		// Condition
 		switch(currentTrial.parameters[4]) {
 			case "VBW":
-				m.condition = (int)Condition.VBW;
+				trialManager.condition = (int)Condition.VBW;
 				break;
 			case "V":
-				m.condition = (int)Condition.V;
+				trialManager.condition = (int)Condition.V;
 				break;
 			case "RW1":
-				m.condition = (int)Condition.RW1;
+				trialManager.condition = (int)Condition.RW1;
 				break;
 			case "RW4":
-				m.condition = (int)Condition.RW4;
+				trialManager.condition = (int)Condition.RW4;
 				break;
 			default:
 				print("Unmanaged group parameter: " + currentTrial.parameters[4]);
@@ -115,8 +114,10 @@ public class ExperimentManager : MonoBehaviour {
 		}
 	}
 
-	void resetTrial() {
-
+	public void EndTrial() {
+		nextTrial();
+		applyTrial();
+		trialManager.ResetScene();
 	}
 
 	public Tuple find(int id) {
