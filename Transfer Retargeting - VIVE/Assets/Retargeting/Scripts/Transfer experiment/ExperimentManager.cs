@@ -34,7 +34,7 @@ public class ExperimentManager : MonoBehaviour {
 	int score = 0;
 
 	void Start () {
-		/*currentTrialIndex = part +
+		currentTrialIndex = part +
 							blck*Parameters.blockFactor +
 							trial*Parameters.trialFactor;
 		trials = GetComponent<CSVParser>().GetTrials();
@@ -48,7 +48,7 @@ public class ExperimentManager : MonoBehaviour {
 			tmp = find(0);
 			currentTrialIndex = tmp.second;
 		}
-		currentTrial = tmp.first;*/
+		currentTrial = tmp.first;
 
 		trialManager = GetComponent<TrialManager>();
 		screenManager = GetComponent<ScreenManager>();
@@ -81,11 +81,11 @@ public class ExperimentManager : MonoBehaviour {
         }*/
 	}
 
-	public void LogContinous(int index, Vector3 position, Vector3 orientation) {
-		csvSaver.writeContinousEntry(currentTrial, index, position, orientation);
+	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV) {
+		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV);
 	}
 
-	public void LogDiscrete(int index, Vector3 positionError, Vector3 orientationError, int obstaclesHit) {
+	public void LogDiscrete(int index, Vector3 positionError, float orientationError, int obstaclesHit) {
 		csvSaver.writeDiscreteEntry(currentTrial, index, positionError, orientationError, obstaclesHit);
 	}
 

@@ -9,8 +9,8 @@ public static class Parameters {
 
     public static float[] CDRatio = {1, 1.2f};
 
-    public static string[] tracebackHeader = {"Participant", "Practice", "Block", "Trial", "Time", "leftX", "leftY", "leftZ", "rightX", "rightY", "rightZ"};
-    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Time"};
+    public static string[] tracebackHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "Time", "Index", "CubePosRX", "CubePosRY", "CubePosRZ", "CubeOrRX", "CubeOrRY", "CubeOrRZ", "CubePosVX", "CubePosVY", "CubePosVZ", "CubeOrVX", "CubeOrVY", "CubeOrVZ"};
+    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Index", "ErrorPosVX", "ErrorPosVY", "ErrorPosVZ", "ErrorOr", "Hit"};
 
     public static float tracebackRepeatRate = 1f;
     public static float experimentRepeatRate = 10f;

@@ -5,58 +5,43 @@ using UnityEngine;
 
 public class CSVSaver : MonoBehaviour {
 
-	public string tracebackPath, experimentPath;
-	int tracebackLength, experimentLength;
+	public string continousPath = "Data/continous.csv", discretePath = "Data/discrete.csv";
 
 	StreamWriter writer;
 
-	DataExtractor extractor;
-
-    public GameObject leftHand, rightHand;
-
     void Start () {
-		tracebackLength = Parameters.tracebackHeader.Length;
-		experimentLength = Parameters.experimentHeader.Length;
-
-		writer = new StreamWriter(tracebackPath, true);
+		writer = new StreamWriter(continousPath, true);
 		write(Parameters.tracebackHeader);
 		writer.Flush();
 		writer.Close();
 
-		writer = new StreamWriter(experimentPath, true);
+		writer = new StreamWriter(discretePath, true);
 		write(Parameters.experimentHeader);
 		writer.Flush();
 		writer.Close();
-
-		extractor = new DataExtractor();
-        extractor.leftHand = leftHand;
-        extractor.rightHand = rightHand;
 	}
 
 	void Update () {
 
 	}
 
-	public void writeContinousEntry(Trial trial, int index, Vector3 position, Vector3 orientation) {
-		writer = new StreamWriter(tracebackPath, true);
+	public void writeContinousEntry(Trial trial, string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV) {
+		writer = new StreamWriter(continousPath, true);
 
-		write(new string[] {trial.parameters[0]; });
-
+		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4], time,
+							index.ToString(), positionR.x.ToString(), positionR.y.ToString(), positionR.z.ToString(), orientationR.x.ToString(),
+							orientationR.y.ToString(), orientationR.z.ToString(), positionV.x.ToString(), positionV.y.ToString(), positionV.z.ToString(),
+							orientationV.x.ToString(), orientationV.y.ToString(), orientationV.z.ToString()});
 		writer.Flush();
 		writer.Close();
 	}
 
-	public void writeDiscreteEntry(Trial trial, int index, Vector3 positionError, Vector3 orientationError, int obstaclesHit) {
-		string[] data = extractor.GetExperimentData();
-		if (data.Length!=experimentLength) {
-			print("/!\\ Error: Wrong number of parameters to write");
-			return;
-		}
+	public void writeDiscreteEntry(Trial trial, int index, Vector3 positionError, float orientationError, int obstaclesHit) {
+		writer = new StreamWriter(discretePath, true);
 
-		writer = new StreamWriter(experimentPath, true);
-
-		write(data);
-
+		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
+							index.ToString(), positionError.x.ToString(), positionError.y.ToString(), positionError.z.ToString(),
+							orientationError.ToString(), obstaclesHit.ToString()});
 		writer.Flush();
 		writer.Close();
 	}
