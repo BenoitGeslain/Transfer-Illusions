@@ -5,12 +5,7 @@ using UnityEngine;
 
 public class OptiTrackManager : MonoBehaviour {
     
-    TrialManager trialManager;
     public Transform tableMarkers;
-
-    void Start() {
-        trialManager = GetComponent<TrialManager>();
-    }
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.KeypadEnter)) {

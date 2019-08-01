@@ -30,7 +30,6 @@ public class ExperimentManager : MonoBehaviour {
 	int currentTrialIndex;
 
 	int step = 0;
-	int score = 0;
 
 	void Start () {
 		currentTrialIndex = part +
@@ -80,12 +79,12 @@ public class ExperimentManager : MonoBehaviour {
         }*/
 	}
 
-	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV) {
-		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV);
+	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, float score) {
+		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, score);
 	}
 
-	public void LogDiscrete(int index, Vector3 positionError, float orientationError, int obstaclesHit) {
-		csvSaver.writeDiscreteEntry(currentTrial, index, positionError, orientationError, obstaclesHit);
+	public void LogDiscrete(int index, Vector3 positionError, float orientationError, int obstaclesHit, float score) {
+		csvSaver.writeDiscreteEntry(currentTrial, index, positionError, orientationError, obstaclesHit, score);
 	}
 
 	void nextTrial() {
@@ -115,6 +114,7 @@ public class ExperimentManager : MonoBehaviour {
 	}
 
 	public void EndTrial() {
+		print("RESET::ExperimentManager::Scene reset");
 		nextTrial();
 		applyTrial();
 		trialManager.ResetScene();

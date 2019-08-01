@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using System;
+﻿using System;
+using System.Diagnostics;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,7 +20,6 @@ public class TrialManager : MonoBehaviour {
     GameObject[] phantoms;
 
     Renderer[] grabbablesR;
-    Material[] phantomsM;
 
     GameObject warpedCube;
 
@@ -33,6 +33,7 @@ public class TrialManager : MonoBehaviour {
 
     BodyWarping bwScript;
     ExperimentManager experimentManager;
+    ScoreManager scoreManager;
 
     Vector3 initPos;
 
@@ -41,14 +42,13 @@ public class TrialManager : MonoBehaviour {
 
     public bool start = false;
 
-    Color phantomColor = new Color(255f, 70f, 70f, 112f), phantomRightColor = new Color(30f, 255f, 30f, 112f);
+    Stopwatch watch;
     
     void Start() {
         grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
         phantoms = GameObject.FindGameObjectsWithTag("Phantom");
 
         grabbablesR = new Renderer[grabbables.Length];
-        phantomsM = new Material[phantoms.Length];
         for (int i = 0; i < grabbables.Length; i++)
         {
             grabbablesR[i] = grabbables[i].GetComponent<Renderer>();
@@ -62,10 +62,10 @@ public class TrialManager : MonoBehaviour {
         {
             r.enabled = false;
         }
-        fixedPointR = fixedPoint.GetComponent<Renderer>();
 
-        experimentManager = this.GetComponent<ExperimentManager>();
-        bwScript = this.GetComponent<BodyWarping>();
+        experimentManager = GetComponent<ExperimentManager>();
+        bwScript = GetComponent<BodyWarping>();
+        scoreManager = GetComponent<ScoreManager>();
 
         warpedCube = trackedCube.transform.GetChild(0).gameObject;
 
@@ -101,7 +101,7 @@ public class TrialManager : MonoBehaviour {
                         step = 0;
                     } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.05f) {
                         step = 2;
-                        experimentManager.LogDiscrete(index, warpedCube.transform.position - phantoms[index].transform.position, Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation), 0);
+                        experimentManager.LogDiscrete(index, warpedCube.transform.position - phantoms[index].transform.position, Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation), 0, scoreManager.GetScore());
                     }
                     break;
                 case 2:
@@ -112,7 +112,8 @@ public class TrialManager : MonoBehaviour {
             print("Step: " + step + "/" + prevStep);
 
             experimentManager.LogContinous(DateTime.Now.ToString("HH:mm:ss"), index, trackedCube.transform.position,
-                                           trackedCube.transform.eulerAngles, warpedCube.transform.position, warpedCube.transform.eulerAngles); 
+                                           trackedCube.transform.eulerAngles, warpedCube.transform.position,
+                                           warpedCube.transform.eulerAngles, scoreManager.GetScore()); 
 
             switch (step) {
                 case 0:
@@ -126,6 +127,9 @@ public class TrialManager : MonoBehaviour {
                         tmpMat[1] = phantomMat;
                         phantoms[index].GetComponent<Renderer>().materials = tmpMat;
                         prevStep = 0;
+                    }
+                    if (prevStep==-1) {
+                        watch.Start();
                     }
                     //print(initPos + ", " + grabbables[index+1].transform.position + ", " + phantoms[index].transform.position);
                     //print(grabbables[index + 1] + " " + grabbables[index + 1].transform.position);
@@ -149,6 +153,10 @@ public class TrialManager : MonoBehaviour {
                     break;
                 case 2:
                     if (prevStep == 1) {
+                        watch.Stop();
+                        scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
+                        scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
+
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube
                             warpedCube.GetComponent<Renderer>().enabled = false;
@@ -187,6 +195,8 @@ public class TrialManager : MonoBehaviour {
         foreach(Transform c in clones) {
             Destroy(c.gameObject);
         }
+
+        scoreManager.ResetScore();
 
         print("RESET::SceneReset::DONE");
     }
