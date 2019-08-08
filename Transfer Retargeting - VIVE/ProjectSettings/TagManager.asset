@@ -7,6 +7,7 @@ TagManager:
   - Grabbable
   - Phantom
   - Target
+  - Obstacle
   layers:
   - Default
   - TransparentFX

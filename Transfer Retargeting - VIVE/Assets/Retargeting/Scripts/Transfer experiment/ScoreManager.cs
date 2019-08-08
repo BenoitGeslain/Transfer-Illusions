@@ -21,16 +21,19 @@ public class ScoreManager : MonoBehaviour
 
     public void Collision() {
     	score -= 10;
+        setScore();
     }
 
     public void AddScoreCube(float magnitude) {
     	score += magnitude*10;
     	setScore();
+        print(score);
     }
 
     public void AddScoreTime(float time) {
     	score += time*10;
     	setScore();
+        print(score);
     }
 
     public void ResetScore() {
@@ -43,6 +46,7 @@ public class ScoreManager : MonoBehaviour
     }
 
     void setScore() {
+        print("Score : " + score + ", " + (int)score);
     	screenManager.UpdateScore((int)score);
     }
 }

@@ -36,11 +36,11 @@ public class CSVSaver : MonoBehaviour {
 		writer.Close();
 	}
 
-	public void writeDiscreteEntry(Trial trial, int index, Vector3 positionError, float orientationError, int obstaclesHit, float score) {
+	public void writeDiscreteEntry(Trial trial, string timeCube, int index, Vector3 positionError, float orientationError, int obstaclesHit, float score) {
 		writer = new StreamWriter(discretePath, true);
 
 		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
-							index.ToString(), positionError.x.ToString(), positionError.y.ToString(), positionError.z.ToString(),
+							timeCube, index.ToString(), positionError.x.ToString(), positionError.y.ToString(), positionError.z.ToString(),
 							orientationError.ToString(), obstaclesHit.ToString(), score.ToString()});
 		writer.Flush();
 		writer.Close();

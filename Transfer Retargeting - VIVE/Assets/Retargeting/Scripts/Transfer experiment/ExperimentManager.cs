@@ -60,7 +60,7 @@ public class ExperimentManager : MonoBehaviour {
 	void Update () {
 		switch(step) {
 			case 0:
-				if (screenManager.index==6) {
+				if (screenManager.index==7) {
 					step++;
 					print("EXEC::ExperimentManager::Intro Over");
 				}
@@ -83,8 +83,8 @@ public class ExperimentManager : MonoBehaviour {
 		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, score);
 	}
 
-	public void LogDiscrete(int index, Vector3 positionError, float orientationError, int obstaclesHit, float score) {
-		csvSaver.writeDiscreteEntry(currentTrial, index, positionError, orientationError, obstaclesHit, score);
+	public void LogDiscrete(string time, int index, Vector3 positionError, float orientationError, int obstaclesHit, float score) {
+		csvSaver.writeDiscreteEntry(currentTrial, time, index, positionError, orientationError, obstaclesHit, score);
 	}
 
 	void nextTrial() {
@@ -114,7 +114,7 @@ public class ExperimentManager : MonoBehaviour {
 	}
 
 	public void EndTrial() {
-		print("RESET::ExperimentManager::Scene reset");
+		print("RESET::ExperimentManager::Scene resetting");
 		nextTrial();
 		applyTrial();
 		trialManager.ResetScene();

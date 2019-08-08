@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Globalization;
+using System;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
@@ -81,6 +82,8 @@ public class TrialManager : MonoBehaviour {
             phantomPosition[i] = phantoms[i].transform.position;
         }
 
+        watch = new Stopwatch();
+
         print("INIT::TrialManager::DONE");
     }
     
@@ -96,12 +99,12 @@ public class TrialManager : MonoBehaviour {
                     }
                     break;
                 case 1: // Cube placé, attente du bouton
+                print((hand.transform.position - fixedPoint.transform.position).magnitude);
                     if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
                         !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) { // Produit scalaire entre les forwards (Elodie)
                         step = 0;
-                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.05f) {
+                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.1f) {
                         step = 2;
-                        experimentManager.LogDiscrete(index, warpedCube.transform.position - phantoms[index].transform.position, Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation), 0, scoreManager.GetScore());
                     }
                     break;
                 case 2:
@@ -117,6 +120,10 @@ public class TrialManager : MonoBehaviour {
 
             switch (step) {
                 case 0:
+                    if (prevStep==-1) {
+                        print("Starting watch");
+                        watch.Start();
+                    }
                     if (prevStep == -1 || prevStep == 2) {
                         initPos = trackedCube.transform.position;
                         warpedCube.GetComponent<Renderer>().enabled = true;
@@ -127,9 +134,6 @@ public class TrialManager : MonoBehaviour {
                         tmpMat[1] = phantomMat;
                         phantoms[index].GetComponent<Renderer>().materials = tmpMat;
                         prevStep = 0;
-                    }
-                    if (prevStep==-1) {
-                        watch.Start();
                     }
                     //print(initPos + ", " + grabbables[index+1].transform.position + ", " + phantoms[index].transform.position);
                     //print(grabbables[index + 1] + " " + grabbables[index + 1].transform.position);
@@ -153,9 +157,12 @@ public class TrialManager : MonoBehaviour {
                     break;
                 case 2:
                     if (prevStep == 1) {
+                        print("EXEC::TrialManager::Trial over (Saving and resetting)");
                         watch.Stop();
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
+                        TimeSpan elapsed = watch.Elapsed;
+                        experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), index, warpedCube.transform.position - phantoms[index].transform.position, Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation), 0, scoreManager.GetScore());
 
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube

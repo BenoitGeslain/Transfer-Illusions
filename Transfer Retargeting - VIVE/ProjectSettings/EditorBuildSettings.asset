@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Retargeting/Scenes/Experiment 1 (plaque).unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Retargeting/Scenes/Illusion Transfer Experiment.unity
+    guid: ce2bfeb2b28fb284a910f713f9aa85fe
   m_configObjects: {}
