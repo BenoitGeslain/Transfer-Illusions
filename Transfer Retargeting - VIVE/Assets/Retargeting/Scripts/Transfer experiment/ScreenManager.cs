@@ -51,6 +51,7 @@ public class ScreenManager : MonoBehaviour {
             } else if (index == 3) {
                 obstacle.SetActive(true);
             } else if (index == 7) {
+                cubes[1].GetComponent<Renderer>().enabled = false;
                 step++;
             }
 

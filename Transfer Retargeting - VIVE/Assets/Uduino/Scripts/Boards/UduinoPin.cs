@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace Uduino
 {
-    [Serializable]
-    public class Pin  
+    [System.Serializable]
+    public class Pin
     {
         private UduinoManager manager = null;
         public UduinoManager Manager {
@@ -19,20 +19,13 @@ namespace Uduino
             set { manager = value; }
         }
 
-        [SerializeField]
+        public string arduinoName = null; // TODO : This one should be remove ?  it's herited from where I used string name all the way
         public UduinoDevice device = null;
-        [SerializeField]
-        public string arduinoName = null; // We keep arduino name to retreive the board when there are multiple boards connected
 
-        [SerializeField]
         public PinMode pinMode;
         public PinMode prevPinMode; // is used for Custom Editor
 
-        [SerializeField]
         public int currentPin = -1;
-        public int prevPin = -1; // used for editor check
-
-        [SerializeField]
         public bool isEditorPin = false;
 
         bool isInit = false;
@@ -40,7 +33,10 @@ namespace Uduino
         [SerializeField]
         public int sendValue = 0;
         public int prevSendValue = 0;
+
         public int lastReadValue = 0; //for Editor panel
+
+        public int prevPin = -1; // used for editor check
 
         public Pin(UduinoDevice arduinoParent, int pin, PinMode mode)
         {
@@ -48,9 +44,6 @@ namespace Uduino
             device = arduinoParent;
             currentPin = pin;
             pinMode = mode;
-
-            if(device != null)
-                arduinoName = device.name;
         }
 
         public void Init(bool useInit = false)
@@ -76,7 +69,7 @@ namespace Uduino
 
         public bool PinTargetExists(UduinoDevice parentArduinoTarget, int currentPinTarget)
         {
-            if (( device != null  || parentArduinoTarget == null || parentArduinoTarget == null || parentArduinoTarget == device)
+            if (( device != null || arduinoName == "" || parentArduinoTarget == null || parentArduinoTarget == null || parentArduinoTarget == device)
                 && currentPinTarget == currentPin )
                 return true;
             else

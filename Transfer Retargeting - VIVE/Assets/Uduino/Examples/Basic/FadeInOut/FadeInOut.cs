@@ -12,7 +12,7 @@ public class FadeInOut : MonoBehaviour
 
     void Start()
     {
-        UduinoManager.Instance.pinMode(ledPin, PinMode.PWM);
+        UduinoManager.Instance.pinMode(ledPin, PinMode.Output);
         StartCoroutine(FadeLoop());
     }
 

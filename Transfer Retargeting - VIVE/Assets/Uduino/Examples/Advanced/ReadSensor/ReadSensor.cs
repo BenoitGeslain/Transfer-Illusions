@@ -18,7 +18,7 @@ public class ReadSensor : MonoBehaviour
         UduinoManager.Instance.Read(myDevice, "mySensor"); // Read every frame the value of the "mySensor" function on our board. 
     }
 
-    public void OnDataReceived(string data, UduinoDevice device)
+    void OnDataReceived(string data, UduinoDevice device)
     {
         Debug.Log(data); // Use the data as you want !
     }

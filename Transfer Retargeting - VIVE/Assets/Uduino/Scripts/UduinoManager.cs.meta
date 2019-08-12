@@ -1,13 +1,7 @@
 fileFormatVersion: 2
-guid: 2f5a4e52dfc3107499249fb2d34a1bae
-labels:
-- Arduino
-- Serial
-- Uduino
-- Unity
-timeCreated: 1496413080
-licenseType: Pro
+guid: 9d482ab0abbef374daa192d3ddb08ad3
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
   executionOrder: 0

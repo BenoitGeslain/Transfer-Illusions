@@ -48,11 +48,11 @@ namespace Uduino
 
     public enum LogLevel
     {
-        None,
-        Debug,
-        Info,
-        Warning,
-        Error
+        DEBUG,
+        INFO,
+        WARNING,
+        ERROR,
+        NONE
     };
 
     public enum Platform
@@ -70,20 +70,12 @@ namespace Uduino
         Bluetooth
     };
 
-    public enum HardwareReading
+    public enum AndroidInterface
     {
-        Thread,
-        Coroutines
-    };
-
-    public enum UduinoInterfaceType
-    {
-        None,
         Minimal,
-        Full
+        Full,
+        None
     }
-
-
     #endregion
 
     [Serializable]
@@ -165,10 +157,8 @@ namespace Uduino
         public Dictionary<string, string> existingExtensionsMap = new Dictionary<string, string>()
         {
             { "UduinoDevice_DesktopSerial", "Desktop Serial" },
-            { "UduinoDevice_DesktopBluetoothLE", "Desktop BLE" },
             { "UduinoDevice_AndroidBluetoothLE", "Android BLE" },
-            { "UduinoDevice_AndroidSerial", "Android Serial" },
-            { "UduinoDevice_Wifi", "Wifi" },
+            { "UduinoDevice_AndroidSerial", "Android Serial" }
         };
         [SerializeField]
         public IsActiveDictionnary activeExtentionsMap = new IsActiveDictionnary();
@@ -207,16 +197,15 @@ namespace Uduino
         /// Enable the reading of serial port in a different Thread.
         /// Might be usefull for optimization and not block the runtime during a reading. 
         /// </summary>
-
-        private HardwareReading readingMethod = HardwareReading.Thread;
-        public HardwareReading ReadingMethod
+        [SerializeField]
+        private bool readOnThread = true;
+        public bool ReadOnThread
         {
-            get { return readingMethod; }
-            set
-            {
-                if (Application.isPlaying && readingMethod != value)
+            get { return readOnThread; }
+            set {
+                if (Application.isPlaying && readOnThread != value)
                 {
-                    if (readingMethod == HardwareReading.Thread)
+                    if (value)
                     {
                         StopAllCoroutines();
                         StartThread();
@@ -224,11 +213,11 @@ namespace Uduino
                     else
                     {
                         StopThread();
-                        foreach (UduinoDevice device in GetAllBoard())
+                        foreach(UduinoDevice device in GetAllBoard())
                             StartCoroutine(CoroutineRead(device));
                     }
                 }
-                readingMethod = value;
+                readOnThread = value;
             }
         }
 
@@ -276,8 +265,6 @@ namespace Uduino
 
         public bool skipMessageQueue = false;
 
-        public int messageQueueLength = 10;
-
         public int defaultArduinoBoardType = 0;
 
 		public bool useCuPort = false;
@@ -297,7 +284,7 @@ namespace Uduino
         /// Number of tries to discover the attached serial ports
         /// </summary>
         [SerializeField]
-        private int discoverTries = 10;
+        private int discoverTries = 20;
         public int DiscoverTries
         {
             get { return discoverTries; }
@@ -312,7 +299,7 @@ namespace Uduino
         /// <summary>
         /// Discover serial ports on Awake
         /// </summary>
-        public float delayBeforeDiscover = 0.5f;
+        public float delayBeforeDiscover = 0.0f;
 
         /// <summary>
         /// Delemiter between each parameters
@@ -411,11 +398,8 @@ namespace Uduino
         //BLE Settings
         public bool autoConnectToLastDevice = true;
         public int bleScanDuration = 3;
-        public UduinoInterfaceType interfaceType = UduinoInterfaceType.Full; // Full, Minimal, None
+        public AndroidInterface interfaceType = AndroidInterface.Full; // Full, Minimal, None
 
-        //Wifi setting
-        public string uduinoIpAddress = "192.168.x.x";
-        public int uduinoWifiPort = 4222;
         #endregion
 
         #region Init
@@ -423,7 +407,6 @@ namespace Uduino
         {
 #if UDUINO_READY
             Instance = this;
-            Interface.Instance.Create();
 
             FullReset();
             Log.SetLogLevel(debugLevel);
@@ -443,7 +426,7 @@ namespace Uduino
 
         public void DiscoverWithDelay(float delay = -1)
         {
-           StartCoroutine("DelayedDiscover", delay);
+            StartCoroutine("DelayedDiscover", delay);
         }
 
         IEnumerator DelayedDiscover(float delay = -1)
@@ -451,14 +434,6 @@ namespace Uduino
             if (delay == -1) delay = delayBeforeDiscover;
             yield return new WaitForSeconds(delay);
             DiscoverPorts();
-            if(autoReconnect)
-             StartCoroutine("RestartIfBoardNotDetected");
-        }
-
-        IEnumerator RestartIfBoardNotDetected()
-        {
-            yield return new WaitForSeconds(autoReconnectDelay);
-           if (uduinoDevices.Count == 0) shouldReconnect = true;
         }
 
         #endregion
@@ -469,8 +444,8 @@ namespace Uduino
         /// </summary>
         public void DiscoverPorts()
         {
-            CloseAllDevices();
-            if (boardConnection == null || !Application.isPlaying)
+            RemoveAllBoards();
+            if (boardConnection == null)
                 boardConnection = UduinoConnection.GetFinder(this, platformType, connectionMethod);
 
             if (boardConnection != null)
@@ -489,15 +464,9 @@ namespace Uduino
             {
                 try
                 {
-                    Log.Info("Board <color=#ff3355>" + name + "</color> <color=#2196F3>[" + board.getIdentity() + "]</color> detected.");
+                    Log.Info("Board <color=#ff3355>" + name + "</color> <color=#2196F3>[" + board.getIdentity() + "]</color> added.");
+
                     uduinoDevices.Add(name, board);
-                }
-                catch (Exception)
-                {
-                    throw new BoardAlreadyExistException("Board with the name " + name + " is already connected ! Try to change the name of one of the arduino board");
-                }
-                finally
-                {
                     board.alwaysRead = alwaysRead;
                     board.readAfterCommand = readAfterCommand;
                     StartReading(board);
@@ -508,6 +477,10 @@ namespace Uduino
                         OnBoardConnected(board);
 
                     OnBoardConnectedEvent.Invoke(board);
+                }
+                catch (Exception)
+                {
+                    throw new BoardAlreadyExistException("Board with the name " + name + " is already connected ! Try to change the name of one of the arduino board");
                 }
             }
         }
@@ -719,9 +692,6 @@ namespace Uduino
         /// <returns>Int of the pin</returns>
         public int GetPinFromBoard(string pin)
         {
-            if(uduinoDevices.Count == 0)
-                return BoardsTypeList.Boards.GetBoardFromId(defaultArduinoBoardType).GetPin(pin);
-
             var e = uduinoDevices.GetEnumerator();
             e.MoveNext();
             UduinoDevice anElement = e.Current.Value;
@@ -738,15 +708,6 @@ namespace Uduino
         public int GetPinFromBoard(int pin)
         {
             return GetPinFromBoard(pin+"");
-        }
-
-        /// <summary>
-        /// Return true if at least one board is connected
-        /// </summary>
-        /// <returns>Is board connected</returns>
-        public bool isConnected()
-        {
-            return uduinoDevices.Count != 0;
         }
         #endregion
 
@@ -1001,32 +962,32 @@ namespace Uduino
 
         #region Simple commands: Read
         // Digital Read
-        public int digitalRead(UduinoDevice target, int pin, string bundle = null)
+        public int digitalRead(UduinoDevice target, int pin)
         {
             int readVal = 0;
             foreach (Pin pinTarget in pins)
             {
                 if (pinTarget.PinTargetExists(target, pin))
                 {
-                    readVal = pinTarget.SendRead(bundle, digital: true);
+                    readVal =  pinTarget.SendRead(null, digital:true);
                 }
             }
             return readVal;
         }
 
-        public int digitalRead(int pin, string bundle = null)
+        public int digitalRead(int pin)
         {
-            return digitalRead(null, pin, bundle);
+            return digitalRead(null, pin);
         }
 
-        public int digitalRead(AnalogPin pin, string bundle = null)
+        public int digitalRead(AnalogPin pin)
         {
-            return digitalRead(null, PinValueToBoardValue(pin), bundle);
+            return digitalRead(null, PinValueToBoardValue(pin));
         }
 
-        public int digitalRead(UduinoDevice target, AnalogPin pin, string bundle = null)
+        public int digitalRead(UduinoDevice target, AnalogPin pin)
         {
-            return digitalRead(target, PinValueToBoardValue(pin, target._boardType), bundle);
+            return digitalRead(target, PinValueToBoardValue(pin, target._boardType));
         }
 
         // Analog read
@@ -1401,7 +1362,7 @@ namespace Uduino
         /// <param name="target">Optional Uduino device</param>
         public void StartReading(UduinoDevice target)
         {
-            if (readingMethod == HardwareReading.Coroutines)
+            if (!ReadOnThread)
                 StartCoroutine(CoroutineRead(target));
             else
                 StartThread();
@@ -1418,7 +1379,7 @@ namespace Uduino
                 return;
             }
 
-            if (Application.isPlaying && _thread == null && readingMethod == HardwareReading.Thread && !IsRunning())
+            if (Application.isPlaying && _thread == null && readOnThread && !IsRunning())
             {
                 try
                 {
@@ -1431,23 +1392,17 @@ namespace Uduino
                     _thread = new Thread(new ThreadStart(ReadPorts));
                     threadRunning = true;
                     _thread.Start();
-                    _thread.IsBackground = true;
                 }
                 catch (Exception e)
                 {
                     Log.Error(e);
                 }
             }
-            else
-            {
-                Log.Debug("Uduino read/write thread is already started.");
-            }
         }
 
         public void StopThread()
         {
             threadRunning = false;
-            _thread = null;
         }
 
         public bool IsRunning()
@@ -1470,18 +1425,16 @@ namespace Uduino
             if (tmpAction != null) tmpAction();
 
             // Threading Loop
-            if (_thread != null && !isApplicationQuiting &&
-                _thread.ThreadState == ThreadState.Stopped)
+            if (_thread != null && !isApplicationQuiting && _thread.ThreadState == ThreadState.Stopped)
             {
-                StopThread();
                 StartThread(true);
             }
 
-            if(autoReconnect && shouldReconnect)
+            if(shouldReconnect)
             {
-                StartCoroutine("DiscoverWithDelay", 5.0f);
+                StartCoroutine("DiscoverWithDelay", autoReconnectDelay);
                 shouldReconnect = false;
-                Log.Warning("No Board detected. Reconnecting.");
+                Log.Info("Arduini is disconnected. Reconnecting in " + autoReconnectDelay + " seconds.");
             }
         }
 
@@ -1492,7 +1445,7 @@ namespace Uduino
         {
 #if UNITY_ANDROID
             if (ExtensionIsPresentAndActive("UduinoDevice_AndroidSerial"))
-                AndroidJNI.AttachCurrentThread(); // Sepcific android serial related code
+                AndroidJNI.AttachCurrentThread(); // Sepcific android related code
 #endif
             while (IsRunning() && !isApplicationQuiting)
             {
@@ -1502,12 +1455,11 @@ namespace Uduino
                     {
                         uduino.Value.WriteToArduinoLoop();
                         uduino.Value.ReadFromArduinoLoop();
+                        Thread.Sleep(threadFrequency);
                     }
                 }
-                Thread.Sleep(threadFrequency);
                 if (limitSendRate) Thread.Sleep((int)sendRateSpeed / 2);
             }
-            _thread = null;
         }
 
         /// <summary>
@@ -1585,16 +1537,13 @@ namespace Uduino
                 _callbacksAsync += callback;
             }
         }
-        #endregion
+#endregion
 
         #region Close Ports
-        [System.Obsolete("The function CloseAllPorts() is deprecated, please use CloseAllDevices() instead.")]
-        public void CloseAllPorts() { CloseAllDevices(); }
-
         /// <summary>
         /// Close all opened serial ports
         /// </summary>
-        public void CloseAllDevices()
+        public void RemoveAllBoards()
         {
             if (uduinoDevices.Count == 0)
             {
@@ -1602,7 +1551,7 @@ namespace Uduino
                 return;
             }
 
-            lock (uduinoDevices) // the lock here is creating delays when closing
+            lock (uduinoDevices)
             {
                 List<string> devicesNames = new List<string>(uduinoDevices.Keys);
                 foreach (string deviceName in devicesNames)
@@ -1614,21 +1563,9 @@ namespace Uduino
 
         }
 
-        public void CloseDevice(string target)
-        {
-            UduinoDevice[] devices;
-            if (GetBoard(target, out devices))
-                foreach (UduinoDevice device in devices)
-                    CloseDevice(device);
-        }
-
         public void CloseDevice(UduinoDevice device)
         {
-            try
-            {
-                if (device.boardStatus == BoardStatus.Closed)
-                    return;
-
+            try {
                 // Delete the pins 
                 if (stopAllOnQuit)
                     foreach (Pin pinTarget in pins)
@@ -1640,20 +1577,12 @@ namespace Uduino
                 device.Stopping();
                 device.Close();
 
-                if (!isApplicationQuiting)
-                {
-                    Interface.Instance.RemoveDeviceButton(device.name);
-                    Interface.Instance.UduinoDisconnected(device.name);
-                }
-
                 if (OnBoardDisconnected != null)
                     OnBoardDisconnected(device);
+
                 OnBoardDisconnectedEvent.Invoke(device);
 
                 uduinoDevices.Remove(device.name);
-
-                if (!isApplicationQuiting && uduinoDevices.Count == 0)
-                    StopThread();
             }
             catch (Exception e)
             {
@@ -1661,7 +1590,7 @@ namespace Uduino
             }
         }
 
-        public bool isApplicationQuiting = false;
+        bool isApplicationQuiting = false;
         void OnApplicationQuit()
         {
             isApplicationQuiting = true;
@@ -1683,15 +1612,9 @@ namespace Uduino
         public void FullReset()
         {
             if (uduinoDevices.Count != 0)
-                CloseAllDevices();
-
-            if (boardConnection != null)
-                boardConnection.Stop();
-
+                RemoveAllBoards();
             StopAllCoroutines();
             DisableThread();
-
-            boardConnection = null;
         }
 
         void DisableThread()
@@ -1713,10 +1636,10 @@ namespace Uduino
 #region Version
     public static class UduinoVersion
     {
-        static int major = 3;
-        static int minor = 0;
-        static int patch = 3;
-        static string update = "May 2019";
+        static int major = 2;
+        static int minor = 1;
+        static int patch = 8;
+        static string update = "Sept 2018";
 
         public static string getVersion()
         {
