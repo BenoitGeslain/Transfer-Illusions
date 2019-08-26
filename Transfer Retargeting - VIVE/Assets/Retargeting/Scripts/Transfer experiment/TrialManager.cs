@@ -35,6 +35,7 @@ public class TrialManager : MonoBehaviour {
     BodyWarping bwScript;
     ExperimentManager experimentManager;
     ScoreManager scoreManager;
+    MultipleUduinoManager uduinoScript;
 
     Vector3 initPos;
 
@@ -44,6 +45,7 @@ public class TrialManager : MonoBehaviour {
     public bool start = false;
 
     Stopwatch watch;
+    DateTime time;
     
     void Start() {
         grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
@@ -67,6 +69,7 @@ public class TrialManager : MonoBehaviour {
         experimentManager = GetComponent<ExperimentManager>();
         bwScript = GetComponent<BodyWarping>();
         scoreManager = GetComponent<ScoreManager>();
+        uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
 
         warpedCube = trackedCube.transform.GetChild(0).gameObject;
 
@@ -87,7 +90,7 @@ public class TrialManager : MonoBehaviour {
         print("INIT::TrialManager::DONE");
     }
     
-    void Update() {
+    void FixedUpdate() {
         if (start)
         {
             switch (step)
@@ -113,15 +116,17 @@ public class TrialManager : MonoBehaviour {
             }
 
             print("Step: " + step + "/" + prevStep);
-
-            experimentManager.LogContinous(DateTime.Now.ToString("HH:mm:ss"), index, trackedCube.transform.position,
+            time = DateTime.Now;
+            experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
                                            trackedCube.transform.eulerAngles, warpedCube.transform.position,
-                                           warpedCube.transform.eulerAngles, scoreManager.GetScore()); 
+                                           warpedCube.transform.eulerAngles, uduinoScript.GetAcceleration(),
+                                           scoreManager.GetScore()); 
 
             switch (step) {
                 case 0:
                     if (prevStep==-1) {
-                        print("Starting watch");
+                        print("Starting watch and arduinos");
+                        uduinoScript.BroadcastCommand("CountHits", 1);
                         watch.Start();
                     }
                     if (prevStep == -1 || prevStep == 2) {
@@ -139,8 +144,8 @@ public class TrialManager : MonoBehaviour {
                     //print(grabbables[index + 1] + " " + grabbables[index + 1].transform.position);
                     //print(phantoms[index] + " " + phantoms[index].transform.position);
                     if (condition == (int)Condition.VBW)
-                        warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position, phantoms[index].transform.position);
-                        print("warping");
+                        warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position,
+                                                                          phantoms[index].transform.position);
                     break;
                 case 1:
                     if (prevStep == 0) {
@@ -151,18 +156,23 @@ public class TrialManager : MonoBehaviour {
                         prevStep = 1;
                     }
                     if (condition == (int)Condition.VBW) {
-                        print("warping");
-                        warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position, phantoms[index].transform.position);
+                        warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position,
+                                                                          phantoms[index].transform.position);
                     }
                     break;
                 case 2:
                     if (prevStep == 1) {
-                        print("EXEC::TrialManager::Trial over (Saving and resetting)");
                         watch.Stop();
+                        uduinoScript.BroadcastCommand("CountHits", 0);
+
+                        print("EXEC::TrialManager::Trial over (Saving and resetting)");
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
                         TimeSpan elapsed = watch.Elapsed;
-                        experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), index, warpedCube.transform.position - phantoms[index].transform.position, Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation), 0, scoreManager.GetScore());
+                        experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), index,
+                                                      warpedCube.transform.position - phantoms[index].transform.position,
+                                                      Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation),
+                                                      0, uduinoScript.GetHitCount(), scoreManager.GetScore());
 
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube

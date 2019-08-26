@@ -1,4 +1,7 @@
 #include <Wire.h>
+#include <Uduino.h>
+
+Uduino accelero("boardOne");
 
 // Broche d'Arduino pour communication I2C avec accéléromètre LG-ADXL345.
 const int ACCELEROMETRE_1_SCL = A5;
@@ -31,9 +34,12 @@ int Accelerometre1_AxeX = 0;
 int Accelerometre1_AxeY = 0;
 int Accelerometre1_AxeZ = 0;
 
-int N = 1000;
-int i = 0, j = 0, dirach = 0;
-double s = 0, sum;
+const int N = 500, dT = 200;
+const double toAcceleration = 3.9*9.81/1000, tolerance = 0.6;
+
+int i = 0, j = 0, dirach = 0, hits = 0;
+double s = 0, magAcc;
+bool countHits = false;
 
 //*****************************************************************************
 
@@ -42,116 +48,145 @@ double s = 0, sum;
 // FONCTION SETUP = Code d'initialisation.
 //*****************************************************************************
 
-void setup ()
-{
-  // Ici les instructions à exécuter au démarrage.
+void setup () {
+    Serial.begin(38400);
+  
+    // Initialisation de la communication I2C bus pour le capteur d’accélération.
+    Wire.begin();
+    // Mettre le ADXL345 à plage +/-2G en écrivant la valeur 0x01 dans le
+    // registre DATA_FORMAT.
+    AccellerometreConfigure(DATA_FORMAT, Accellerometre_1_Precision2G);
+    // Mettre le ADXL345 en mode de mesure en écrivant 0x08 dans le registre
+    // POWER_CTL.
+    AccellerometreConfigure(POWER_CTL, Accellerometre_1_ModeMesure);
 
-  // IMPORTANT : régler le terminal côté PC avec la même valeur de
-  // transmission. Ici c'est 115200.
-  Serial.begin (19200);
-
-  // Initialisation de la communication I2C bus pour le capteur d’accélération.
-  Wire.begin ();
-  // Mettre le ADXL345 à plage +/-2G en écrivant la valeur 0x01 dans le
-  // registre DATA_FORMAT.
-  AccellerometreConfigure (DATA_FORMAT, Accellerometre_1_Precision2G);
-  // Mettre le ADXL345 en mode de mesure en écrivant 0x08 dans le registre
-  // POWER_CTL.
-  AccellerometreConfigure (POWER_CTL, Accellerometre_1_ModeMesure);
+    accelero.addCommand("Calibrate", Calibrate);
+    accelero.addCommand("CountHits", CountHits);
+    //Calibrate();
 }
 
-void loop()
-{
-    sum = Accelerometre1_AxeX*3.9*9.81/1000 + Accelerometre1_AxeY*3.9*9.81/1000 + Accelerometre1_AxeZ*3.9*9.81/1000;
-    if (i<200+N && i>200) {
-        s += sum;
-    } else if (i==200+N) {
-        s /= N;
-    } else if (i>200+N) {
-        if ((sum - s > 0.36 || sum - s < -0.36) && j > 200) {
-            dirach = 1;
-            j = 0;
-        } else {
-            dirach = 0;
-        }
-        j++;
+void Calibrate() {
+    Serial.println("Calibrating Accelerometer");
+    countHits = false;
+    s=0;
+    for (int i=0; i<N; i++) {
+        readAccelemrometer();
+        s += magAcc;
+        delay(10);
     }
-    // Pour affichage dans le moniteur série de l'éditeur Arduino.
-    AccellerometreLecture ();
-    /*Serial.print(Accelerometre1_AxeX*3.9*9.81/1000);
-    Serial.print(" ");
-    Serial.print(Accelerometre1_AxeY*3.9*9.81/1000);
-    Serial.print(" ");
-    Serial.print(Accelerometre1_AxeZ*3.9*9.81/1000);
-    Serial.print(" ");*/
-    Serial.print(dirach);
-    Serial.print(" ");
-    Serial.println(sum);
+    s /= N;
+    Serial.println("Accelerometer Calibrated");
+}
 
-    i++;
+void CountHits() {
+    Serial.println(accelero.getNumberOfParameters());
+    int boolInt = false;
+    delay(10);
+    if (accelero.getNumberOfParameters() > 0) {
+        boolInt = accelero.charToInt(accelero.getParameter(0));
+    }
+    if (boolInt) {
+        countHits = true;
+        Serial.println("Started counting hits");
+    } else {
+        countHits = false;
+        Serial.println("Stopped counting hits");
+    }
+}
+
+void readAccelemrometer() {
+    AccellerometreLecture();
+    magAcc = Accelerometre1_AxeX*toAcceleration + Accelerometre1_AxeY*toAcceleration + Accelerometre1_AxeZ*toAcceleration;
+}
+
+void loop() {
+    accelero.update();
+
+    if (accelero.isConnected()) {
+        readAccelemrometer();
+        
+        if (countHits) {
+            Serial.print(magAcc); Serial.print(" "); Serial.println(hits);
+            if ((magAcc - s > tolerance || magAcc - s < -tolerance) && j > dT) {
+                dirach = 1;
+                hits++;
+                j = 0;
+            } else {
+                dirach = 0;
+            }
+            j++;
+        } else {
+          Serial.print(magAcc); Serial.print(" "); Serial.println(hits);
+        }
+    }
+    
+    /*Serial.print(dirach);
+    Serial.print(" ");
+    Serial.print(hits);
+    Serial.print(" ");*/
+    //Serial.println(magAcc);
+    
+    // Pour affichage dans le moniteur série de l'éditeur Arduino.
 }
 
 //*****************************************************************************
 // FONCTION AccellerometreConfigure
 //*****************************************************************************
-void AccellerometreConfigure (byte address, byte val)
-{
-  // Commencer la transmission à trois axes accéléromètre
-  Wire.beginTransmission (Accellerometre3AxesAdresse);
-  // Envoyer l'adresse de registre
-  Wire.write (address);
-  // Envoyer la valeur à écrire.
-  Wire.write (val);
-  // Fin de la transmission.
-  Wire.endTransmission ();
+void AccellerometreConfigure (byte address, byte val) {
+    // Commencer la transmission à trois axes accéléromètre
+    Wire.beginTransmission (Accellerometre3AxesAdresse);
+    // Envoyer l'adresse de registre
+    Wire.write (address);
+    // Envoyer la valeur à écrire.
+    Wire.write (val);
+    // Fin de la transmission.
+    Wire.endTransmission ();
 }
 
 //*****************************************************************************
 // FONCTION AccellerometreLecture ()
 //*****************************************************************************
-void AccellerometreLecture ()
-{
-  uint8_t NombreOctets_a_Lire = 6;
-  // Lire les données d'accélération à partir du module ADXL345.
-  AccellerometreLectureMemoire (DATAX0, NombreOctets_a_Lire,
-                                Accellerometre3AxesMemoire);
-
-  // Chaque lecture de l'axe vient dans une résolution de 10 bits, soit 2 octets.
-  // Première Octet significatif !
-  // Donc nous convertissons les deux octets pour un « int ».
-  Accelerometre1_AxeX = (((int)Accellerometre3AxesMemoire[1]) << 8) |
-      Accellerometre3AxesMemoire[0];
-  Accelerometre1_AxeY = (((int)Accellerometre3AxesMemoire[3]) << 8) |
-      Accellerometre3AxesMemoire[2];
-  Accelerometre1_AxeZ = (((int)Accellerometre3AxesMemoire[5]) << 8) |
-      Accellerometre3AxesMemoire[4];
+void AccellerometreLecture () {
+    uint8_t NombreOctets_a_Lire = 6;
+    // Lire les données d'accélération à partir du module ADXL345.
+    AccellerometreLectureMemoire (DATAX0, NombreOctets_a_Lire,
+                                  Accellerometre3AxesMemoire);
+  
+    // Chaque lecture de l'axe vient dans une résolution de 10 bits, soit 2 octets.
+    // Première Octet significatif !
+    // Donc nous convertissons les deux octets pour un « int ».
+    Accelerometre1_AxeX = (((int)Accellerometre3AxesMemoire[1]) << 8) |
+        Accellerometre3AxesMemoire[0];
+    Accelerometre1_AxeY = (((int)Accellerometre3AxesMemoire[3]) << 8) |
+        Accellerometre3AxesMemoire[2];
+    Accelerometre1_AxeZ = (((int)Accellerometre3AxesMemoire[5]) << 8) |
+        Accellerometre3AxesMemoire[4];
 }
 
 //*****************************************************************************
 // FONCTION AccellerometreLectureMemoire
 //*****************************************************************************
 void AccellerometreLectureMemoire (byte address, int num, byte
-                                   Accellerometre3AxesMemoire[])
-{
-  // Démarrer la transmission à accéléromètre.
-  Wire.beginTransmission (Accellerometre3AxesAdresse);
-  // Envoie l'adresse de lire.
-  Wire.write (address);
-  // Fin de la transmission.
-  Wire.endTransmission ();
-  // Démarrer la transmission à accéléromètre.
-  Wire.beginTransmission (Accellerometre3AxesAdresse);
-  // Demande 6 octets à l'accéléromètre.
-  Wire.requestFrom (Accellerometre3AxesAdresse, num);
-
-  int i = 0;
-  // L'accéléromètre peut envoyer moins que demandé, c'est anormal, mais...
-  while (Wire.available())
-  {
-    // Recevoir un octet.
-    Accellerometre3AxesMemoire[i] = Wire.read ();
-    i++;
-  }
+                                   Accellerometre3AxesMemoire[]) {
+    // Démarrer la transmission à accéléromètre.
+    Wire.beginTransmission (Accellerometre3AxesAdresse);
+    // Envoie l'adresse de lire.
+    Wire.write (address);
     // Fin de la transmission.
-  Wire.endTransmission ();
+    Wire.endTransmission ();
+    // Démarrer la transmission à accéléromètre.
+    Wire.beginTransmission (Accellerometre3AxesAdresse);
+    // Demande 6 octets à l'accéléromètre.
+    Wire.requestFrom (Accellerometre3AxesAdresse, num);
+  
+    int i = 0;
+    // L'accéléromètre peut envoyer moins que demandé, c'est anormal, mais...
+    while (Wire.available())
+    {
+      // Recevoir un octet.
+      Accellerometre3AxesMemoire[i] = Wire.read ();
+      i++;
+    }
+      // Fin de la transmission.
+    Wire.endTransmission ();
 }

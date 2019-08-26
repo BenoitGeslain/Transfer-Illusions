@@ -6,6 +6,8 @@ using UnityEngine;
 public class ScreenManager : MonoBehaviour {
 	public GameObject tvText;
     public int index = 0;
+    public bool start = false;
+    
     int step = 0;
 	string[] entries;
     DateTime tic;
@@ -39,36 +41,38 @@ public class ScreenManager : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Space) && step == 0) {
-            index++;
-            tvText.GetComponent<TextMesh>().text = entries[index];
-            print("EXEC::ScreenManager::Next message");
+        if (start) {
+            if (Input.GetKeyDown(KeyCode.Space) && step == 0) {
+                index++;
+                tvText.GetComponent<TextMesh>().text = entries[index];
+                print("EXEC::ScreenManager::Next message");
 
-            if (index == 1) {
-                cubes[0].GetComponent<Renderer>().enabled = true;
-            } else if (index == 2) {
-                cubes[1].GetComponent<Renderer>().enabled = true;
-            } else if (index == 3) {
-                obstacle.SetActive(true);
-            } else if (index == 7) {
-                cubes[1].GetComponent<Renderer>().enabled = false;
+                if (index == 1) {
+                    cubes[0].GetComponent<Renderer>().enabled = true;
+                } else if (index == 2) {
+                    cubes[1].GetComponent<Renderer>().enabled = true;
+                } else if (index == 3) {
+                    obstacle.SetActive(true);
+                } else if (index == 7) {
+                    cubes[1].GetComponent<Renderer>().enabled = false;
+                    step++;
+                }
+
+                if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
+                    Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 5f) {
+                    Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
+                    tmpMat[1] = phantomRightMat;
+                    cubes[1].GetComponent<Renderer>().materials = tmpMat;
+                } else {
+                    Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
+                    tmpMat[1] = phantomMat;
+                    cubes[1].GetComponent<Renderer>().materials = tmpMat;
+                }
+
+            } else if (step == 1) {
+                tvText.GetComponent<TextMesh>().text = scoreText + 0 + entries[6];
                 step++;
             }
-
-            if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
-                Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 5f) {
-                Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                tmpMat[1] = phantomRightMat;
-                cubes[1].GetComponent<Renderer>().materials = tmpMat;
-            } else {
-                Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                tmpMat[1] = phantomMat;
-                cubes[1].GetComponent<Renderer>().materials = tmpMat;
-            }
-
-        } else if (step == 1) {
-            tvText.GetComponent<TextMesh>().text = scoreText + 0 + entries[6];
-            step++;
         }
     }
 

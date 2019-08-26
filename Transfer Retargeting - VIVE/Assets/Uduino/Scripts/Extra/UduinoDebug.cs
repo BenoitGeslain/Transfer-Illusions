@@ -14,7 +14,7 @@ namespace Uduino
         {
             if (removeNewLines) message.ToString().RemoveLineEndings();
 
-            if ((int)_debugLevel <= (int)LogLevel.ERROR)
+            if ((int)_debugLevel <= (int)LogLevel.Error && (int)_debugLevel != 0)
                 UnityEngine.Debug.LogError(message);
         }
 
@@ -22,7 +22,7 @@ namespace Uduino
         {
             if (removeNewLines) message.ToString().RemoveLineEndings();
 
-            if ((int)_debugLevel <= (int)LogLevel.WARNING)
+            if ((int)_debugLevel <= (int)LogLevel.Warning && (int)_debugLevel != 0)
                 UnityEngine.Debug.LogWarning(message);
         }
 
@@ -30,7 +30,7 @@ namespace Uduino
         {
             if (removeNewLines) message.ToString().RemoveLineEndings();
 
-            if ((int)_debugLevel <= (int)LogLevel.INFO)
+            if ((int)_debugLevel <= (int)LogLevel.Info && (int)_debugLevel != 0)
               UnityEngine.Debug.Log(((string)message).RemoveLineEndings());
         }
 
@@ -43,7 +43,7 @@ namespace Uduino
         public static void Debug(object message, bool removeNewLines = false)
         {
             if (removeNewLines) message.ToString().RemoveLineEndings();
-            if ((int)_debugLevel <= (int)LogLevel.DEBUG)
+            if ((int)_debugLevel <= (int)LogLevel.Debug && (int)_debugLevel !=0)
                 UnityEngine.Debug.Log(message);
         }
 

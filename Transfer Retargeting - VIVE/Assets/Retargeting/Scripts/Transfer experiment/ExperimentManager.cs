@@ -22,6 +22,7 @@ public class ExperimentManager : MonoBehaviour {
 
 	TrialManager trialManager;		// Handles all the trial computation and state machine
 	ScreenManager screenManager;	// Handles what is displayed on the screen
+    MultipleUduinoManager uduinoScript;
 
 	CSVSaver csvSaver;
 
@@ -29,7 +30,7 @@ public class ExperimentManager : MonoBehaviour {
 	Trial currentTrial;
 	int currentTrialIndex;
 
-	int step = 0;
+	int step = -1;
 
 	void Start () {
 		currentTrialIndex = part +
@@ -50,6 +51,7 @@ public class ExperimentManager : MonoBehaviour {
 
 		trialManager = GetComponent<TrialManager>();
 		screenManager = GetComponent<ScreenManager>();
+        uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
 
 		csvSaver = GetComponent<CSVSaver>();
 
@@ -59,6 +61,13 @@ public class ExperimentManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		switch(step) {
+			case -1:
+				if (Input.GetKeyDown(KeyCode.KeypadEnter) && step==-1) {
+					step++;
+					uduinoScript.BroadcastCommand("Calibrate");
+					screenManager.start = true;
+	        	}
+				break;
 			case 0:
 				if (screenManager.index==7) {
 					step++;
@@ -70,21 +79,17 @@ public class ExperimentManager : MonoBehaviour {
 				trialManager.start = true;
 				trialManager.condition = (int)Condition.VBW;
 				break;
+			default:
+				break;
 		}
-		/*if (Input.GetKeyDown("space")) {	// If user reached end of trial
-            nextTrial();
-			resetTrial();
-			applyTrial();
-			printCurrentTrial();
-        }*/
 	}
 
-	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, float score) {
-		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, score);
+	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, List<float> acceleration, float score) {
+		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, acceleration, score);
 	}
 
-	public void LogDiscrete(string time, int index, Vector3 positionError, float orientationError, int obstaclesHit, float score) {
-		csvSaver.writeDiscreteEntry(currentTrial, time, index, positionError, orientationError, obstaclesHit, score);
+	public void LogDiscrete(string time, int index, Vector3 positionError, float orientationError, int obstaclesHit, List<int> hitCount, float score) {
+		csvSaver.writeDiscreteEntry(currentTrial, time, index, positionError, orientationError, obstaclesHit, hitCount, score);
 	}
 
 	void nextTrial() {

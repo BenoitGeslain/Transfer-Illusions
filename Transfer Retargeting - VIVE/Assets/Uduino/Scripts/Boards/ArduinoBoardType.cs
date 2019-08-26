@@ -11,7 +11,7 @@ namespace Uduino
         public string name = "";
         public Dictionary<string, int> pins = new Dictionary<string, int>();
 
-        //                                                                      TODO : If we add this as optional value, is it breaking ?
+        //  TODO : If we add this as optional value, is it breaking ?
         public ArduinoBoardType(string name, int[] digitalRange, int[] analogRange, int[] otherAnalogPins)
         {
             this.name = name;
@@ -129,8 +129,13 @@ namespace Uduino
             boardTypes.Add(new ArduinoBoardType("Arduino Nano", defaultArduinoBoard.pins));
             boardTypes.Add(new ArduinoBoardType("Arduino Micro", defaultATmega32U4.pins));
             //   boardTypes.Add(new ArduinoBoardType("Arduino Mini", new int[] { 0, 13 }, 7, null));
-            boardTypes.Add(new ArduinoBoardType("Other ATMega32B", defaultArduinoBoard.pins));
-            boardTypes.Add(new ArduinoBoardType("Other ATMega32u4", defaultATmega32U4.pins));
+            boardTypes.Add(new ArduinoBoardType("Generic ATMega32B", defaultArduinoBoard.pins));
+            boardTypes.Add(new ArduinoBoardType("Generic ATMega32u4", defaultATmega32U4.pins));
+            boardTypes.Add(new ArduinoBoardType("NodeMCU", new Dictionary<string, int>() { { "D0", 16 }, { "D1", 5 }, { "D2", 4 }, { "D3", 0 }, { "D4", 2 }, { "D5", 14 }, { "D6", 12 }, { "D7", 13 }, { "D8", 15 }, { "RX", 3 }, { "TX", 1 }, { "S2", 9 }, { "S3", 10 }, { "A0", 17 } }));
+            boardTypes.Add(new ArduinoBoardType("LoLin", GetBoardFromName("NodeMCU").pins));
+            boardTypes.Add(new ArduinoBoardType("WeMos", new Dictionary<string, int>() { { "D0", 16 }, { "D1", 5 }, { "D2", 4 }, { "D3", 0 }, { "D4", 2 }, { "D5", 14 }, { "D6", 12 }, { "D7", 13 }, { "D8", 15 }, { "A0", 17 } }));
+            boardTypes.Add(new ArduinoBoardType("Generic esp8266", new Dictionary<string, int>() { { "D0", 16 }, { "D1", 5 }, { "D2", 4 }, { "D3", 0 }, { "D4", 2 }, { "D5", 14 }, { "D6", 12 }, { "D7", 13 }, { "D8", 15 }, { "RX", 3 }, { "TX", 1 }, { "S2", 9 }, { "S3", 10 }, { "A0", 17 } }));
+
             //   boardTypes.Add(new ArduinoBoardType("Arduino Yun", 13, 6, new int[] {4,6,7,8,9,10,12}));
         }
 

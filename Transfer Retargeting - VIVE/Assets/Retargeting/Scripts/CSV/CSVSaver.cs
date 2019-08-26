@@ -25,23 +25,23 @@ public class CSVSaver : MonoBehaviour {
 
 	}
 
-	public void writeContinousEntry(Trial trial, string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, float score) {
+	public void writeContinousEntry(Trial trial, string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, List<float> acceleration, float score) {
 		writer = new StreamWriter(continousPath, true);
 
 		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4], time,
 							index.ToString(), positionR.x.ToString(), positionR.y.ToString(), positionR.z.ToString(), orientationR.x.ToString(),
 							orientationR.y.ToString(), orientationR.z.ToString(), positionV.x.ToString(), positionV.y.ToString(), positionV.z.ToString(),
-							orientationV.x.ToString(), orientationV.y.ToString(), orientationV.z.ToString(), score.ToString()});
+							orientationV.x.ToString(), orientationV.y.ToString(), orientationV.z.ToString(), string.Join(";", acceleration), score.ToString()});
 		writer.Flush();
 		writer.Close();
 	}
 
-	public void writeDiscreteEntry(Trial trial, string timeCube, int index, Vector3 positionError, float orientationError, int obstaclesHit, float score) {
+	public void writeDiscreteEntry(Trial trial, string timeCube, int index, Vector3 positionError, float orientationError, int obstaclesHit, List<int> hitCount, float score) {
 		writer = new StreamWriter(discretePath, true);
 
 		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
 							timeCube, index.ToString(), positionError.x.ToString(), positionError.y.ToString(), positionError.z.ToString(),
-							orientationError.ToString(), obstaclesHit.ToString(), score.ToString()});
+							orientationError.ToString(), obstaclesHit.ToString(), string.Join(";", hitCount), score.ToString()});
 		writer.Flush();
 		writer.Close();
 	}
@@ -50,7 +50,7 @@ public class CSVSaver : MonoBehaviour {
 		for (int i=0; i<d.Length; i++) {
 			writer.Write(d[i]);
 			if (i!=d.Length-1) {
-				writer.Write(",");
+				writer.Write(";");
 			}
 		}
 		writer.WriteLine("");
