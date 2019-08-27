@@ -82,6 +82,10 @@ public class ExperimentManager : MonoBehaviour {
 			default:
 				break;
 		}
+
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
 	}
 
 	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, List<float> acceleration, float score) {

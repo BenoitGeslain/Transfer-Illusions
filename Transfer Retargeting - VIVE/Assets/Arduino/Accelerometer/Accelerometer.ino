@@ -4,8 +4,8 @@
 Uduino accelero("boardOne");
 
 // Broche d'Arduino pour communication I2C avec accéléromètre LG-ADXL345.
-const int ACCELEROMETRE_1_SCL = A5;
-const int ACCELEROMETRE_1_SDA = A4;
+const int ACCELEROMETRE_1_SCL = 21;
+const int ACCELEROMETRE_1_SDA = 20;
 
 //*****************************************************************************
 // Déclaration des variables globales.
@@ -100,7 +100,7 @@ void readAccelemrometer() {
 }
 
 void loop() {
-    accelero.update();
+   accelero.update();
 
     if (accelero.isConnected()) {
         readAccelemrometer();
@@ -120,11 +120,8 @@ void loop() {
         }
     }
     
-    /*Serial.print(dirach);
-    Serial.print(" ");
-    Serial.print(hits);
-    Serial.print(" ");*/
-    //Serial.println(magAcc);
+    /*readAccelemrometer();
+    Serial.println(magAcc);*/
     
     // Pour affichage dans le moniteur série de l'éditeur Arduino.
 }

@@ -131,11 +131,28 @@ public static class OptitrackHiResTimer
 }
 
 
+/*Ben's code*/
+public struct OptiMarker {
+    public int id;
+    public Vector3 position;
+
+    public OptiMarker(int id, Vector3 pos) {
+        this.id = id;
+        this.position = pos;
+    }
+}
+/*End Ben's code*/
+
 /// <summary>
 /// Connects to a NatNet streaming server and makes the data available in lightweight Unity-friendly representations.
 /// </summary>
 public class OptitrackStreamingClient : MonoBehaviour
 {
+    /*Ben's code*/
+    public List<OptiMarker> unlabeledMarkers;
+    /*End Ben's code*/
+
+
     public enum ClientConnectionType
     {
         Multicast,
@@ -180,6 +197,11 @@ public class OptitrackStreamingClient : MonoBehaviour
     private object m_frameDataUpdateLock = new object();
     #endregion Private fields
 
+    /*Ben's code*/
+    void Start() {
+        unlabeledMarkers = new List<OptiMarker>();
+    }
+    /*End Ben's code*/
 
     private void Update()
     {
@@ -550,7 +572,6 @@ public class OptitrackStreamingClient : MonoBehaviour
         }
     }
 
-
     #region Private methods
     /// <summary>
     /// Event handler for NatNet frame delivery. Updates our simplified state representations.
@@ -660,6 +681,10 @@ public class OptitrackStreamingClient : MonoBehaviour
 
             m_latestMarkerStates.Clear();
 
+            /*Ben's code*/
+            unlabeledMarkers.Clear();
+            /*End Ben's code*/
+
             for (int markerIdx = 0; markerIdx < MarkerCount; ++markerIdx)
             {
                 sMarker marker = new sMarker();
@@ -673,6 +698,13 @@ public class OptitrackStreamingClient : MonoBehaviour
                 markerState.Size = marker.Size;
                 markerState.Labeled = (marker.Params & 0x10) == 0;
                 markerState.Id = marker.Id;
+
+                /*Ben's code*/
+                if (!markerState.Labeled) {
+                    //print("Marker " + markerState.Id + " : " + markerPos);
+                    unlabeledMarkers.Add(new OptiMarker(markerState.Id, markerPos));
+                }
+                /*End Ben's code*/
             }
         }
         catch (Exception ex)
