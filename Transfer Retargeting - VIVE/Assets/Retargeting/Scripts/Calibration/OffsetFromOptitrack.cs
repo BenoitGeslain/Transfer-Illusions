@@ -6,8 +6,8 @@ public class OffsetFromOptitrack : MonoBehaviour
 {
 
 	public Transform optitrackGameObject;
-	public Transform markersOculus;
-	public Transform realOculus;
+	Transform markersOculus;
+	Transform realOculus;
 
 	private Vector3 offsetDist;
 	private Vector3 offsetAngle;
@@ -17,7 +17,8 @@ public class OffsetFromOptitrack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        realOculus = optitrackGameObject.Find("Camera Oculus");
+        markersOculus = optitrackGameObject.Find("Markers Oculus");
     }
 
     // Update is called once per frame
