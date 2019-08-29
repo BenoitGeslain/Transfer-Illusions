@@ -29,12 +29,13 @@ public class OffsetFromOptitrack : MonoBehaviour
             offsetAngle = markersOculus.eulerAngles - realOculus.eulerAngles;
 
             this.transform.position = optitrackGameObject.position - offsetDist;
-            //this.transform.rotation.eulerAngles = optitrackGameObject.rotation - offsetAngle;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles - offsetAngle;
             start = true;
+
         } else if (start && this.name != "World") {
             this.transform.position = optitrackGameObject.position - offsetDist;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles - offsetAngle;
+			//Debug.DrawLine(this.transform.position, optitrackGameObject.position, new Color(1f, 0f, 0f));
         }
     }
 }

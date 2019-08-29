@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class ShoulderBase : MonoBehaviour
 {
-	public Transform rightArm;
+	public GameObject rightArm;
 	
-	Vector3 position, orientation;
+	Vector3 offset, orientation;
     // Start is called before the first frame update
     void Awake() {
-        position = rightArm.position - transform.position;
-        orientation = rightArm.eulerAngles - transform.eulerAngles;
+        offset = rightArm.transform.position - transform.position;
+        orientation = rightArm.transform.eulerAngles - transform.eulerAngles;
     }
 
     // Update is called once per frame
     void Update() {
-        transform.position = rightArm.position + position;
-        transform.eulerAngles = rightArm.eulerAngles + orientation;
+        transform.position = rightArm.transform.position + offset;
+        transform.eulerAngles = rightArm.transform.eulerAngles + orientation;
 
     }
 }

@@ -149,7 +149,7 @@ public struct OptiMarker {
 public class OptitrackStreamingClient : MonoBehaviour
 {
     /*Ben's code*/
-    public List<OptiMarker> unlabeledMarkers;
+    //public List<OptiMarker> unlabeledMarkers;
     /*End Ben's code*/
 
 
@@ -198,9 +198,9 @@ public class OptitrackStreamingClient : MonoBehaviour
     #endregion Private fields
 
     /*Ben's code*/
-    void Start() {
+    /*void Start() {
         unlabeledMarkers = new List<OptiMarker>();
-    }
+    }*/
     /*End Ben's code*/
 
     private void Update()
@@ -682,7 +682,7 @@ public class OptitrackStreamingClient : MonoBehaviour
             m_latestMarkerStates.Clear();
 
             /*Ben's code*/
-            unlabeledMarkers.Clear();
+            //unlabeledMarkers.Clear();
             /*End Ben's code*/
 
             for (int markerIdx = 0; markerIdx < MarkerCount; ++markerIdx)
@@ -700,10 +700,10 @@ public class OptitrackStreamingClient : MonoBehaviour
                 markerState.Id = marker.Id;
 
                 /*Ben's code*/
-                if (!markerState.Labeled) {
+                /*if (!markerState.Labeled) {
                     //print("Marker " + markerState.Id + " : " + markerPos);
                     unlabeledMarkers.Add(new OptiMarker(markerState.Id, markerPos));
-                }
+                }*/
                 /*End Ben's code*/
             }
         }
