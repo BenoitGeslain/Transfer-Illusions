@@ -67,7 +67,6 @@ public class ScreenManager : MonoBehaviour {
                 Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                 tmpMat[1] = phantomRightMat;
                 cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                print("GREEN");
             } else {
                 Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                 tmpMat[1] = phantomMat;
