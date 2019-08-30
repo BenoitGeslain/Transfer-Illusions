@@ -13,6 +13,5 @@ public class ForearmRoll : MonoBehaviour
     void Update() {
         //transform.position = (forearm.position - hand.position)/2;
         transform.eulerAngles = forearm.eulerAngles;
-        print(transform.position);
     }
 }

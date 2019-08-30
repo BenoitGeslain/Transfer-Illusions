@@ -57,21 +57,21 @@ public class ScreenManager : MonoBehaviour {
                     cubes[1].GetComponent<Renderer>().enabled = false;
                     step++;
                 }
-
-                if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
-                    Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 5f) {
-                    Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                    tmpMat[1] = phantomRightMat;
-                    cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                } else {
-                    Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                    tmpMat[1] = phantomMat;
-                    cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                }
-
             } else if (step == 1) {
                 tvText.GetComponent<TextMesh>().text = scoreText + 0 + entries[6];
                 step++;
+            }
+
+            if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
+                Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 5f) {
+                Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
+                tmpMat[1] = phantomRightMat;
+                cubes[1].GetComponent<Renderer>().materials = tmpMat;
+                print("GREEN");
+            } else {
+                Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
+                tmpMat[1] = phantomMat;
+                cubes[1].GetComponent<Renderer>().materials = tmpMat;
             }
         }
     }

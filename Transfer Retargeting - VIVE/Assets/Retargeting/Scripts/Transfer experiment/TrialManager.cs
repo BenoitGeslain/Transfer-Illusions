@@ -197,7 +197,7 @@ public class TrialManager : MonoBehaviour {
         }
     }
 
-    public void ResetScene() {
+    public void ResetScene(bool resetScore) {
         step = 0; prevStep = -1; index = 0;
 
         Material[] tmpMat = phantoms[0].GetComponent<Renderer>().materials;
@@ -213,7 +213,8 @@ public class TrialManager : MonoBehaviour {
             Destroy(c.gameObject);
         }
 
-        scoreManager.ResetScore();
+        if (resetScore)
+            scoreManager.ResetScore();
 
         print("RESET::SceneReset::DONE");
     }

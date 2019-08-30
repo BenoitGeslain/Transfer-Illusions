@@ -124,9 +124,13 @@ public class ExperimentManager : MonoBehaviour {
 
 	public void EndTrial() {
 		print("RESET::ExperimentManager::Scene resetting");
+
+		string id = currentTrial.parameters[0];
+		print(id);
 		nextTrial();
 		applyTrial();
-		trialManager.ResetScene();
+		print(currentTrial.parameters[0]);
+		trialManager.ResetScene(string.Equals(id, currentTrial.parameters[0]));
 	}
 
 	public Tuple find(int id) {
