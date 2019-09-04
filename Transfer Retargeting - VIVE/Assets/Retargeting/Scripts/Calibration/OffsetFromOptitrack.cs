@@ -12,13 +12,13 @@ public class OffsetFromOptitrack : MonoBehaviour
 	private Vector3 offsetDist;
 	private Vector3 offsetAngle;
 
-    private bool start = false;
+    private bool start = true;
 
     // Start is called before the first frame update
     void Start()
     {
         realOculus = GameObject.Find("Camera Oculus").transform;
-        markersOculus = GameObject.Find("Markers Oculus").transform;
+        markersOculus = GameObject.Find("Oculus OptiTrack").transform;
     }
 
     // Update is called once per frame
@@ -34,6 +34,9 @@ public class OffsetFromOptitrack : MonoBehaviour
             start = true;
 
         } else if (start && this.name != "World") {
+            /*offsetDist = markersOculus.position - realOculus.position;
+            offsetAngle = markersOculus.eulerAngles - realOculus.eulerAngles;*/
+
             this.transform.position = optitrackGameObject.position - offsetDist;
             // this.transform.eulerAngles = optitrackGameObject.eulerAngles - offsetAngle;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles;
