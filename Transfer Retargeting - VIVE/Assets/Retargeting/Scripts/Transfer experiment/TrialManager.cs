@@ -36,6 +36,7 @@ public class TrialManager : MonoBehaviour {
     ExperimentManager experimentManager;
     ScoreManager scoreManager;
     MultipleUduinoManager uduinoScript;
+    PathManager pathScript;
 
     Vector3 initPos;
 
@@ -70,6 +71,7 @@ public class TrialManager : MonoBehaviour {
         bwScript = GetComponent<BodyWarping>();
         scoreManager = GetComponent<ScoreManager>();
         uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
+        pathScript = GetComponent<PathManager>();
 
         warpedCube = trackedCube.transform.GetChild(0).gameObject;
 
@@ -95,14 +97,13 @@ public class TrialManager : MonoBehaviour {
         {
             switch (step)
             {
-                case 0: // Cube is being placed // TODO Add rotation
+                case 0: // Cube is being placed
                     if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f &&
                         Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f) {
                         step = 1;
                     }
                     break;
                 case 1: // Cube placé, attente du bouton
-                print((hand.transform.position - fixedPoint.transform.position).magnitude);
                     if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
                         !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) { // Produit scalaire entre les forwards (Elodie)
                         step = 0;
@@ -125,15 +126,13 @@ public class TrialManager : MonoBehaviour {
             switch (step) {
                 case 0:
                     if (prevStep==-1) {
-                        print("Starting watch and arduinos");
-                        uduinoScript.BroadcastCommand("CountHits", 1);
-                        watch.Start();
-                    }
-                    if (prevStep == -1 || prevStep == 2) {
-                        initPos = trackedCube.transform.position;
+                    	initPos = trackedCube.transform.position;
                         warpedCube.GetComponent<Renderer>().enabled = true;
                         phantoms[index].GetComponent<Renderer>().enabled = true;
                         prevStep = 0;
+                        print("Starting watch and arduinos");
+                        uduinoScript.BroadcastCommand("CountHits", 1);
+                        watch.Start();
                     } else if (prevStep == 1) {
                         Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
                         tmpMat[1] = phantomMat;
@@ -144,8 +143,10 @@ public class TrialManager : MonoBehaviour {
                     //print(grabbables[index + 1] + " " + grabbables[index + 1].transform.position);
                     //print(phantoms[index] + " " + phantoms[index].transform.position);
                     if (condition == (int)Condition.VBW)
+                    	print(initPos);
                         warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
+                    pathScript.ShowPath(index);
                     break;
                 case 1:
                     if (prevStep == 0) {
@@ -159,11 +160,13 @@ public class TrialManager : MonoBehaviour {
                         warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
                     }
+                    pathScript.ShowPath(index);
                     break;
                 case 2:
                     if (prevStep == 1) {
                         watch.Stop();
                         uduinoScript.BroadcastCommand("CountHits", 0);
+                        pathScript.HidePath();
 
                         print("EXEC::TrialManager::Trial over (Saving and resetting)");
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
@@ -186,7 +189,7 @@ public class TrialManager : MonoBehaviour {
                         }
 
                         index++;
-                        prevStep = 2;
+                        prevStep = -1;
 
                         if (index==grabbables.Length) {
                             experimentManager.EndTrial();

@@ -120,8 +120,8 @@ void loop() {
         }
     }
     
-    /*readAccelemrometer();
-    Serial.println(magAcc);*/
+    //readAccelemrometer();
+    //Serial.println(magAcc);
     
     // Pour affichage dans le moniteur série de l'éditeur Arduino.
 }
