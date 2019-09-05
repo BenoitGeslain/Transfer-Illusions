@@ -43,7 +43,7 @@ public class OffsetFromOptitrack : MonoBehaviour
             // this.transform.eulerAngles = optitrackGameObject.eulerAngles - offsetAngle;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles;
 
-			//Debug.DrawLine(this.transform.position, optitrackGameObject.position, new Color(1f, 0f, 0f));
+			Debug.DrawLine(this.transform.position, optitrackGameObject.position, new Color(1f, 0f, 0f));
         }
     }
 }
