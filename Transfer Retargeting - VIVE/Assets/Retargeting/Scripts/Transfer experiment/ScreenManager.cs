@@ -7,8 +7,9 @@ public class ScreenManager : MonoBehaviour {
 	public GameObject tvText;
     public int index = 0;
     public bool start = false;
+    public Transform hand, fixedPoint;
     
-    int step = 0;
+    public int step = 0, prevStep = -1;
 	string[] entries;
     DateTime tic;
 
@@ -21,13 +22,8 @@ public class ScreenManager : MonoBehaviour {
 
     void Start() {
         entries = new string[8];
-        entries[0] = "Lors de cette expérience,\nvous allez devoir saisir des cubes\net les placer à l'endroit indiqué";
-        entries[1] = "Les cubes bleus représentent\nles cubes que vous pouvez manipuler";
-        entries[2] = "Les cubes rouges translucides\nsont les cibles où vous devez poser\nles cubes bleus.";
-        entries[3] = "Les obstacles sont transparents\npour que vous puissiez voir\nau travers,vous ne devez pas\nles toucher où ils deviendront\nrouges et vous perdrez des points";
-        entries[4] = "Tendez les bras. Vous pouvez les\nvoir tout au long de\nl'expérience, vous pouvez\négalement saisir le cube bleu\ndevant vous.";
-        entries[5] = "Prenez le temps de vous familiariser\navec l'environment, lorsque vous\nserez prêt, appuyez sur\nle bouton vert.";
-        entries[6] = "\n\nPrenez le cube bleu et superposez\nle au cube rouge.\nPuis touchez la sphère verte\npour continuer.";
+        entries[0] = "Votre objectif est de :\n\n- Sélectionner le cube bleu et de le placer, avec la\nbonne orientation, dans le cube rouge semi-transparent.\nLorsqu'il est bien positionner, le cube rouge devient vert.\n\n- De ne pas toucher les obstacles gris semi-transparent\n\nPrêt? Appuyer sur la sphère verte.";
+        entries[1] = "Placer le cube bleu dans le cube\n\nrouge, puis toucher la sphère verte";
         tvText.GetComponent<TextMesh>().text = entries[0];
 
         cubes = new GameObject[2];
@@ -42,36 +38,44 @@ public class ScreenManager : MonoBehaviour {
 
     void Update() {
         if (start) {
-            if (Input.GetKeyDown(KeyCode.Space) && step == 0) {
-                index++;
-                tvText.GetComponent<TextMesh>().text = entries[index];
-                print("EXEC::ScreenManager::Next message");
+            if (step == 0) {
+                if (index == 0) {
+                    if (prevStep == -1) {
+                        cubes[0].GetComponent<Renderer>().enabled = true;
+                        cubes[1].GetComponent<Renderer>().enabled = true;
+                        obstacle.SetActive(true);
+                        tvText.GetComponent<TextMesh>().text = entries[index];
+                        prevStep = 0;
+                    }
 
-                if (index == 1) {
-                    cubes[0].GetComponent<Renderer>().enabled = true;
-                } else if (index == 2) {
-                    cubes[1].GetComponent<Renderer>().enabled = true;
-                } else if (index == 3) {
-                    obstacle.SetActive(true);
-                } else if (index == 7) {
-                    cubes[1].GetComponent<Renderer>().enabled = false;
-                    step++;
+                    if ((hand.position - fixedPoint.position).magnitude < 0.1f) {
+                        index++;
+                    }
+                } else if (index == 1 && prevStep == 0) {
+                    tvText.GetComponent<TextMesh>().text = entries[index];
                 }
-            } else if (step == 1) {
-                tvText.GetComponent<TextMesh>().text = scoreText + 0 + entries[6];
+
+                if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
+                    Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 5f) {
+                    Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
+                    tmpMat[1] = phantomRightMat;
+                    cubes[1].GetComponent<Renderer>().materials = tmpMat;
+                    if (index == 1 && (hand.position - fixedPoint.position).magnitude < 0.1f) {
+                        cubes[1].SetActive(false);
+                        step++;
+                    }
+                } else {
+                    Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
+                    tmpMat[1] = phantomMat;
+                    cubes[1].GetComponent<Renderer>().materials = tmpMat;
+                }
+            } else {
+                tvText.GetComponent<TextMesh>().text = scoreText + 0 + "\n\n" + entries[1];
                 step++;
             }
 
-            if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
-                Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 5f) {
-                Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                tmpMat[1] = phantomRightMat;
-                cubes[1].GetComponent<Renderer>().materials = tmpMat;
-            } else {
-                Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                tmpMat[1] = phantomMat;
-                cubes[1].GetComponent<Renderer>().materials = tmpMat;
-            }
+            
+            
         }
     }
 

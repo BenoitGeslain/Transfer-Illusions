@@ -9,13 +9,15 @@ using UnityEngine;
 
 public class TrialManager : MonoBehaviour {
 
-    public GameObject hand;
+    public GameObject hand, wholeHand;
     public GameObject trackedCube;
     public GameObject cubePrefab;
 
     public Material phantomRightMat, phantomMat;
 
-    public int condition;
+    public int condition, collisions;
+
+    int[] col;
 
     GameObject[] grabbables;
     GameObject[] phantoms;
@@ -87,16 +89,16 @@ public class TrialManager : MonoBehaviour {
             phantomPosition[i] = phantoms[i].transform.position;
         }
 
+        col = new int[4];
+
         watch = new Stopwatch();
 
         print("INIT::TrialManager::DONE");
     }
     
     void FixedUpdate() {
-        if (start)
-        {
-            switch (step)
-            {
+        if (start) {
+            switch (step) {
                 case 0: // Cube is being placed
                     if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f &&
                         Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f) {
@@ -121,7 +123,7 @@ public class TrialManager : MonoBehaviour {
             experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
                                            trackedCube.transform.eulerAngles, warpedCube.transform.position,
                                            warpedCube.transform.eulerAngles, uduinoScript.GetAcceleration(),
-                                           scoreManager.GetScore()); 
+                                           col, scoreManager.GetScore()); 
 
             switch (step) {
                 case 0:
@@ -175,7 +177,7 @@ public class TrialManager : MonoBehaviour {
                         experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), index,
                                                       warpedCube.transform.position - phantoms[index].transform.position,
                                                       Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation),
-                                                      0, uduinoScript.GetHitCount(), scoreManager.GetScore());
+                                                      uduinoScript.GetHitCount(), col, scoreManager.GetScore());
 
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube
@@ -196,6 +198,10 @@ public class TrialManager : MonoBehaviour {
                         }
                     }
                     break;
+            }
+
+            for (; collisions!=0; collisions--) {
+            	col[index]++;
             }
         }
     }

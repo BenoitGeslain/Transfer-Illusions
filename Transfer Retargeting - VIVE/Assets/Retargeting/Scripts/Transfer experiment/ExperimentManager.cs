@@ -88,12 +88,12 @@ public class ExperimentManager : MonoBehaviour {
         }
 	}
 
-	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, List<float> acceleration, float score) {
-		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, acceleration, score);
+	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, List<float> acceleration, int[] collisions, float score) {
+		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, acceleration, collisions, score);
 	}
 
-	public void LogDiscrete(string time, int index, Vector3 positionError, float orientationError, int obstaclesHit, List<int> hitCount, float score) {
-		csvSaver.writeDiscreteEntry(currentTrial, time, index, positionError, orientationError, obstaclesHit, hitCount, score);
+	public void LogDiscrete(string time, int index, Vector3 positionError, float orientationError, List<int> obstaclesHit, int[] collisions, float score) {
+		csvSaver.writeDiscreteEntry(currentTrial, time, index, positionError, orientationError, obstaclesHit, collisions, score);
 	}
 
 	void nextTrial() {
