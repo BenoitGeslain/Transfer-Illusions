@@ -69,7 +69,7 @@ public class ExperimentManager : MonoBehaviour {
 	        	}
 				break;
 			case 0:
-				if (screenManager.index==7) {
+				if (screenManager.step==1) {
 					step++;
 					print("EXEC::ExperimentManager::Intro Over");
 				}

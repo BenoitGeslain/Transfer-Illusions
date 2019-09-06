@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CSVSaver : MonoBehaviour {
 
-	public string continousPath = "Data/continous.csv", discretePath = "Data/discrete.csv";
+	public string continousPath = "Data/continous.csv", discretePath = "Data/discrete.csv", sceneConfiguration = "Data/config.csv";
 
 	StreamWriter writer;
 
@@ -19,10 +19,11 @@ public class CSVSaver : MonoBehaviour {
 		write(Parameters.experimentHeader);
 		writer.Flush();
 		writer.Close();
-	}
 
-	void Update () {
-
+		writer = new StreamWriter(sceneConfiguration, true);
+		write(Parameters.sceneConfiguration);
+		writer.Flush();
+		writer.Close();
 	}
 
 	public void writeContinousEntry(Trial trial, string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, List<float> acceleration, int[] collisions, float score) {
@@ -42,6 +43,15 @@ public class CSVSaver : MonoBehaviour {
 		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
 							timeCube, index.ToString(), positionError.x.ToString(), positionError.y.ToString(), positionError.z.ToString(),
 							orientationError.ToString(), string.Join(";", hitCount), collisions[1].ToString(), collisions[2].ToString(), collisions[3].ToString(), score.ToString()});
+		writer.Flush();
+		writer.Close();
+	}
+
+	public void writeConfig(string cubeName, Vector3 positionR, Vector3 orientationR) {
+		writer = new StreamWriter(sceneConfiguration, true);
+
+		write(new string[] {cubeName, positionR.x.ToString(), positionR.y.ToString(), positionR.z.ToString(),
+							orientationR.x.ToString(), orientationR.y.ToString(), orientationR.z.ToString()});
 		writer.Flush();
 		writer.Close();
 	}

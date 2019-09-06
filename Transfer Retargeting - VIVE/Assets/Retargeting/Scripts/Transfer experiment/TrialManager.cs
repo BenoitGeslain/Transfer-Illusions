@@ -193,6 +193,7 @@ public class TrialManager : MonoBehaviour {
                         index++;
                         prevStep = -1;
 
+                        print("Index : " + index + "/" + grabbables.Length);
                         if (index==grabbables.Length) {
                             experimentManager.EndTrial();
                         }

@@ -4,26 +4,25 @@ using UnityEngine;
 
 public class OffsetFromOptitrack : MonoBehaviour
 {
-
-	public Transform optitrackGameObject;
 	Transform markersOculus;
 	Transform realOculus;
 
-	private Vector3 offsetDist;
-	private Vector3 offsetAngle;
+    public Transform optitrackGameObject;
+	Vector3 offsetDist;
+	Vector3 offsetAngle;
 
-    private bool start = false;
+    LogSceneConfiguration configScript;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    bool start = false;
+
+    void Start() {
         realOculus = GameObject.Find("Camera Oculus").transform;
         markersOculus = GameObject.Find("Markers Oculus").transform;
+
+        configScript = GameObject.Find("World").GetComponent<LogSceneConfiguration>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
             offsetDist = markersOculus.position - realOculus.position;
             offsetAngle = markersOculus.eulerAngles - realOculus.eulerAngles;
@@ -33,7 +32,7 @@ public class OffsetFromOptitrack : MonoBehaviour
                 this.transform.eulerAngles = new Vector3(0f, optitrackGameObject.eulerAngles.y, 0f);
             else
                 this.transform.eulerAngles = optitrackGameObject.eulerAngles;
-            //this.transform.eulerAngles = optitrackGameObject.eulerAngles - offsetAngle;
+            configScript.saveConfig = true;
             start = true;
         } else if (start && this.name != "World") {
             offsetDist = markersOculus.position - realOculus.position;
