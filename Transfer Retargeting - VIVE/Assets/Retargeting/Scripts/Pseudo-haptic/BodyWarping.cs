@@ -18,8 +18,8 @@ public class BodyWarping : MonoBehaviour {
         
     }
 
-    public Vector3 BodyWarp(Vector3 wOrigin, Vector3 wTargetReal, Vector3 wTargetVirtual) {
-        Vector3 realHandPos = trackedCube.position;
+    public Vector3 BodyWarp(Vector3 realPosition, Vector3 wOrigin, Vector3 wTargetReal, Vector3 wTargetVirtual) {
+        Vector3 realHandPos = realPosition;
         Vector3 d = realHandPos - wTargetReal;
         Vector3 D = wOrigin - wTargetReal;
         Vector3 virtHandPos = realHandPos;

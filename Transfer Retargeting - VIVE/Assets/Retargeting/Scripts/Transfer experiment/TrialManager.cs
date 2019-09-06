@@ -9,7 +9,8 @@ using UnityEngine;
 
 public class TrialManager : MonoBehaviour {
 
-    public GameObject hand, wholeHand;
+    public GameObject hand;
+    public GameObject armHand;
     public GameObject trackedCube;
     public GameObject cubePrefab;
 
@@ -144,10 +145,13 @@ public class TrialManager : MonoBehaviour {
                     //print(initPos + ", " + grabbables[index+1].transform.position + ", " + phantoms[index].transform.position);
                     //print(grabbables[index + 1] + " " + grabbables[index + 1].transform.position);
                     //print(phantoms[index] + " " + phantoms[index].transform.position);
-                    if (condition == (int)Condition.VBW)
-                    	print(initPos);
-                        warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position,
+                    if (condition == (int)Condition.VBW) {
+                        print(initPos);
+                        warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
+                        
+                    }
+                    	
                     pathScript.ShowPath(index);
                     break;
                 case 1:
@@ -159,7 +163,7 @@ public class TrialManager : MonoBehaviour {
                         prevStep = 1;
                     }
                     if (condition == (int)Condition.VBW) {
-                        warpedCube.transform.position = bwScript.BodyWarp(initPos, grabbables[index].transform.position,
+                        warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
                     }
                     pathScript.ShowPath(index);
