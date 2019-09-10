@@ -22,7 +22,7 @@ public class OffsetFromOptitrack : MonoBehaviour
         configScript = GameObject.Find("World").GetComponent<LogSceneConfiguration>();
     }
 
-    void Update() {
+    void FixedUpdate() {
         if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
             offsetDist = markersOculus.position - realOculus.position;
             offsetAngle = markersOculus.eulerAngles - realOculus.eulerAngles;
@@ -39,7 +39,6 @@ public class OffsetFromOptitrack : MonoBehaviour
             offsetAngle = markersOculus.eulerAngles - realOculus.eulerAngles;
 
             this.transform.position = optitrackGameObject.position - offsetDist;
-            // this.transform.eulerAngles = optitrackGameObject.eulerAngles - offsetAngle;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles;
 
 			Debug.DrawLine(this.transform.position, optitrackGameObject.position, new Color(1f, 0f, 0f));

@@ -10,7 +10,7 @@ using UnityEngine;
 public class TrialManager : MonoBehaviour {
 
     public GameObject hand;
-    public GameObject armHand;
+    public Transform armHand;
     public GameObject trackedCube;
     public GameObject cubePrefab;
 
@@ -149,9 +149,13 @@ public class TrialManager : MonoBehaviour {
                         print(initPos);
                         warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
+                        foreach (Transform t in armHand) {
+                            t.position = bwScript.BodyWarp(t.position, initPos, grabbables[index].transform.position,
+                                                                          phantoms[index].transform.position);
+                        }
                         
                     }
-                    	
+                    
                     pathScript.ShowPath(index);
                     break;
                 case 1:
