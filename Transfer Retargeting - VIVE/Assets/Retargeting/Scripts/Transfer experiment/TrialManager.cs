@@ -10,7 +10,7 @@ using UnityEngine;
 public class TrialManager : MonoBehaviour {
 
     public GameObject hand;
-    public Transform armHand;
+    public Transform armHandMetaphor, armHandTracked;
     public GameObject trackedCube;
     public GameObject cubePrefab;
 
@@ -108,7 +108,7 @@ public class TrialManager : MonoBehaviour {
                     break;
                 case 1: // Cube placé, attente du bouton
                     if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
-                        !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) { // Produit scalaire entre les forwards (Elodie)
+                        !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) {
                         step = 0;
                     } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.1f) {
                         step = 2;
@@ -142,18 +142,17 @@ public class TrialManager : MonoBehaviour {
                         phantoms[index].GetComponent<Renderer>().materials = tmpMat;
                         prevStep = 0;
                     }
-                    //print(initPos + ", " + grabbables[index+1].transform.position + ", " + phantoms[index].transform.position);
-                    //print(grabbables[index + 1] + " " + grabbables[index + 1].transform.position);
-                    //print(phantoms[index] + " " + phantoms[index].transform.position);
                     if (condition == (int)Condition.VBW) {
-                        print(initPos);
+                        bwScript.warp = true;
                         warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
-                        foreach (Transform t in armHand) {
-                            t.position = bwScript.BodyWarp(t.position, initPos, grabbables[index].transform.position,
+                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
+                            armHandMetaphor.GetChild(i).position = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
+                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
                         }
-                        
+                    } else {
+                        bwScript.warp = false;
                     }
                     
                     pathScript.ShowPath(index);
@@ -167,8 +166,16 @@ public class TrialManager : MonoBehaviour {
                         prevStep = 1;
                     }
                     if (condition == (int)Condition.VBW) {
+                        bwScript.warp = true;
                         warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
                                                                           phantoms[index].transform.position);
+                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
+                            armHandMetaphor.GetChild(i).position = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
+                                                                                     phantoms[index].transform.position);
+                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
+                        }
+                    } else {
+                        bwScript.warp = false;
                     }
                     pathScript.ShowPath(index);
                     break;
@@ -189,6 +196,7 @@ public class TrialManager : MonoBehaviour {
 
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube
+                            bwScript.warp = false;
                             warpedCube.GetComponent<Renderer>().enabled = false;
                             phantoms[index].GetComponent<Renderer>().enabled = false;
 
