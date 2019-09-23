@@ -60,7 +60,7 @@ public class ScreenManager : MonoBehaviour {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                     tmpMat[1] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                    if (index == 1 && (hand.position - fixedPoint.position).magnitude < 0.1f) {
+                    if (index == 1 && (hand.position - fixedPoint.position).magnitude < 0.05f) {
                         cubes[1].SetActive(false);
                         step++;
                     }

@@ -19,6 +19,5 @@ public class ArmWarping : MonoBehaviour
                 armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
             }
         }
-        
     }
 }

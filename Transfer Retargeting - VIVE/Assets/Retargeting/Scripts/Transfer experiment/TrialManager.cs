@@ -110,7 +110,7 @@ public class TrialManager : MonoBehaviour {
                     if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
                         !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) {
                         step = 0;
-                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.1f) {
+                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.05f) {
                         step = 2;
                     }
                     break;
