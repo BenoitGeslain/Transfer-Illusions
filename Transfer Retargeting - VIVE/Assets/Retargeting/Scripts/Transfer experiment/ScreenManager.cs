@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ScreenManager : MonoBehaviour {
-	public GameObject tvText;
+	public GameObject tvTextScore, tvTextSumScore;
     public int index = 0;
     public bool start = false;
     public Transform hand, fixedPoint;
@@ -18,13 +18,15 @@ public class ScreenManager : MonoBehaviour {
     GameObject[] cubes;
     GameObject obstacle;
 
+    int score, sumScore = 0;
+
     public Material phantomRightMat, phantomMat;
 
     void Start() {
         entries = new string[8];
         entries[0] = "Votre objectif est de :\n\n- Sélectionner le cube bleu et de le placer, avec la\nbonne orientation, dans le cube rouge semi-transparent.\nLorsqu'il est bien positionner, le cube rouge devient vert.\n\n- De ne pas toucher les obstacles gris semi-transparent\n\nPrêt? Appuyer sur la sphère verte.";
-        entries[1] = "Placer le cube bleu dans le cube\n\nrouge, puis toucher la sphère verte";
-        tvText.GetComponent<TextMesh>().text = entries[0];
+        entries[1] = "\n\nPlacer le cube bleu dans le cube\n\nrouge, puis toucher la sphère verte";
+        tvTextScore.GetComponent<TextMesh>().text = entries[0];
 
         cubes = new GameObject[2];
         cubes[0] = GameObject.Find("Warped Cube");
@@ -44,7 +46,7 @@ public class ScreenManager : MonoBehaviour {
                         cubes[0].GetComponent<Renderer>().enabled = true;
                         cubes[1].GetComponent<Renderer>().enabled = true;
                         obstacle.SetActive(true);
-                        tvText.GetComponent<TextMesh>().text = entries[index];
+                        tvTextScore.GetComponent<TextMesh>().text = entries[index];
                         prevStep = 0;
                     }
 
@@ -52,7 +54,7 @@ public class ScreenManager : MonoBehaviour {
                         index++;
                     }
                 } else if (index == 1 && prevStep == 0) {
-                    tvText.GetComponent<TextMesh>().text = entries[index];
+                    tvTextScore.GetComponent<TextMesh>().text = entries[index];
                 }
 
                 if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
@@ -69,18 +71,17 @@ public class ScreenManager : MonoBehaviour {
                     tmpMat[1] = phantomMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
                 }
-            } else {
-                tvText.GetComponent<TextMesh>().text = scoreText + 0 + "\n\n" + entries[1];
-                step++;
             }
-
-            
-            
         }
     }
 
-    public void UpdateScore(int score) {
-        print("Updating Score : " + scoreText + score + entries[6]);
-        tvText.GetComponent<TextMesh>().text = scoreText + score + entries[6];
+    public void UpdateScore(int newScore) {
+        print("Updating Score : " + scoreText + newScore + entries[1]);
+        tvTextScore.GetComponent<TextMesh>().text = scoreText + newScore + entries[1];
+        if (newScore==0) {
+            sumScore += score;
+            tvTextSumScore.GetComponent<TextMesh>().text = "Score total : " + sumScore;
+        }
+        score = newScore;
     }
 }

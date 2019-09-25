@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class OffsetFromOptitrack : MonoBehaviour
 {
-	Transform markersOculus;
-	Transform realOculus;
+	static Transform markersOculus;
+	static Transform realOculus;
 
     public Transform optitrackGameObject;
-	Vector3 offsetDist;
-	Vector3 offsetAngle;
+	static Vector3 offsetDist;
+	static Vector3 offsetAngle;
 
-    LogSceneConfiguration configScript;
+    static LogSceneConfiguration configScript;
 
-    bool start = false;
+    static bool start = false;
+
+    static Color offsetColor = new Color(0.1f, 0.5f, 0.1f);
 
     void Start() {
         realOculus = GameObject.Find("Camera Oculus").transform;
@@ -41,7 +43,7 @@ public class OffsetFromOptitrack : MonoBehaviour
             this.transform.position = optitrackGameObject.position - offsetDist;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles;
 
-			Debug.DrawLine(this.transform.position, optitrackGameObject.position, new Color(1f, 0f, 0f));
+            Debug.DrawLine(this.transform.position, optitrackGameObject.position, offsetColor);
         }
     }
 }

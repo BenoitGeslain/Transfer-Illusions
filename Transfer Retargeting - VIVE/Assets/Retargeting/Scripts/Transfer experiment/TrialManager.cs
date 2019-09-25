@@ -41,6 +41,8 @@ public class TrialManager : MonoBehaviour {
     MultipleUduinoManager uduinoScript;
     PathManager pathScript;
 
+    AudioSource collisionSource;
+
     Vector3 initPos;
 
     int step = 0, prevStep = -1;
@@ -75,6 +77,9 @@ public class TrialManager : MonoBehaviour {
         scoreManager = GetComponent<ScoreManager>();
         uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
         pathScript = GetComponent<PathManager>();
+
+        collisionSource = GetComponent<AudioSource>();
+
 
         warpedCube = trackedCube.transform.GetChild(0).gameObject;
 
@@ -217,10 +222,14 @@ public class TrialManager : MonoBehaviour {
                     break;
             }
 
-            for (; collisions!=0; collisions--) {
+            if (collisions!=0) {
+                if (!collisionSource.isPlaying)
+                    collisionSource.Play();
+                collisions=0;
             	col[index]++;
             }
         }
+
     }
 
     public void ResetScene(bool resetScore) {

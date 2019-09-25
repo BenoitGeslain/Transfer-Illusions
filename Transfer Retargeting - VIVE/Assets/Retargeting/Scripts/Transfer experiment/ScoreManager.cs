@@ -8,14 +8,11 @@ public class ScoreManager : MonoBehaviour
 
 	float score;
 
-    void Start()
-    {
+    void Start() {
         screenManager = GetComponent<ScreenManager>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         
     }
 
@@ -27,13 +24,11 @@ public class ScoreManager : MonoBehaviour
     public void AddScoreCube(float magnitude) {
     	score += magnitude*10;
     	setScore();
-        print(score);
     }
 
     public void AddScoreTime(float time) {
     	score += time*10;
     	setScore();
-        print(score);
     }
 
     public void ResetScore() {
@@ -46,7 +41,6 @@ public class ScoreManager : MonoBehaviour
     }
 
     void setScore() {
-        print("Score : " + score + ", " + (int)score);
     	screenManager.UpdateScore((int)score);
     }
 }
