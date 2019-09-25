@@ -37,8 +37,8 @@ public class OffsetFromOptitrack : MonoBehaviour
             configScript.saveConfig = true;
             start = true;
         } else if (start && this.name != "World") {
-            /*offsetDist = markersOculus.position - realOculus.position;
-            offsetAngle = markersOculus.eulerAngles - realOculus.eulerAngles;*/
+            //offsetDist = markersOculus.position - realOculus.position;
+            //offsetAngle = markersOculus.eulerAngles - realOculus.eulerAngles;
 
             this.transform.position = optitrackGameObject.position - offsetDist;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles;
