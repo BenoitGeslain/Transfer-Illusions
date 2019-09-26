@@ -62,7 +62,7 @@ public class ExperimentManager : MonoBehaviour {
 	void Update () {
 		switch(step) {
 			case -1:
-				if (Input.GetKeyDown(KeyCode.KeypadEnter) && step==-1) {
+				if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
 					step++;
 					uduinoScript.BroadcastCommand("Calibrate");
 					screenManager.start = true;
@@ -92,8 +92,8 @@ public class ExperimentManager : MonoBehaviour {
 		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, acceleration, collisions, score);
 	}
 
-	public void LogDiscrete(string time, int index, Vector3 positionError, float orientationError, List<int> obstaclesHit, int[] collisions, float score) {
-		csvSaver.writeDiscreteEntry(currentTrial, time, index, positionError, orientationError, obstaclesHit, collisions, score);
+	public void LogDiscrete(string time, string startTrialTime, int index, Vector3 positionError, float orientationError, List<int> obstaclesHit, int[] collisions, float score) {
+		csvSaver.writeDiscreteEntry(currentTrial, time, startTrialTime, index, positionError, orientationError, obstaclesHit, collisions, score);
 	}
 
 	void nextTrial() {

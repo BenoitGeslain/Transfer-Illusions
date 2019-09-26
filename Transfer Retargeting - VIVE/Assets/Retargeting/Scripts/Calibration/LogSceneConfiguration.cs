@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,12 +24,12 @@ public class LogSceneConfiguration : MonoBehaviour
     void Update() {
         if (saveConfig) {
         	foreach (GameObject g in grabbables) {
-        		csvSaver.writeConfig(g.name, g.transform.position, g.transform.eulerAngles);
+        		csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), g.name, g.transform.position, g.transform.eulerAngles);
         	}
         	foreach (GameObject p in phantoms) {
-        		csvSaver.writeConfig(p.name, p.transform.position, p.transform.eulerAngles);
+        		csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), p.name, p.transform.position, p.transform.eulerAngles);
         	}
-        	csvSaver.writeConfig(world.name, world.transform.position, world.transform.eulerAngles);
+        	csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), world.name, world.transform.position, world.transform.eulerAngles);
         	saveConfig = false;
         }
     }

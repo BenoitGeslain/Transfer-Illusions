@@ -51,7 +51,7 @@ public class TrialManager : MonoBehaviour {
     public bool start = false;
 
     Stopwatch watch;
-    DateTime time;
+    DateTime time, startTrialTime;
     
     void Start() {
         grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
@@ -140,6 +140,7 @@ public class TrialManager : MonoBehaviour {
                         prevStep = 0;
                         print("Starting watch and arduinos");
                         uduinoScript.BroadcastCommand("CountHits", 1);
+                        startTrialTime = DateTime.Now;
                         watch.Start();
                     } else if (prevStep == 1) {
                         Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
@@ -194,7 +195,7 @@ public class TrialManager : MonoBehaviour {
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
                         TimeSpan elapsed = watch.Elapsed;
-                        experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), index,
+                        experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
                                                       warpedCube.transform.position - phantoms[index].transform.position,
                                                       Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation),
                                                       uduinoScript.GetHitCount(), col, scoreManager.GetScore());
