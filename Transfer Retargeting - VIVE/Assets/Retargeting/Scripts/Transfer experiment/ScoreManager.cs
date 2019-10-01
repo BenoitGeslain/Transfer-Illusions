@@ -27,7 +27,7 @@ public class ScoreManager : MonoBehaviour
     }
 
     public void AddScoreTime(float time) {
-    	score += time*10;
+    	score += (30 - time<30 ? time : 30)*10;
     	setScore();
     }
 

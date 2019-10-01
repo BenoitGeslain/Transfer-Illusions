@@ -45,7 +45,7 @@ public class TrialManager : MonoBehaviour {
 
     Vector3 initPos;
 
-    int step = 0, prevStep = -1;
+    public int step = 0, prevStep = -1;
     int index = 0;
 
     public bool start = false;
@@ -188,7 +188,7 @@ public class TrialManager : MonoBehaviour {
                     if (prevStep == 1) {
                         watch.Stop();
                         uduinoScript.BroadcastCommand("CountHits", 0);
-                        pathScript.HidePath();
+                        //pathScript.HidePath();
 
                         print("EXEC::TrialManager::Trial over (Saving and resetting)");
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);

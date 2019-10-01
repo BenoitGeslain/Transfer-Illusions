@@ -2,80 +2,89 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LineRenderer))]
 public class PathManager : MonoBehaviour
 {
+    LineRenderer lineRenderer;
+
     GameObject[] grabbables;
     GameObject[] phantoms;
     Transform phantomIntro;
-    public int i = -1;
+    public int index = -1, prevIndex = -1;
+
+    Vector3[] points;
 
     void Start() {
+        lineRenderer = GetComponent<LineRenderer>();
+
         grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
         phantoms = GameObject.FindGameObjectsWithTag("Phantom");
         phantomIntro = GameObject.Find("Cube Phantom Intro").transform;
+        points = new Vector3[5];
     }
 
-    void OnDrawGizmos() {
-    	switch (i) {
-    		case 0:
-    			Gizmos.DrawLine(phantoms[0].transform.position,
-    							new Vector3(phantoms[0].transform.position.x, phantoms[0].transform.position.y + 0.065f, phantoms[0].transform.position.z));
-
-    			Gizmos.DrawLine(new Vector3(phantoms[0].transform.position.x, phantoms[0].transform.position.y + 0.065f, phantoms[0].transform.position.z),
-    							new Vector3(phantomIntro.position.x, phantoms[0].transform.position.y + 0.065f, phantomIntro.position.z));
-
-    			Gizmos.DrawLine(new Vector3(phantomIntro.position.x, phantoms[0].transform.position.y + 0.065f, phantomIntro.position.z),
-    							phantomIntro.position);
-    			break;
-    		case 1:
-    			Gizmos.DrawLine(grabbables[0].transform.position,
-    							new Vector3(grabbables[0].transform.position.x, grabbables[0].transform.position.y + 0.271f, grabbables[0].transform.position.z));
-
-    			Gizmos.DrawLine(new Vector3(grabbables[0].transform.position.x, grabbables[0].transform.position.y + 0.271f, grabbables[0].transform.position.z),
-    							new Vector3(grabbables[0].transform.position.x, grabbables[0].transform.position.y + 0.271f, phantoms[1].transform.position.z));
-
-    			Gizmos.DrawLine(new Vector3(grabbables[0].transform.position.x, grabbables[0].transform.position.y + 0.271f, phantoms[1].transform.position.z),
-    							new Vector3(phantoms[1].transform.position.x, grabbables[0].transform.position.y + 0.271f, phantoms[1].transform.position.z));
-
-    			Gizmos.DrawLine(new Vector3(phantoms[1].transform.position.x, grabbables[0].transform.position.y + 0.271f, phantoms[1].transform.position.z),
-    							phantoms[1].transform.position);
-    			break;
-    		case 2:
-    			Gizmos.DrawLine(grabbables[1].transform.position,
-    							new Vector3(grabbables[1].transform.position.x, grabbables[1].transform.position.y + 0.271f, grabbables[1].transform.position.z));
-    			
-    			Gizmos.DrawLine(new Vector3(grabbables[1].transform.position.x, grabbables[1].transform.position.y + 0.271f, grabbables[1].transform.position.z),
-    							new Vector3(phantoms[2].transform.position.x, grabbables[1].transform.position.y + 0.271f, grabbables[1].transform.position.z));
-    			
-    			Gizmos.DrawLine(new Vector3(phantoms[2].transform.position.x, grabbables[1].transform.position.y + 0.271f, grabbables[1].transform.position.z),
-    							phantoms[2].transform.position);
-    			break;
-    		case 3:
-    			Gizmos.DrawLine(grabbables[2].transform.position,
-    							new Vector3(grabbables[2].transform.position.x + 0.12f, grabbables[2].transform.position.y, grabbables[2].transform.position.z));
-
-    			Gizmos.DrawLine(new Vector3(grabbables[2].transform.position.x + 0.12f, grabbables[2].transform.position.y, grabbables[2].transform.position.z),
-    							new Vector3(grabbables[2].transform.position.x + 0.12f, grabbables[2].transform.position.y - 0.05f, grabbables[2].transform.position.z - 0.2f));
-
-    			Gizmos.DrawLine(new Vector3(grabbables[2].transform.position.x + 0.12f, grabbables[2].transform.position.y - 0.05f, grabbables[2].transform.position.z - 0.2f),
-    							new Vector3(phantoms[3].transform.position.x, grabbables[2].transform.position.y - 0.05f, grabbables[2].transform.position.z - 0.2f));
-
-    			Gizmos.DrawLine(new Vector3(phantoms[3].transform.position.x, grabbables[2].transform.position.y - 0.05f, grabbables[2].transform.position.z - 0.2f),
-    							new Vector3(phantoms[3].transform.position.x, phantoms[3].transform.position.y, grabbables[2].transform.position.z - 0.2f));
-
-    			Gizmos.DrawLine(new Vector3(phantoms[3].transform.position.x, phantoms[3].transform.position.y, grabbables[2].transform.position.z - 0.2f),
-    							phantoms[3].transform.position);
-    			break;
-    		default:
-    			break;
-    	};
+    void LateUpdate() {
+    	switch (index) {
+            case 0:
+                points[0] = grabbables[0].transform.position;
+                points[1] = grabbables[0].transform.position + new Vector3(0f, 0.13f, 0f);
+                points[2] = points[1]; points[2].x = phantomIntro.position.x;
+                points[3] = phantomIntro.position;
+                lineRenderer.positionCount = 4;
+                lineRenderer.SetPositions(points);
+                break;
+            case 1:
+                if (prevIndex !=1) {
+                    points[0] = phantomIntro.transform.position;
+                    points[1] = phantomIntro.transform.position + new Vector3(0f, 0.12f, 0f);
+                    points[2] = points[1]; points[2].x = phantoms[0].transform.position.x;
+                    points[3] = phantoms[0].transform.position;
+                    lineRenderer.positionCount = 4;
+                    lineRenderer.SetPositions(points);
+                    prevIndex = 1;
+                }
+                break;
+            case 2:
+                if (prevIndex !=2) {
+                    points[0] = grabbables[0].transform.position;
+                    points[1] = grabbables[0].transform.position + new Vector3(0f, 0.32f, 0f);
+                    points[2] = points[1]; points[2].x = phantoms[1].transform.position.x;
+                    points[3] = points[2]; points[3].z = phantoms[1].transform.position.z;
+                    points[4] = phantoms[1].transform.position;
+                    lineRenderer.positionCount = 5;
+                    lineRenderer.SetPositions(points);
+                    prevIndex = 2;
+                }
+                break;
+            case 3:
+                if (prevIndex !=3) {
+                    points[0] = grabbables[1].transform.position;
+                    points[1] = grabbables[1].transform.position + new Vector3(0f, 0.3f, -0.1f);
+                    points[2] = points[1]; points[2].x = phantoms[2].transform.position.x;
+                    points[3] = points[2]; points[3].z = phantoms[2].transform.position.z;
+                    points[4] = phantoms[2].transform.position;
+                    lineRenderer.positionCount = 5;
+                    lineRenderer.SetPositions(points);
+                    prevIndex = 3;
+                }
+                break;
+            case 4:
+                if (prevIndex !=4) {
+                    points[0] = grabbables[2].transform.position;
+                    points[1] = grabbables[2].transform.position + new Vector3(0.135f, 0f, 0);
+                    points[2] = points[1]; points[2].y = phantoms[3].transform.position.y;
+                    points[3] = points[2]; points[3].x = phantoms[3].transform.position.x;
+                    points[4] = phantoms[3].transform.position;
+                    lineRenderer.positionCount = 5;
+                    lineRenderer.SetPositions(points);
+                    prevIndex = 3;
+                }
+                break;
+        }
     }
 
-    public void ShowPath(int id) {
-    	i = id;
-    }
-
-    public void HidePath() {
-    	i = -1;
+    public void ShowPath(int i) {
+        index = ++i;
+        print("Showing " + i + " path");
     }
 }

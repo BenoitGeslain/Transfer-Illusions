@@ -23,6 +23,7 @@ public class ExperimentManager : MonoBehaviour {
 	TrialManager trialManager;		// Handles all the trial computation and state machine
 	ScreenManager screenManager;	// Handles what is displayed on the screen
     MultipleUduinoManager uduinoScript;
+    PathManager pathScript;
 
 	CSVSaver csvSaver;
 
@@ -52,6 +53,7 @@ public class ExperimentManager : MonoBehaviour {
 		trialManager = GetComponent<TrialManager>();
 		screenManager = GetComponent<ScreenManager>();
         uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
+        pathScript = GetComponent<PathManager>();
 
 		csvSaver = GetComponent<CSVSaver>();
 
@@ -59,13 +61,14 @@ public class ExperimentManager : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		switch(step) {
 			case -1:
 				if (Input.GetKeyDown(KeyCode.KeypadEnter) && step==-1) {
 					step++;
 					uduinoScript.BroadcastCommand("Calibrate");
 					screenManager.start = true;
+					pathScript.ShowPath(0);
 	        	}
 				break;
 			case 0:
