@@ -24,6 +24,9 @@ public class PathManager : MonoBehaviour
     }
 
     void LateUpdate() {
+        if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
+            prevIndex = -1;
+        }
     	switch (index) {
             case 0:
                 points[0] = grabbables[0].transform.position;
@@ -84,7 +87,7 @@ public class PathManager : MonoBehaviour
     }
 
     public void ShowPath(int i) {
-        index = ++i;
-        print("Showing " + i + " path");
+        index = i;
+        print("Showing path : " + i);
     }
 }

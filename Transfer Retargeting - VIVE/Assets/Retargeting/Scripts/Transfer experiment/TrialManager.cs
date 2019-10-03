@@ -108,6 +108,8 @@ public class TrialManager : MonoBehaviour {
     
     void FixedUpdate() {
         if (start) {
+            pathScript.ShowPath(index+1);
+
             switch (step) {
                 case 0: // Cube is being placed
                     if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f &&
@@ -167,7 +169,6 @@ public class TrialManager : MonoBehaviour {
                         bwScript.warp = false;
                     }
                     
-                    pathScript.ShowPath(index);
                     break;
                 case 1:
                     if (prevStep == 0) {
@@ -189,7 +190,6 @@ public class TrialManager : MonoBehaviour {
                     } else {
                         bwScript.warp = false;
                     }
-                    pathScript.ShowPath(index);
                     break;
                 case 2:
                     if (prevStep == 1) {

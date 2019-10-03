@@ -22,6 +22,13 @@ public class Trial  {
         return false;
     }
 
+    public void print() {
+    	string str = "";
+    	foreach(string s in parameters)
+    		str += ", " + s;
+    	Debug.Log("ID : " + id + ", " + str);
+    }
+
     int GetId() {
 		if (this.parameters[0]=="Participant" || this.parameters[0]=="") {
 			return -1;

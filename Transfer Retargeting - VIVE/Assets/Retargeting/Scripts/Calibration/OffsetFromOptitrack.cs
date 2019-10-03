@@ -11,7 +11,7 @@ public class OffsetFromOptitrack : MonoBehaviour
 	static Vector3 offsetDist;
 	static Vector3 offsetAngle;
 
-    static LogSceneConfiguration configScript;
+    static SceneConfiguration configScript;
 
     static bool start = false;
 
@@ -21,7 +21,7 @@ public class OffsetFromOptitrack : MonoBehaviour
         realOculus = GameObject.Find("Camera Oculus").transform;
         markersOculus = GameObject.Find("Markers Oculus").transform;
 
-        configScript = GameObject.Find("World").GetComponent<LogSceneConfiguration>();
+        configScript = GameObject.Find("World").GetComponent<SceneConfiguration>();
     }
 
     void FixedUpdate() {

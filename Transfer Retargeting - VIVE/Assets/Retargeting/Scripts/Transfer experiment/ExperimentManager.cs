@@ -24,6 +24,7 @@ public class ExperimentManager : MonoBehaviour {
 	ScreenManager screenManager;	// Handles what is displayed on the screen
     MultipleUduinoManager uduinoScript;
     PathManager pathScript;
+    SceneConfiguration sceneConfiguration;
 
 	CSVSaver csvSaver;
 
@@ -54,6 +55,7 @@ public class ExperimentManager : MonoBehaviour {
 		screenManager = GetComponent<ScreenManager>();
         uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
         pathScript = GetComponent<PathManager>();
+        sceneConfiguration = GetComponent<SceneConfiguration>();
 
 		csvSaver = GetComponent<CSVSaver>();
 
@@ -74,13 +76,15 @@ public class ExperimentManager : MonoBehaviour {
 			case 0:
 				if (screenManager.step==1) {
 					step++;
+					nextTrial();
+					applyTrial();
 					print("EXEC::ExperimentManager::Intro Over");
 				}
 				break;
 			case 1:
 				// Start experiment
 				trialManager.start = true;
-				trialManager.condition = (int)Condition.VBW;
+				trialManager.condition = (int)Condition.V;
 				break;
 			default:
 				break;
@@ -105,19 +109,24 @@ public class ExperimentManager : MonoBehaviour {
 	}
 
 	void applyTrial() {
-		// Condition
+		currentTrial.print();
+
 		switch(currentTrial.parameters[4]) {
 			case "VBW":
 				trialManager.condition = (int)Condition.VBW;
+				sceneConfiguration.resetPhantoms();
 				break;
 			case "V":
 				trialManager.condition = (int)Condition.V;
+				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			case "RW1":
 				trialManager.condition = (int)Condition.RW1;
+				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			case "RW4":
 				trialManager.condition = (int)Condition.RW4;
+				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			default:
 				print("Unmanaged group parameter: " + currentTrial.parameters[4]);
