@@ -45,10 +45,10 @@ public class TrialManager : MonoBehaviour {
 
     Vector3 initPos;
 
-    public int step = 0, prevStep = -1;
+    int step = 0, prevStep = -1;
     int index = 0;
 
-    public bool start = false;
+    public bool start = false, log = false;
 
     Stopwatch watch;
     DateTime time, startTrialTime;
@@ -97,6 +97,10 @@ public class TrialManager : MonoBehaviour {
 
         col = new int[4];
 
+        if (!log) {
+            print("WARNING : Logging is disabled !!");
+        }
+
         watch = new Stopwatch();
 
         print("INIT::TrialManager::DONE");
@@ -126,10 +130,12 @@ public class TrialManager : MonoBehaviour {
 
             print("Step: " + step + "/" + prevStep);
             time = DateTime.Now;
-            experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
-                                           trackedCube.transform.eulerAngles, warpedCube.transform.position,
-                                           warpedCube.transform.eulerAngles, uduinoScript.GetAcceleration(),
-                                           col, scoreManager.GetScore()); 
+            if (log) {
+                experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
+                                               trackedCube.transform.eulerAngles, warpedCube.transform.position,
+                                               warpedCube.transform.eulerAngles, uduinoScript.GetAcceleration(),
+                                               col, scoreManager.GetScore());
+            }
 
             switch (step) {
                 case 0:
@@ -189,16 +195,17 @@ public class TrialManager : MonoBehaviour {
                     if (prevStep == 1) {
                         watch.Stop();
                         uduinoScript.BroadcastCommand("CountHits", 0);
-                        //pathScript.HidePath();
 
                         print("EXEC::TrialManager::Trial over (Saving and resetting)");
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
                         TimeSpan elapsed = watch.Elapsed;
-                        experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
-                                                      warpedCube.transform.position - phantoms[index].transform.position,
-                                                      Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation),
-                                                      uduinoScript.GetHitCount(), col, scoreManager.GetScore());
+                        if (log) {
+                            experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
+                                                          warpedCube.transform.position - phantoms[index].transform.position,
+                                                          Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation),
+                                                          uduinoScript.GetHitCount(), col, scoreManager.GetScore());
+                        }
 
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube
