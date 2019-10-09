@@ -83,6 +83,7 @@ public class ExperimentManager : MonoBehaviour {
 				// Start experiment
 				trialManager.start = true;
 				trialManager.SetCondition(Int32.Parse(currentTrial.parameters[3]));
+				currentTrial.print();
 				break;
 			default:
 				break;
@@ -112,7 +113,6 @@ public class ExperimentManager : MonoBehaviour {
 
 		switch(currentTrial.parameters[4]) {
 			case "VBW":
-			print("VBW");
 			print("!");
 				trialManager.SetCondition((int)Condition.VBW);
 				sceneConfiguration.resetPhantoms();
