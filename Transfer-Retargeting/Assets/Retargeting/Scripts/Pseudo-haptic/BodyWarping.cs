@@ -23,6 +23,8 @@ public class BodyWarping : MonoBehaviour {
         Vector3 D = wOrigin - wTargetReal;
         Vector3 virtHandPos = realHandPos;
 
+        print("warping");
+
         if (d.magnitude > D.magnitude) {
             return realHandPos;
         } else {

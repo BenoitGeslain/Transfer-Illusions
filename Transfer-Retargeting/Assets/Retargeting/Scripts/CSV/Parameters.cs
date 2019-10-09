@@ -9,5 +9,5 @@ public static class Parameters {
 
     public static string[] tracebackHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "Time", "Index", "CubePosRX", "CubePosRY", "CubePosRZ", "CubeOrRX", "CubeOrRY", "CubeOrRZ", "CubePosVX", "CubePosVY", "CubePosVZ", "CubeOrVX", "CubeOrVY", "CubeOrVZ", "Score"};
     public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Index", "ErrorPosVX", "ErrorPosVY", "ErrorPosVZ", "ErrorOr", "Hit", "Score"};
-    public static string[] sceneConfiguration = {"Name", "RX", "RY", "RZ", "RorX", "RorY", "RorZ"};
+    public static string[] sceneConfiguration = {"Name", "PX", "PY", "PZ", "RX", "RY", "RZ"};
 }

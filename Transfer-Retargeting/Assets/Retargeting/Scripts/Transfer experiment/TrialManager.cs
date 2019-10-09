@@ -16,7 +16,9 @@ public class TrialManager : MonoBehaviour {
 
     public Material phantomRightMat, phantomMat;
 
-    public int condition, collisions;
+    public int collisions;
+
+    int condition;
 
     int[] col;
 
@@ -156,6 +158,7 @@ public class TrialManager : MonoBehaviour {
                         phantoms[index].GetComponent<Renderer>().materials = tmpMat;
                         prevStep = 0;
                     }
+                    
                     if (condition == (int)Condition.VBW) {
                         bwScript.warp = true;
                         warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
@@ -195,11 +198,11 @@ public class TrialManager : MonoBehaviour {
                     if (prevStep == 1) {
                         watch.Stop();
                         uduinoScript.BroadcastCommand("CountHits", 0);
+                        TimeSpan elapsed = watch.Elapsed;
 
-                        print("EXEC::TrialManager::Trial over (Saving and resetting)");
+                        print("EXEC::TrialManager::Operation over (Saving and resetting)");
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
-                        TimeSpan elapsed = watch.Elapsed;
                         if (log) {
                             experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
                                                           warpedCube.transform.position - phantoms[index].transform.position,
@@ -207,11 +210,11 @@ public class TrialManager : MonoBehaviour {
                                                           uduinoScript.GetHitCount(), col, scoreManager.GetScore());
                         }
 
+                        phantoms[index].GetComponent<Renderer>().enabled = false;
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube
                             bwScript.warp = false;
                             warpedCube.GetComponent<Renderer>().enabled = false;
-                            phantoms[index].GetComponent<Renderer>().enabled = false;
 
                             GameObject tmp = Instantiate(cubePrefab, warpedCube.transform.position, warpedCube.transform.rotation);
                             tmp.transform.parent = clones;
@@ -238,6 +241,10 @@ public class TrialManager : MonoBehaviour {
             }
         }
 
+    }
+
+    public void SetCondition(int c) {
+        condition = c;
     }
 
     public void ResetScene(bool resetScore) {

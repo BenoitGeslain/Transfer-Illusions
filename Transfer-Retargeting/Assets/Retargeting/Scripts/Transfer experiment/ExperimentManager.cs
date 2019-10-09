@@ -39,9 +39,7 @@ public class ExperimentManager : MonoBehaviour {
 							blck*Parameters.blockFactor +
 							trial*Parameters.trialFactor;
 		trials = GetComponent<CSVParser>().GetTrials();
-		// foreach (Trial trial in trials) {
-		// 	print(trial.id);
-		// }
+
 		Tuple tmp = find(currentTrialIndex);
 		if (tmp.first == null) {
 			print("Trial not found: P = " + part + ", block = " + blck +
@@ -84,7 +82,7 @@ public class ExperimentManager : MonoBehaviour {
 			case 1:
 				// Start experiment
 				trialManager.start = true;
-				trialManager.condition = (int)Condition.V;
+				trialManager.SetCondition(Int32.Parse(currentTrial.parameters[3]));
 				break;
 			default:
 				break;
@@ -106,6 +104,7 @@ public class ExperimentManager : MonoBehaviour {
 	void nextTrial() {
 		currentTrialIndex++;
 		currentTrial=trials[currentTrialIndex];
+		print(currentTrial.parameters[4]);
 	}
 
 	void applyTrial() {
@@ -113,19 +112,21 @@ public class ExperimentManager : MonoBehaviour {
 
 		switch(currentTrial.parameters[4]) {
 			case "VBW":
-				trialManager.condition = (int)Condition.VBW;
+			print("VBW");
+			print("!");
+				trialManager.SetCondition((int)Condition.VBW);
 				sceneConfiguration.resetPhantoms();
 				break;
 			case "V":
-				trialManager.condition = (int)Condition.V;
+				trialManager.SetCondition((int)Condition.V);
 				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			case "RW1":
-				trialManager.condition = (int)Condition.RW1;
+				trialManager.SetCondition((int)Condition.RW1);
 				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			case "RW4":
-				trialManager.condition = (int)Condition.RW4;
+				trialManager.SetCondition((int)Condition.RW4);
 				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			default:
