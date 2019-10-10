@@ -51,6 +51,8 @@ public class TrialManager : MonoBehaviour {
     int index = 0;
 
     public bool start = false, log = false;
+    public bool pause = false;
+    bool paused = false;
 
     Stopwatch watch;
     DateTime time, startTrialTime;
@@ -143,34 +145,47 @@ public class TrialManager : MonoBehaviour {
 
             switch (step) {
                 case 0:
-                    if (prevStep==-1) {
-                    	initPos = trackedCube.transform.position;
-                        warpedCube.GetComponent<Renderer>().enabled = true;
-                        phantoms[index].GetComponent<Renderer>().enabled = true;
-                        prevStep = 0;
-                        print("Starting watch and arduinos");
-                        uduinoScript.BroadcastCommand("CountHits", 1);
-                        startTrialTime = DateTime.Now;
-                        watch.Start();
-                    } else if (prevStep == 1) {
-                        Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
-                        tmpMat[1] = phantomMat;
-                        phantoms[index].GetComponent<Renderer>().materials = tmpMat;
-                        prevStep = 0;
-                    }
-                    
-                    if (condition == (int)Condition.VBW) {
-                        bwScript.warp = true;
-                        warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
-                                                                          phantoms[index].transform.position);
-                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
-                            armHandMetaphor.GetChild(i).position = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
-                                                                          phantoms[index].transform.position);
-                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
-                        }
-                    } else {
-                        bwScript.warp = false;
-                    }
+                	if (!pause) {
+	                    if (paused && (prevStep != -1)) {
+	                    	print("Game resuming");
+	                    	paused = false;
+	                    	watch.Restart();
+	                    }
+
+                		if (prevStep==-1) {
+	                    	initPos = trackedCube.transform.position;
+	                        warpedCube.GetComponent<Renderer>().enabled = true;
+	                        phantoms[index].GetComponent<Renderer>().enabled = true;
+	                        prevStep = 0;
+	                        print("Starting watch and arduinos");
+	                        uduinoScript.BroadcastCommand("CountHits", 1);
+	                        startTrialTime = DateTime.Now;
+	                        watch.Start();
+	                    } else if (prevStep == 1) {
+	                        Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
+	                        tmpMat[1] = phantomMat;
+	                        phantoms[index].GetComponent<Renderer>().materials = tmpMat;
+	                        prevStep = 0;
+	                    }
+	                    
+	                    if (condition == (int)Condition.VBW) {
+	                        bwScript.warp = true;
+	                        warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
+	                                                                          phantoms[index].transform.position);
+	                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
+	                            armHandMetaphor.GetChild(i).position = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
+	                                                                          phantoms[index].transform.position);
+	                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
+	                        }
+	                    } else {
+	                        bwScript.warp = false;
+	                    }
+                	} else {
+                		if (!paused) {
+                			print("Game paused");
+	                    	paused = true;
+                		}
+                	}
                     
                     break;
                 case 1:

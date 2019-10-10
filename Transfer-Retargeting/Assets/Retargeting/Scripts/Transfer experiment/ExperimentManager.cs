@@ -49,6 +49,10 @@ public class ExperimentManager : MonoBehaviour {
 		}
 		currentTrial = tmp.first;
 
+		/*foreach(Trial t in trials) {
+			t.print();
+		}*/
+
 		trialManager = GetComponent<TrialManager>();
 		screenManager = GetComponent<ScreenManager>();
         uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
