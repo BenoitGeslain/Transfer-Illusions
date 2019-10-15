@@ -116,16 +116,16 @@ public class TrialManager : MonoBehaviour {
 
             switch (step) {
                 case 0: // Cube is being placed
-                    if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f &&
-                        Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f) {
+                    if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.025f &&
+                        Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f) {
                         step = 1;
                     }
                     break;
                 case 1: // Cube placé, attente du bouton
-                    if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
-                        !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) {
+                    if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.025f) ||
+                        !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                         step = 0;
-                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.05f) {
+                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.07f) {
                         step = 2;
                     }
                     break;
@@ -139,7 +139,8 @@ public class TrialManager : MonoBehaviour {
             if (log) {
                 experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
                                                trackedCube.transform.eulerAngles, warpedCube.transform.position,
-                                               warpedCube.transform.eulerAngles, uduinoScript.GetAcceleration(),
+                                               warpedCube.transform.eulerAngles, phantoms[index].transform.position,
+                                               phantoms[index].transform.eulerAngles, uduinoScript.GetAcceleration(),
                                                col, scoreManager.GetScore());
             }
 
@@ -220,8 +221,8 @@ public class TrialManager : MonoBehaviour {
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
                         if (log) {
                             experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
-                                                          warpedCube.transform.position - phantoms[index].transform.position,
-                                                          Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation),
+                                                          warpedCube.transform.position, warpedCube.transform.eulerAngles, 
+                                                          phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                           uduinoScript.GetHitCount(), col, scoreManager.GetScore());
                         }
 

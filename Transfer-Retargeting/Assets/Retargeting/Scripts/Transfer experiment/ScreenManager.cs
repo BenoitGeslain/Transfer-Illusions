@@ -50,19 +50,19 @@ public class ScreenManager : MonoBehaviour {
                         prevStep = 0;
                     }
 
-                    if ((hand.position - fixedPoint.position).magnitude < 0.1f) {
+                    if ((hand.position - fixedPoint.position).magnitude < 0.07f) {
                         index++;
                     }
                 } else if (index == 1 && prevStep == 0) {
                     tvTextScore.GetComponent<TextMesh>().text = entries[index];
                 }
 
-                if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.01f &&
-                    Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 5f) {
+                if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.02f &&
+                    Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 7f) {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                     tmpMat[1] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                    if (index == 1 && (hand.position - fixedPoint.position).magnitude < 0.05f) {
+                    if (index == 1 && (hand.position - fixedPoint.position).magnitude < 0.07f) {
                         cubes[1].SetActive(false);
                         step++;
                     }

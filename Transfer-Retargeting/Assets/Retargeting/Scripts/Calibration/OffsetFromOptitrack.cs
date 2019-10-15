@@ -40,7 +40,7 @@ public class OffsetFromOptitrack : MonoBehaviour
 
             this.transform.position = optitrackGameObject.position - offsetDist;
             if (this.name == "World") 
-                this.transform.eulerAngles = new Vector3(0f, optitrackGameObject.eulerAngles.y, 0f);
+                this.transform.eulerAngles = new Vector3(0f, optitrackGameObject.eulerAngles.y/* - offsetAngle.y*/, 0f);
             else
                 this.transform.eulerAngles = optitrackGameObject.eulerAngles;
 
@@ -55,7 +55,7 @@ public class OffsetFromOptitrack : MonoBehaviour
             this.transform.position = optitrackGameObject.position - offsetDist;
             this.transform.eulerAngles = optitrackGameObject.eulerAngles;
 
-            Debug.DrawLine(this.transform.position, optitrackGameObject.position, offsetColor);
+            //Debug.DrawLine(this.transform.position, optitrackGameObject.position, offsetColor);
         }
     }
 }
