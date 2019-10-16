@@ -157,9 +157,11 @@ public class TrialManager : MonoBehaviour {
 					        cubePrevPos = warpedCube.transform.position;
 					        handPrevPos = hand.transform.position;
 	                        prevStep = 0;
+	                        col = new int[4];
 	                        print("Starting watch and arduinos");
 	                        uduinoScript.BroadcastCommand("CountHits", 1);
 	                        startTrialTime = DateTime.Now;
+	                        watch = new Stopwatch();
 	                        watch.Start();
 	                    } else if (prevStep == 1) {
 	                        Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
@@ -219,7 +221,7 @@ public class TrialManager : MonoBehaviour {
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
                         if (log) {
-                            experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
+                            experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
                                                           warpedCube.transform.position, warpedCube.transform.eulerAngles, 
                                                           phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                           cubeDistGone, handDistGone,
