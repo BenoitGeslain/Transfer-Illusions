@@ -26,7 +26,14 @@ public class CSVSaver : MonoBehaviour {
 		writer.Close();
 	}
 
-	public void writeContinousEntry(Trial trial, string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, Vector3 positionP, Vector3 orientationP, List<float> acceleration, int[] collisions, float score) {
+	public void writeContinousEntry(Trial trial, string time, int index,
+									Vector3 positionR, Vector3 orientationR,
+									Vector3 positionV, Vector3 orientationV,
+									Vector3 positionP, Vector3 orientationP,
+									float cubeDistGone, float handDistGone,
+									List<float> acceleration, int[] collisions,
+									float score,
+									bool pause) {
 		writer = new StreamWriter(continousPath, true);
 
 		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
@@ -38,14 +45,21 @@ public class CSVSaver : MonoBehaviour {
 							orientationV.x.ToString(), orientationV.y.ToString(), orientationV.z.ToString(),
 							positionP.x.ToString(), positionP.y.ToString(), positionP.z.ToString(),
 							orientationP.x.ToString(), orientationP.y.ToString(), orientationP.z.ToString(),
+							cubeDistGone.ToString(), handDistGone.ToString(),
 							string.Join(";", acceleration),
 							collisions[0].ToString(), collisions[1].ToString(), collisions[2].ToString(), collisions[3].ToString(),
-							score.ToString()});
+							score.ToString(),
+							pause.ToString()});
 		writer.Flush();
 		writer.Close();
 	}
 
-	public void writeDiscreteEntry(Trial trial, string timeCube, string timeTrial, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionP, Vector3 orientationP, List<int> hitCount, int[] collisions, float score) {
+	public void writeDiscreteEntry(Trial trial, string timeCube, string timeTrial, int index,
+								   Vector3 positionR, Vector3 orientationR,
+								   Vector3 positionP, Vector3 orientationP,
+								   float cubeDistGone, float handDistGone,
+								   List<int> hitCount, int[] collisions,
+								   float score) {
 		writer = new StreamWriter(discretePath, true);
 
 		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
@@ -54,6 +68,7 @@ public class CSVSaver : MonoBehaviour {
 							orientationR.x.ToString(), orientationR.y.ToString(), orientationR.z.ToString(),
 							positionP.x.ToString(), positionP.y.ToString(), positionP.z.ToString(),
 							orientationP.x.ToString(), orientationP.y.ToString(), orientationP.z.ToString(),
+							cubeDistGone.ToString(), handDistGone.ToString(),
 							string.Join(";", hitCount),
 							collisions[0].ToString(), collisions[1].ToString(), collisions[2].ToString(), collisions[3].ToString(),
 							score.ToString()});

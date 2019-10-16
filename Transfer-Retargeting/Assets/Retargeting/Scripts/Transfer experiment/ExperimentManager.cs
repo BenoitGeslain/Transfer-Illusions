@@ -87,7 +87,7 @@ public class ExperimentManager : MonoBehaviour {
 				// Start experiment
 				trialManager.start = true;
 				trialManager.SetCondition(Int32.Parse(currentTrial.parameters[3]));
-				currentTrial.print();
+				//currentTrial.print();
 				break;
 			default:
 				break;
@@ -98,12 +98,35 @@ public class ExperimentManager : MonoBehaviour {
         }
 	}
 
-	public void LogContinous(string time, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionV, Vector3 orientationV, Vector3 positionP, Vector3 orientationP, List<float> acceleration, int[] collisions, float score) {
-		csvSaver.writeContinousEntry(currentTrial, time, index, positionR, orientationR, positionV, orientationV, positionP, orientationP, acceleration, collisions, score);
+	public void LogContinous(string time, int index,
+							 Vector3 positionR, Vector3 orientationR, Vector3 positionV,
+							 Vector3 orientationV, Vector3 positionP, Vector3 orientationP,
+							 float cubeDistGone, float handDistGone,
+							 List<float> acceleration, int[] collisions,
+							 float score,
+							 bool pause) {
+		csvSaver.writeContinousEntry(currentTrial, time, index,
+									 positionR, orientationR,
+									 positionV, orientationV,
+									 positionP, orientationP,
+									 cubeDistGone, handDistGone,
+									 acceleration, collisions,
+									 score,
+									 pause);
 	}
 
-	public void LogDiscrete(string time, string startTrialTime, int index, Vector3 positionR, Vector3 orientationR, Vector3 positionP, Vector3 orientationP, List<int> obstaclesHit, int[] collisions, float score) {
-		csvSaver.writeDiscreteEntry(currentTrial, time, startTrialTime, index, positionR, positionR, positionP, orientationP, obstaclesHit, collisions, score);
+	public void LogDiscrete(string time, string startTrialTime, int index,
+							Vector3 positionR, Vector3 orientationR,
+							Vector3 positionP, Vector3 orientationP,
+							float cubeDistGone, float handDistGone,
+							List<int> obstaclesHit, int[] collisions,
+							float score) {
+		csvSaver.writeDiscreteEntry(currentTrial, time, startTrialTime, index,
+									positionR, positionR,
+									positionP, orientationP,
+									cubeDistGone, handDistGone,
+									obstaclesHit, collisions,
+									score);
 	}
 
 	void nextTrial() {
@@ -117,7 +140,6 @@ public class ExperimentManager : MonoBehaviour {
 
 		switch(currentTrial.parameters[4]) {
 			case "VBW":
-			print("!");
 				trialManager.SetCondition((int)Condition.VBW);
 				sceneConfiguration.resetPhantoms();
 				break;

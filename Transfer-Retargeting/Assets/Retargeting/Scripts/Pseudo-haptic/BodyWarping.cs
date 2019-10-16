@@ -9,21 +9,10 @@ public class BodyWarping : MonoBehaviour {
     Color warpColor = new Color(0.5f, 0.1f, 0.1f);
     Color lambdaColor = new Color(0.1f, 0.1f, 0.5f);
 
-    void Start() {
-        
-    }
-
-    // Update is called once per frame
-    void Update() {
-        
-    }
-
     public Vector3 BodyWarp(Vector3 realHandPos, Vector3 wOrigin, Vector3 wTargetReal, Vector3 wTargetVirtual) {
         Vector3 d = realHandPos - wTargetReal;
         Vector3 D = wOrigin - wTargetReal;
         Vector3 virtHandPos = realHandPos;
-
-        print("warping");
 
         if (d.magnitude > D.magnitude) {
             return realHandPos;

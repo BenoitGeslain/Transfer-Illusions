@@ -46,6 +46,8 @@ public class TrialManager : MonoBehaviour {
     AudioSource collisionSource;
 
     Vector3 initPos;
+    Vector3 cubePrevPos, handPrevPos;
+    float cubeDistGone, handDistGone;
 
     int step = 0, prevStep = -1;
     int index = 0;
@@ -101,6 +103,11 @@ public class TrialManager : MonoBehaviour {
 
         col = new int[4];
 
+        cubePrevPos = warpedCube.transform.position;
+        handPrevPos = hand.transform.position;
+        cubeDistGone = 0f;
+        handDistGone = 0f;
+
         if (!log) {
             print("WARNING : Logging is disabled !!");
         }
@@ -134,16 +141,6 @@ public class TrialManager : MonoBehaviour {
                     break;
             }
 
-            print("Step: " + step + "/" + prevStep);
-            time = DateTime.Now;
-            if (log) {
-                experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
-                                               trackedCube.transform.eulerAngles, warpedCube.transform.position,
-                                               warpedCube.transform.eulerAngles, phantoms[index].transform.position,
-                                               phantoms[index].transform.eulerAngles, uduinoScript.GetAcceleration(),
-                                               col, scoreManager.GetScore());
-            }
-
             switch (step) {
                 case 0:
                 	if (!pause) {
@@ -157,6 +154,8 @@ public class TrialManager : MonoBehaviour {
 	                    	initPos = trackedCube.transform.position;
 	                        warpedCube.GetComponent<Renderer>().enabled = true;
 	                        phantoms[index].GetComponent<Renderer>().enabled = true;
+					        cubePrevPos = warpedCube.transform.position;
+					        handPrevPos = hand.transform.position;
 	                        prevStep = 0;
 	                        print("Starting watch and arduinos");
 	                        uduinoScript.BroadcastCommand("CountHits", 1);
@@ -223,8 +222,12 @@ public class TrialManager : MonoBehaviour {
                             experimentManager.LogDiscrete(elapsed.Milliseconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
                                                           warpedCube.transform.position, warpedCube.transform.eulerAngles, 
                                                           phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                                          cubeDistGone, handDistGone,
                                                           uduinoScript.GetHitCount(), col, scoreManager.GetScore());
                         }
+
+                        cubeDistGone = 0f;
+                        handDistGone = 0f;
 
                         phantoms[index].GetComponent<Renderer>().enabled = false;
                         if (condition == (int)Condition.VBW) {
@@ -254,6 +257,27 @@ public class TrialManager : MonoBehaviour {
                     collisionSource.Play();
                 collisions=0;
             	col[index]++;
+            }
+
+            if (!pause) {
+            	if (!paused) {
+            		cubeDistGone += (warpedCube.transform.position - cubePrevPos).magnitude;
+            		handDistGone += (hand.transform.position - handPrevPos).magnitude;
+            	}
+        		cubePrevPos = warpedCube.transform.position;
+        		handPrevPos = hand.transform.position;
+            }
+
+            print("Step: " + step + "/" + prevStep);
+            time = DateTime.Now;
+            if (log) {
+                experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
+                							   trackedCube.transform.position, trackedCube.transform.eulerAngles,
+                							   warpedCube.transform.position, warpedCube.transform.eulerAngles,
+                							   phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                               cubeDistGone, handDistGone,
+                                               uduinoScript.GetAcceleration(), col,
+                                               scoreManager.GetScore(), pause);
             }
         }
 

@@ -30,7 +30,7 @@ public class PathManager : MonoBehaviour
     	switch (index) {
             case 0:
                 points[0] = grabbables[0].transform.position;
-                points[1] = grabbables[0].transform.position + new Vector3(0f, 0.13f, 0f);
+                points[1] = grabbables[0].transform.position + new Vector3(0f, 0.04f, 0f);
                 points[2] = points[1]; points[2].x = phantomIntro.position.x;
                 points[3] = phantomIntro.position;
                 lineRenderer.positionCount = 4;
@@ -39,7 +39,7 @@ public class PathManager : MonoBehaviour
             case 1:
                 if (prevIndex !=1) {
                     points[0] = phantomIntro.transform.position;
-                    points[1] = phantomIntro.transform.position + new Vector3(0f, 0.12f, 0f);
+                    points[1] = phantomIntro.transform.position + new Vector3(0f, 0.04f, 0f);
                     points[2] = points[1]; points[2].x = phantoms[0].transform.position.x;
                     points[3] = phantoms[0].transform.position;
                     lineRenderer.positionCount = 4;

@@ -26,15 +26,15 @@ public class Trial  {
     	string str = "";
     	foreach(string s in parameters)
     		str += ", " + s;
-    	Debug.Log("ID : " + id + ", " + str);
+    	Debug.Log("ID : " + id + " - " + str);
     }
 
     int GetId() {
 		if (this.parameters[0]=="Participant" || this.parameters[0]=="") {
 			return -1;
 		}
-        return  Int32.Parse(this.parameters[0])
-			  + Int32.Parse(this.parameters[2])*Parameters.blockFactor
-  			  + Int32.Parse(this.parameters[3])*Parameters.trialFactor;
+        return Int32.Parse(this.parameters[0])
+			 + Int32.Parse(this.parameters[2])*Parameters.blockFactor
+  			 + Int32.Parse(this.parameters[3])*Parameters.trialFactor;
     }
 }
