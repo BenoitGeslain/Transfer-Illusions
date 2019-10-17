@@ -86,8 +86,7 @@ public class ExperimentManager : MonoBehaviour {
 			case 1:
 				// Start experiment
 				trialManager.start = true;
-				trialManager.SetCondition(Int32.Parse(currentTrial.parameters[3]));
-				//currentTrial.print();
+				applyTrial();
 				break;
 			default:
 				break;
@@ -132,7 +131,6 @@ public class ExperimentManager : MonoBehaviour {
 	void nextTrial() {
 		currentTrialIndex++;
 		currentTrial=trials[currentTrialIndex];
-		print(currentTrial.parameters[4]);
 	}
 
 	void applyTrial() {
@@ -165,10 +163,8 @@ public class ExperimentManager : MonoBehaviour {
 		print("RESET::ExperimentManager::Scene resetting");
 
 		string id = currentTrial.parameters[0];
-		print(id);
 		nextTrial();
 		applyTrial();
-		print(currentTrial.parameters[0]);
 		trialManager.ResetScene(string.Equals(id, currentTrial.parameters[0]));
 	}
 
@@ -202,8 +198,7 @@ public class ExperimentManager : MonoBehaviour {
 						   " - Block: " + currentTrial.parameters[2] +
 						   " - Trial: " + currentTrial.parameters[3] +
 						   " - Index: " + currentTrialIndex +
-						   " - ID: " + currentTrial.id);
-		print("Conditions - Group: " + currentTrial.parameters[4] +
-						" - Path: " + currentTrial.parameters[5]);
+						   " - ID: " + currentTrial.id +
+						   " - Conditions: " + currentTrial.parameters[4]);
 	}
 }

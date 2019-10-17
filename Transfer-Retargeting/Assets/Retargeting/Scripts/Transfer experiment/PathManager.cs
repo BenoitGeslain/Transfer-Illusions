@@ -88,6 +88,6 @@ public class PathManager : MonoBehaviour
 
     public void ShowPath(int i) {
         index = i;
-        print("Showing path : " + i);
+        //print("Showing path : " + i);
     }
 }

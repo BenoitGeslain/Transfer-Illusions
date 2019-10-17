@@ -78,7 +78,6 @@ public class ScreenManager : MonoBehaviour {
     }
 
     public void UpdateScore(int newScore) {
-        print("Updating Score : " + scoreText + newScore + entries[1]);
         tvTextScore.GetComponent<TextMesh>().text = scoreText + newScore + entries[1];
         if (newScore==0) {
             sumScore += score;
