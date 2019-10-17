@@ -54,6 +54,7 @@ public class TrialManager : MonoBehaviour {
 
     public bool start = false, log = false;
     public bool pause = false;
+    public bool nextCube = false;
     bool paused = false;
 
     Stopwatch watch;
@@ -123,12 +124,17 @@ public class TrialManager : MonoBehaviour {
 
             switch (step) {
                 case 0: // Cube is being placed
-                    if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.025f &&
-                        Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f) {
+                    if (((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.025f &&
+                        Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f) || nextCube) {
                         step = 1;
                     }
                     break;
                 case 1: // Cube placé, attente du bouton
+                	if (nextCube) {
+                		print("step = 2");
+                		step = 2;
+                		break;
+                	}
                     if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.025f) ||
                         !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                         step = 0;
@@ -137,6 +143,7 @@ public class TrialManager : MonoBehaviour {
                     }
                     break;
                 case 2:
+                	nextCube = false;
                     step = 0;
                     break;
             }
