@@ -13,7 +13,7 @@ public class TrialManager : MonoBehaviour {
     public GameObject trackedCube;
     public GameObject cubePrefab;
 
-    public Material phantomRightMat, phantomMat;
+    public Material phantomRightMat, phantomMat, cubeActive, cubePassive;
 
     public int condition;
 
@@ -95,20 +95,37 @@ public class TrialManager : MonoBehaviour {
         {
             switch (step)
             {
-                case 0: // Cube is being placed // TODO Add rotation
-                    if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f &&
-                        Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f) {
-                        step = 1;
+                case 0: // Cube is being placed
+                    if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                        if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f &&
+                            Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f) {
+                            step = 1;
+                        }
+                    } else {
+                        if ((cubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.01f &&
+                            Quaternion.Angle( cubes[index].transform.rotation, phantoms[index].transform.rotation) < 5f) {
+                            step = 1;
+                        }
                     }
+                    
                     break;
                 case 1: // Cube placé, attente du bouton
-                print((hand.transform.position - fixedPoint.transform.position).magnitude);
-                    if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
-                        !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) { // Produit scalaire entre les forwards (Elodie)
-                        step = 0;
-                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.1f) {
-                        step = 2;
+                    if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                        if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
+                            !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 5f)) {
+                            step = 0;
+                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.1f) {
+                            step = 2;
+                        }
+                    } else {
+                        if (!((cubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.01f) ||
+                            !(Quaternion.Angle(cubes[index].transform.rotation, phantoms[index].transform.rotation) < 5f)) {
+                            step = 0;
+                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.1f) {
+                            step = 2;
+                        }
                     }
+                        
                     break;
                 case 2:
                     step = 0;
@@ -117,10 +134,17 @@ public class TrialManager : MonoBehaviour {
 
             print("Step: " + step + "/" + prevStep);
             time = DateTime.Now;
-            experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
-                                           trackedCube.transform.eulerAngles, warpedCube.transform.position,
-                                           warpedCube.transform.eulerAngles, uduinoScript.GetAcceleration(),
-                                           scoreManager.GetScore()); 
+            if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
+                                               trackedCube.transform.eulerAngles, warpedCube.transform.position,
+                                               warpedCube.transform.eulerAngles, uduinoScript.GetAcceleration(),
+                                               scoreManager.GetScore()); 
+            } else {
+                experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index, trackedCube.transform.position,
+                                               trackedCube.transform.eulerAngles, cubes[index].transform.position,
+                                               cubes[index].transform.eulerAngles, uduinoScript.GetAcceleration(),
+                                               scoreManager.GetScore()); 
+            }
 
             switch (step) {
                 case 0:
@@ -131,7 +155,12 @@ public class TrialManager : MonoBehaviour {
                     }
                     if (prevStep == -1 || prevStep == 2) {
                         initPos = trackedCube.transform.position;
-                        warpedCube.GetComponent<Renderer>().enabled = true;
+                        if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                            warpedCube.GetComponent<Renderer>().enabled = true;
+                        } else {
+                            cubes[index].GetComponent<Renderer>().enabled = true;
+                        }
+                        
                         phantoms[index].GetComponent<Renderer>().enabled = true;
                         prevStep = 0;
                     } else if (prevStep == 1) {
@@ -183,6 +212,10 @@ public class TrialManager : MonoBehaviour {
                             tmp.transform.parent = clones;
 
                             warpedCube.transform.position = trackedCube.transform.position;
+                        } else if (condition == (int)Condition.V) {
+                            Material[] tmpMat = cube[index].GetComponent<Renderer>().materials;
+                            tmpMat[1] = cubePassive;
+                            cube[index].GetComponent<Renderer>().materials = tmpMat;
                         }
 
                         index++;
