@@ -177,12 +177,13 @@ public class TrialManager : MonoBehaviour {
 
                 		if (prevStep==-1) {
 	                    	initPos = trackedCube.transform.position;
-	                        warpedCube.GetComponent<Renderer>().enabled = true;
+                            warpedCube.GetComponent<Renderer>().enabled = true;
+                            warpedCube.SetActive(true);
 	                        phantoms[index].GetComponent<Renderer>().enabled = true;
 	                        if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
                                 warpedCube.GetComponent<Renderer>().enabled = true;
                             } else {
-                                physicalCubes[index].GetComponent<Renderer>().enabled = true;
+                                physicalCubes[index].SetActive(true);
                             }
 
 					        cubePrevPos = warpedCube.transform.position;
@@ -351,6 +352,11 @@ public class TrialManager : MonoBehaviour {
             phantoms[i].GetComponent<Renderer>().materials = tmpMat;
             phantoms[i].GetComponent<Renderer>().enabled = false;
         }
+
+        foreach(GameObject c in physicalCubes) {
+            c.SetActive(false);
+        }
+        physicalCubes[0].SetActive(true);
 
         // Détruit tous les clones du cube tracké
         foreach(Transform c in clones) {
