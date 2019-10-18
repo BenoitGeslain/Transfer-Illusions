@@ -114,13 +114,14 @@ public class ExperimentManager : MonoBehaviour {
 									 pause);
 	}
 
-	public void LogDiscrete(string time, string startTrialTime, int index,
+	public void LogDiscrete(string time, string startTrialTime, string endTrialTime, int index,
 							Vector3 positionR, Vector3 orientationR,
 							Vector3 positionP, Vector3 orientationP,
 							float cubeDistGone, float handDistGone,
 							List<int> obstaclesHit, int[] collisions,
 							float score) {
-		csvSaver.writeDiscreteEntry(currentTrial, time, startTrialTime, index,
+		csvSaver.writeDiscreteEntry(currentTrial, time, startTrialTime, endTrialTime,
+									index,
 									positionR, positionR,
 									positionP, orientationP,
 									cubeDistGone, handDistGone,

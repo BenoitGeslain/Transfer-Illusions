@@ -58,6 +58,8 @@ public class TrialManager : MonoBehaviour {
     public bool nextCube = false;
     bool paused = false;
 
+    int N;
+
     Stopwatch watch;
     DateTime time, startTrialTime;
     
@@ -79,6 +81,7 @@ public class TrialManager : MonoBehaviour {
         {
             r.enabled = false;
         }
+        N = grabbables.Length;
 
         experimentManager = GetComponent<ExperimentManager>();
         bwScript = GetComponent<BodyWarping>();
@@ -90,6 +93,7 @@ public class TrialManager : MonoBehaviour {
 
 
         warpedCube = trackedCube.transform.GetChild(0).gameObject;
+        physicalCubes = GameObject.FindGameObjectsWithTag("PhysicalCubes");
 
         clones = GameObject.Find("/World/Clones").transform;
 
@@ -103,7 +107,7 @@ public class TrialManager : MonoBehaviour {
             phantomPosition[i] = phantoms[i].transform.position;
         }
 
-        col = new int[5];
+        col = new int[N];
 
         cubePrevPos = warpedCube.transform.position;
         handPrevPos = hand.transform.position;
@@ -121,9 +125,16 @@ public class TrialManager : MonoBehaviour {
 
             switch (step) {
                 case 0: // Cube is being placed
-                    if (((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.025f &&
-                        Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f) || nextCube) {
-                        step = 1;
+                    if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                        if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
+                            Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f) {
+                            step = 1;
+                        }
+                    } else {
+                        if ((physicalCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
+                            Quaternion.Angle( physicalCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f) {
+                            step = 1;
+                        }
                     }
                     break;
                 case 1: // Cube placé, attente du bouton
@@ -132,11 +143,20 @@ public class TrialManager : MonoBehaviour {
                 		step = 2;
                 		break;
                 	}
-                    if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.025f) ||
-                        !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f)) {
-                        step = 0;
-                    } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.07f) {
-                        step = 2;
+                    if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                        if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
+                            !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f)) {
+                            step = 0;
+                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
+                            step = 2;
+                        }
+                    } else {
+                        if (!((physicalCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
+                            !(Quaternion.Angle(physicalCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f)) {
+                            step = 0;
+                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
+                            step = 2;
+                        }
                     }
                     break;
                 case 2:
@@ -148,20 +168,27 @@ public class TrialManager : MonoBehaviour {
             switch (step) {
                 case 0:
                 	if (!pause) {
-	                    if (paused && (prevStep != -1)) {
+	                    if (paused) {
 	                    	print("Game resuming");
 	                    	paused = false;
-	                    	watch.Restart();
+	                    	watch.Stop();
+	                    	prevStep = -1;
 	                    }
 
                 		if (prevStep==-1) {
 	                    	initPos = trackedCube.transform.position;
 	                        warpedCube.GetComponent<Renderer>().enabled = true;
 	                        phantoms[index].GetComponent<Renderer>().enabled = true;
+	                        if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                                warpedCube.GetComponent<Renderer>().enabled = true;
+                            } else {
+                                physicalCubes[index].GetComponent<Renderer>().enabled = true;
+                            }
+
 					        cubePrevPos = warpedCube.transform.position;
 					        handPrevPos = hand.transform.position;
 	                        prevStep = 0;
-	                        col = new int[5];
+	                        col = new int[N];
 	                        print("Starting watch and arduinos");
 	                        uduinoScript.BroadcastCommand("CountHits", 1);
 	                        startTrialTime = DateTime.Now;
@@ -182,7 +209,7 @@ public class TrialManager : MonoBehaviour {
 	                            armHandMetaphor.GetChild(i).position = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
 	                                                                          phantoms[index].transform.position);
 	                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
-	                        }
+	                    	}
 	                    } else {
 	                        bwScript.warp = false;
 	                    }
@@ -226,11 +253,24 @@ public class TrialManager : MonoBehaviour {
                         print("EXEC::TrialManager::Operation over (Saving and resetting)");
                         scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
-                        experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(), startTrialTime.ToString("HH:mm:ss.fff"), index,
-                                                      warpedCube.transform.position, warpedCube.transform.eulerAngles, 
-                                                      phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
-                                                      cubeDistGone, handDistGone,
-                                                      uduinoScript.GetHitCount(), col, scoreManager.GetScore());
+                        if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                        	experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
+                        								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
+                        								  index,
+	                                                      warpedCube.transform.position, warpedCube.transform.eulerAngles, 
+	                                                      phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+	                                                      cubeDistGone, handDistGone,
+	                                                      uduinoScript.GetHitCount(), col, scoreManager.GetScore());
+                        	} else {
+                        		experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
+                        								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
+                        								  index,
+	                                                      physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles, 
+	                                                      phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+	                                                      cubeDistGone, handDistGone,
+	                                                      uduinoScript.GetHitCount(), col, scoreManager.GetScore());
+                        	}
+	                        
 
                         cubeDistGone = 0f;
                         handDistGone = 0f;
@@ -276,16 +316,25 @@ public class TrialManager : MonoBehaviour {
 
             print("Step: " + step + "/" + prevStep + ". Index: " + index + "/" + grabbables.Length);
             time = DateTime.Now;
-            experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
-            							   trackedCube.transform.position, trackedCube.transform.eulerAngles,
-            							   warpedCube.transform.position, warpedCube.transform.eulerAngles,
-            							   phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
-                                           cubeDistGone, handDistGone,
-                                           uduinoScript.GetAcceleration(), col,
-                                           scoreManager.GetScore(), pause);
+            if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
+                                               trackedCube.transform.position, trackedCube.transform.eulerAngles,
+                                               warpedCube.transform.position, warpedCube.transform.eulerAngles,
+                                               phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                               cubeDistGone, handDistGone,
+                                               uduinoScript.GetAcceleration(), col,
+                                               scoreManager.GetScore(), pause);
+            } else {
+                experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
+                                               trackedCube.transform.position, trackedCube.transform.eulerAngles,
+                                               physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles,
+                                               phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                               cubeDistGone, handDistGone,
+                                               uduinoScript.GetAcceleration(), col,
+                                               scoreManager.GetScore(), pause);
+            }
             print(condition + ", " + (int)Condition.VBW);
         }
-
     }
 
     public void SetCondition(int c) {
