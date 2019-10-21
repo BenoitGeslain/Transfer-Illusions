@@ -8,6 +8,7 @@ TagManager:
   - Phantom
   - Target
   - Obstacle
+  - PhysicalCubes
   layers:
   - Default
   - TransparentFX

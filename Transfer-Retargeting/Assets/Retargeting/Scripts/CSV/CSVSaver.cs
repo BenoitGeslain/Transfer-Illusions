@@ -54,7 +54,8 @@ public class CSVSaver : MonoBehaviour {
 		writer.Close();
 	}
 
-	public void writeDiscreteEntry(Trial trial, string timeCube, string timeTrial, int index,
+	public void writeDiscreteEntry(Trial trial, string timeCube, string StartTimeTrial, string EndTimeTrial,
+								   int index,
 								   Vector3 positionR, Vector3 orientationR,
 								   Vector3 positionP, Vector3 orientationP,
 								   float cubeDistGone, float handDistGone,
@@ -63,7 +64,7 @@ public class CSVSaver : MonoBehaviour {
 		writer = new StreamWriter(discretePath, true);
 
 		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
-							timeCube, timeTrial, index.ToString(),
+							timeCube, StartTimeTrial, EndTimeTrial, index.ToString(),
 							positionR.x.ToString(), positionR.y.ToString(), positionR.z.ToString(),
 							orientationR.x.ToString(), orientationR.y.ToString(), orientationR.z.ToString(),
 							positionP.x.ToString(), positionP.y.ToString(), positionP.z.ToString(),

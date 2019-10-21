@@ -19,7 +19,8 @@ public static class Parameters {
     										  "score",
     										  "pause"};
 
-    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "ElapsedTime", "TrialStartTime", "Index",
+    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "ElapsedTime",
+                                               "TrialStartTime", "TrialEndTime", "Index",
     										   "CubePosRX", "CubePosRY", "CubePosRZ",
     										   "CubeOrRX", "CubeOrRY", "CubeOrRZ",
     										   "CubePosPX", "CubePosPY", "CubePosPZ",
