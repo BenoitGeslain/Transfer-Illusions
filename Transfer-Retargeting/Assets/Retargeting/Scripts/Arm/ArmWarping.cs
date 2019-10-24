@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class ArmWarping : MonoBehaviour
 {
-    public Transform armHandMetaphor, armHandTracked;
+    public Transform armHandTracked;
 
-	BodyWarping bodyWarping;
+    TrialManager trialScript;
 
-    void Start() {
-        bodyWarping = GameObject.Find("World").GetComponent<BodyWarping>();
+    void Sart() {
+    	trialScript = GameObject.Find("World").GetComponent<TrialManager>();
     }
-
+    
     void Update() {
-        if (!bodyWarping.warp) {
-			for (int i = 0; i<armHandMetaphor.childCount; i++) {
-                armHandMetaphor.GetChild(i).position = armHandTracked.GetChild(i).position;
-                armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
-            }
-        }
+    	if (!trialScript.IsWarping()) {
+			for (int i = 0; i<this.transform.childCount; i++) {
+	            this.transform.GetChild(i).position = armHandTracked.GetChild(i).position;
+	            this.transform.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
+	        }
+    	}
     }
 }

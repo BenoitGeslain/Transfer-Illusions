@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System;
 using System.Diagnostics;
 using System.Collections;
@@ -57,6 +57,9 @@ public class TrialManager : MonoBehaviour {
     public bool pause = false;
     public bool nextCube = false;
     bool paused = false;
+
+    KeyValuePair<Vector3, bool> result;
+    bool warping = false;
 
     int N;
 
@@ -203,16 +206,16 @@ public class TrialManager : MonoBehaviour {
 	                    }
 	                    print(condition + ", " + (int)Condition.VBW);
 	                    if (condition == (int)Condition.VBW) {
-	                        bwScript.warp = true;
-	                        warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
-	                                                                          phantoms[index].transform.position);
+	                        result = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
+	                                                   phantoms[index].transform.position);
+                            warpedCube.transform.position = result.Key;
+                            warping = result.Value;
 	                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
-	                            armHandMetaphor.GetChild(i).position = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
-	                                                                          phantoms[index].transform.position);
+                                result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
+                                                           phantoms[index].transform.position);
+	                            armHandMetaphor.GetChild(i).position = result.Key;
 	                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
 	                    	}
-	                    } else {
-	                        bwScript.warp = false;
 	                    }
 	                    print(condition + ", " + (int)Condition.VBW);
                 	} else {
@@ -233,16 +236,16 @@ public class TrialManager : MonoBehaviour {
                     }
                     print(condition + ", " + (int)Condition.VBW);	
                     if (condition == (int)Condition.VBW) {
-                        bwScript.warp = true;
-                        warpedCube.transform.position = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
-                                                                          phantoms[index].transform.position);
+                        result = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
+                                                   phantoms[index].transform.position);
+                        warpedCube.transform.position = result.Key;
+                        warping = result.Value;
                         for (int i = 0; i<armHandMetaphor.childCount; i++) {
-                            armHandMetaphor.GetChild(i).position = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
-                                                                                     phantoms[index].transform.position);
+                            result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
+                                                       phantoms[index].transform.position);
+                            armHandMetaphor.GetChild(i).position = result.Key;
                             armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
                         }
-                    } else {
-                        bwScript.warp = false;
                     }
                     break;
                 case 2:
@@ -252,26 +255,25 @@ public class TrialManager : MonoBehaviour {
                         TimeSpan elapsed = watch.Elapsed;
 
                         print("EXEC::TrialManager::Operation over (Saving and resetting)");
-                        scoreManager.AddScoreTime((int)watch.ElapsedMilliseconds/1000);
+                        scoreManager.AddScoreTime((int)watch.Elapsed.TotalSeconds);
                         scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
                         if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
                         	experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
                         								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
                         								  index,
-	                                                      warpedCube.transform.position, warpedCube.transform.eulerAngles, 
-	                                                      phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
-	                                                      cubeDistGone, handDistGone,
-	                                                      uduinoScript.GetHitCount(), col, scoreManager.GetScore());
-                        	} else {
-                        		experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
+                                                          warpedCube.transform.position, warpedCube.transform.eulerAngles, 
+                                                          phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                                          cubeDistGone, handDistGone,
+                                                          uduinoScript.GetHitCount(), col, scoreManager.GetScore());
+                    	} else {
+                    		experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
                         								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
                         								  index,
-	                                                      physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles, 
-	                                                      phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
-	                                                      cubeDistGone, handDistGone,
-	                                                      uduinoScript.GetHitCount(), col, scoreManager.GetScore());
-                        	}
-	                        
+                                                          physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles, 
+                                                          phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                                          cubeDistGone, handDistGone,
+                                                          uduinoScript.GetHitCount(), col, scoreManager.GetScore());
+                    	}
 
                         cubeDistGone = 0f;
                         handDistGone = 0f;
@@ -325,6 +327,7 @@ public class TrialManager : MonoBehaviour {
                                                trackedCube.transform.position, trackedCube.transform.eulerAngles,
                                                warpedCube.transform.position, warpedCube.transform.eulerAngles,
                                                phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                               warping,
                                                cubeDistGone, handDistGone,
                                                uduinoScript.GetAcceleration(), col,
                                                scoreManager.GetScore(), pause);
@@ -333,12 +336,17 @@ public class TrialManager : MonoBehaviour {
                                                trackedCube.transform.position, trackedCube.transform.eulerAngles,
                                                physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles,
                                                phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
+                                               warping,
                                                cubeDistGone, handDistGone,
                                                uduinoScript.GetAcceleration(), col,
                                                scoreManager.GetScore(), pause);
             }
             print(condition + ", " + (int)Condition.VBW);
         }
+    }
+
+    public bool IsWarping() {
+        return warping;
     }
 
     public void SetCondition(int c) {
