@@ -7,8 +7,9 @@ public class MultiCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("displays connected: " + Display.displays.Length);
-        //Display.displays[2].Activate();
+        Debug.Log("Displays connected: " + Display.displays.Length);
+        if (Display.displays.Length > 1)
+            Display.displays[1].Activate();
     }
 
     // Update is called once per frame

@@ -24,10 +24,11 @@ public class ScreenManager : MonoBehaviour {
 
     void Start() {
         entries = new string[8];
-        entries[0] = "Votre objectif est de :\n\n- Prendre le cube bleu et de le placer, avec la\nbonne orientation (face blanche), dans le cube rouge semi-transparent." +
-                      "\nLorsqu'il est bien positionné, le cube rouge devient vert.\n\n- De ne pas toucher les obstacles gris semi-transparent. Ils deviennent rouges lorsque vous les touchez" +
-                      "\n\nPrêt? Appuyer sur la sphère verte.";
-        entries[1] = "\n\nPlacer le cube bleu dans le cube\n\nrouge, puis toucher la sphère verte";
+        entries[0] = "Votre objectif est de :\n\n- Prendre le <color=#36c>cube bleu</color> et de le placer, avec\n la bonne orientation (face blanche),\ndans le <color=#d33>cube rouge</color> semi-transparent." +
+                      "\nLorsqu'il est bien positionné, le <color=#d33>cube rouge</color> devient <color=#00af40>vert</color>.\n\n- De ne pas toucher les obstacles gris semi-transparent."
+                      +"\nIls deviennent <color=#d33>rouge</color> lorsque vous les touchez" +
+                      "\n\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>.";
+        entries[1] = "\n\nPlacer le <color=#36c>cube bleu</color> dans le <color=#d33>cube rouge</color>\n\n, puis toucher la <color=#00af40>sphère verte</color>";
         tvTextScore.GetComponent<TextMesh>().text = entries[0];
 
         cubes = new GameObject[2];

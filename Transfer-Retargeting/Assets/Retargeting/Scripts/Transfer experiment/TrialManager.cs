@@ -14,7 +14,7 @@ public class TrialManager : MonoBehaviour {
     public GameObject trackedCube;
     public GameObject cubePrefab;
 
-    public Material phantomRightMat, phantomMat;
+    public Material phantomRightMat, phantomMat, cubePassive;
 
     public int collisions;
 
@@ -95,7 +95,7 @@ public class TrialManager : MonoBehaviour {
         warpedCube = trackedCube.transform.GetChild(0).gameObject;
         physicalCubes = GameObject.FindGameObjectsWithTag("PhysicalCubes");
 
-        clones = GameObject.Find("/World/Clones").transform;
+        clones = GameObject.Find("/World/Clones Cubes").transform;
 
         grabbablesPosition = new Vector3[grabbables.Length];
         phantomPosition = new Vector3[phantoms.Length];
@@ -286,9 +286,9 @@ public class TrialManager : MonoBehaviour {
 
                             warpedCube.transform.position = trackedCube.transform.position;
                         } else if (condition == (int)Condition.V) {
-                            Material[] tmpMat = cube[index].GetComponent<Renderer>().materials;
+                            Material[] tmpMat = physicalCubes[index].GetComponent<Renderer>().materials;
                             tmpMat[1] = cubePassive;
-                            cube[index].GetComponent<Renderer>().materials = tmpMat;
+                            physicalCubes[index].GetComponent<Renderer>().materials = tmpMat;
                         }
 
                         index++;
