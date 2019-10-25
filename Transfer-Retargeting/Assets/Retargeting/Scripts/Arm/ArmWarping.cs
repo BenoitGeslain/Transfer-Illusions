@@ -8,7 +8,7 @@ public class ArmWarping : MonoBehaviour
 
     TrialManager trialScript;
 
-    void Sart() {
+    void Start() {
     	trialScript = GameObject.Find("World").GetComponent<TrialManager>();
     }
     

@@ -11,7 +11,7 @@ public class SceneConfiguration : MonoBehaviour
 
     GameObject[] grabbables;
     GameObject[] phantoms;
-    GameObject world;
+    GameObject world, button;
 
     public Vector3[] phantomPos;
 
@@ -19,6 +19,7 @@ public class SceneConfiguration : MonoBehaviour
         grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
         phantoms = GameObject.FindGameObjectsWithTag("Phantom");
         world = GameObject.Find("World");
+        button = GameObject.Find("Button");
 
         phantomPos = new Vector3[grabbables.Length];
 
@@ -26,7 +27,7 @@ public class SceneConfiguration : MonoBehaviour
     }
 
     void Update() {
-        if (saveConfig) {
+        if (saveConfig || Input.GetKeyDown(KeyCode.Space)) {
         	foreach (GameObject g in grabbables) {
         		csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), g.name, g.transform.position, g.transform.eulerAngles);
             }
@@ -38,7 +39,8 @@ public class SceneConfiguration : MonoBehaviour
                 phantomPos[i] = phantoms[i].transform.position;
             }
 
-        	csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), world.name, world.transform.position, world.transform.eulerAngles);
+            csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), world.name, world.transform.position, world.transform.eulerAngles);
+            csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), button.name, button.transform.position, button.transform.eulerAngles);
         	
             saveConfig = false;
         }

@@ -56,8 +56,9 @@ public class ScreenManager : MonoBehaviour {
                     if ((hand.position - fixedPoint.position).magnitude < 0.07f) {
                         index++;
                     }
-                } else if (index == 1 && prevStep == 0) {
-                    tvTextScore.GetComponent<TextMesh>().text = entries[index];
+                } else if (prevStep == 0) {
+                    tvTextScore.GetComponent<TextMesh>().text = entries[1];
+                    prevStep = 1;
                 }
 
                 if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.02f &&
@@ -65,9 +66,11 @@ public class ScreenManager : MonoBehaviour {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                     tmpMat[1] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                    if (index == 1 && (hand.position - fixedPoint.position).magnitude < 0.07f) {
+                    print((hand.position - fixedPoint.position).magnitude);
+                    if ((hand.position - fixedPoint.position).magnitude < 0.07f) {
                         cubes[1].SetActive(false);
                         step++;
+                        print("§§§");
                     }
                 } else {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
