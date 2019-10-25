@@ -10,6 +10,10 @@ public class ScreenManager : MonoBehaviour {
     public Transform hand, fixedPoint;
     
     public int step = 0, prevStep = -1;
+
+    public AudioClip bump, coin;
+
+    
 	string[] entries;
     DateTime tic;
 
@@ -20,7 +24,12 @@ public class ScreenManager : MonoBehaviour {
 
     int score, sumScore = 0;
 
+    AudioSource collisionSource;
+    public int collisions = 0;
+
     public Material phantomRightMat, phantomMat;
+
+    bool soundPlayed = false;
 
     void Start() {
         entries = new string[8];
@@ -39,6 +48,8 @@ public class ScreenManager : MonoBehaviour {
         cubes[0].GetComponent<Renderer>().enabled = false;
         cubes[1].GetComponent<Renderer>().enabled = false;
         obstacle.SetActive(false);
+
+        collisionSource = GetComponent<AudioSource>();
     }
 
     void Update() {
@@ -66,16 +77,28 @@ public class ScreenManager : MonoBehaviour {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                     tmpMat[1] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                    print((hand.position - fixedPoint.position).magnitude);
                     if ((hand.position - fixedPoint.position).magnitude < 0.07f) {
                         cubes[1].SetActive(false);
                         step++;
-                        print("§§§");
+                    }
+                    if (!soundPlayed && !collisionSource.isPlaying) {
+                        soundPlayed = true;
+                        collisionSource.clip = coin;
+                        collisionSource.Play();
                     }
                 } else {
+                    soundPlayed = false;
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                     tmpMat[1] = phantomMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
+                }
+
+                if (collisions!=0) {
+                    if (!collisionSource.isPlaying) {
+                        collisionSource.clip = bump;
+                        collisionSource.Play();
+                    }
+                    collisions=0;
                 }
             }
         }

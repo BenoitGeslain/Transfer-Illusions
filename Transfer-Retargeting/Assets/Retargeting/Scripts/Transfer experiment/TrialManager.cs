@@ -16,7 +16,9 @@ public class TrialManager : MonoBehaviour {
 
     public Material phantomRightMat, phantomMat, cubePassive;
 
-    public int collisions;
+    public int collisions = 0;
+
+    public AudioClip bump, coin;
 
     int condition;
 
@@ -57,8 +59,9 @@ public class TrialManager : MonoBehaviour {
     public bool pause = false;
     public bool nextCube = false;
     bool paused = false;
+    bool soundPlayed = false;
 
-    KeyValuePair<Vector3, bool> result;
+    KeyValuePair<Vector3, Vector3> result;
     bool warping = false;
 
     int N;
@@ -91,6 +94,7 @@ public class TrialManager : MonoBehaviour {
         scoreManager = GetComponent<ScoreManager>();
         uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
         pathScript = GetComponent<PathManager>();
+        GetComponent<SceneConfiguration>().saveConfig = true;
 
         collisionSource = GetComponent<AudioSource>();
 
@@ -132,11 +136,23 @@ public class TrialManager : MonoBehaviour {
                         if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
                             Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f) {
                             step = 1;
+
+                            if (!soundPlayed && !collisionSource.isPlaying) {
+                                soundPlayed = true;
+                                collisionSource.clip = coin;
+                                collisionSource.Play();
+                            }
                         }
                     } else {
                         if ((physicalCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
                             Quaternion.Angle( physicalCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f) {
                             step = 1;
+
+                            if (!soundPlayed && !collisionSource.isPlaying) {
+                                soundPlayed = true;
+                                collisionSource.clip = coin;
+                                collisionSource.Play();
+                            }
                         }
                     }
                     break;
@@ -150,6 +166,7 @@ public class TrialManager : MonoBehaviour {
                         if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
                             !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                             step = 0;
+                            soundPlayed = false;
                         } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
                             step = 2;
                         }
@@ -157,6 +174,7 @@ public class TrialManager : MonoBehaviour {
                         if (!((physicalCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
                             !(Quaternion.Angle(physicalCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                             step = 0;
+                            soundPlayed = false;
                         } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
                             step = 2;
                         }
@@ -204,20 +222,16 @@ public class TrialManager : MonoBehaviour {
 	                        phantoms[index].GetComponent<Renderer>().materials = tmpMat;
 	                        prevStep = 0;
 	                    }
-	                    print(condition + ", " + (int)Condition.VBW);
 	                    if (condition == (int)Condition.VBW) {
 	                        result = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
 	                                                   phantoms[index].transform.position);
                             warpedCube.transform.position = result.Key;
-                            warping = result.Value;
 	                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
-                                result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
-                                                           phantoms[index].transform.position);
-	                            armHandMetaphor.GetChild(i).position = result.Key;
+	                            armHandMetaphor.GetChild(i).position = armHandTracked.GetChild(i).position + result.Value;
 	                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
 	                    	}
+                            warping = result.Value != Vector3.zero;
 	                    }
-	                    print(condition + ", " + (int)Condition.VBW);
                 	} else {
                 		if (!paused) {
                 			print("Game paused");
@@ -233,17 +247,16 @@ public class TrialManager : MonoBehaviour {
                         tmpMat[1] = phantomRightMat;
                         phantoms[index].GetComponent<Renderer>().materials = tmpMat;
                         prevStep = 1;
-                    }
-                    print(condition + ", " + (int)Condition.VBW);	
+                    }	
                     if (condition == (int)Condition.VBW) {
                         result = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
                                                    phantoms[index].transform.position);
                         warpedCube.transform.position = result.Key;
-                        warping = result.Value;
+                        warping = result.Value != Vector3.zero;
                         for (int i = 0; i<armHandMetaphor.childCount; i++) {
                             result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
                                                        phantoms[index].transform.position);
-                            armHandMetaphor.GetChild(i).position = result.Key;
+                            armHandMetaphor.GetChild(i).position = armHandTracked.GetChild(i).position + result.Value;
                             armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
                         }
                     }
@@ -302,11 +315,12 @@ public class TrialManager : MonoBehaviour {
                     }
                     break;
             }
-            print(condition + ", " + (int)Condition.VBW);
 
             if (collisions!=0) {
-                if (!collisionSource.isPlaying)
+                if (!collisionSource.isPlaying) {
+                    collisionSource.clip = bump;
                     collisionSource.Play();
+                } 
                 collisions=0;
             	col[index] += 1;
             }
@@ -341,7 +355,6 @@ public class TrialManager : MonoBehaviour {
                                                uduinoScript.GetAcceleration(), col,
                                                scoreManager.GetScore(), pause);
             }
-            print(condition + ", " + (int)Condition.VBW);
         }
     }
 

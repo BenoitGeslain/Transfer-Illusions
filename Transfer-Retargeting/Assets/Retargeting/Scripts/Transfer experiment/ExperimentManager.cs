@@ -24,7 +24,6 @@ public class ExperimentManager : MonoBehaviour {
 	ScreenManager screenManager;	// Handles what is displayed on the screen
     MultipleUduinoManager uduinoScript;
     PathManager pathScript;
-    SceneConfiguration sceneConfiguration;
 
 	CSVSaver csvSaver;
 
@@ -57,7 +56,6 @@ public class ExperimentManager : MonoBehaviour {
 		screenManager = GetComponent<ScreenManager>();
         uduinoScript = GameObject.Find("Uduino").GetComponent<MultipleUduinoManager>();
         pathScript = GetComponent<PathManager>();
-        sceneConfiguration = GetComponent<SceneConfiguration>();
 
 		csvSaver = GetComponent<CSVSaver>();
 
@@ -142,19 +140,15 @@ public class ExperimentManager : MonoBehaviour {
 		switch(currentTrial.parameters[4]) {
 			case "VBW":
 				trialManager.SetCondition((int)Condition.VBW);
-				sceneConfiguration.resetPhantoms();
 				break;
 			case "V":
 				trialManager.SetCondition((int)Condition.V);
-				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			case "RW1":
 				trialManager.SetCondition((int)Condition.RW1);
-				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			case "RW4":
 				trialManager.SetCondition((int)Condition.RW4);
-				sceneConfiguration.setPhantomsOnGrabbables();
 				break;
 			default:
 				print("Unmanaged group parameter: " + currentTrial.parameters[4]);

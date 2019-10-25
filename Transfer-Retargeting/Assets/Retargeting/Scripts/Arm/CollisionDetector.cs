@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class CollisionDetector : MonoBehaviour
 {
-	BodyWarping bodyWarping;
+    BodyWarping bodyWarping;
 	TrialManager trialManager;
+    ScreenManager screenManager;
 
 	Color noContact, contact;
 
     void Start() {
         bodyWarping = GameObject.Find("World").GetComponent<BodyWarping>();
         trialManager = GameObject.Find("World").GetComponent<TrialManager>();
+        screenManager = GameObject.Find("World").GetComponent<ScreenManager>();
 
         noContact = new Color(0.5660378f, 0.5660378f, 0.5660378f);
         contact = new Color(0.5660378f, 0.0f, 0.0f, 0.6627451f);
@@ -25,7 +27,8 @@ public class CollisionDetector : MonoBehaviour
 	void OnTriggerEnter(Collider col) {
         contact.a = col.gameObject.GetComponent<Renderer>().material.color.a;
         col.gameObject.GetComponent<Renderer>().material.color = contact;
-		trialManager.collisions++;
+        trialManager.collisions++;
+        screenManager.collisions++;
     }
 
 	void OnTriggerExit(Collider col) {
