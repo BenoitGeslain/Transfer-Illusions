@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArmWarping : MonoBehaviour
+public class HandCalibration : MonoBehaviour
 {
     public Transform armHandTracked;
 
