@@ -7,7 +7,7 @@ public static class Parameters {
 	public static int blockFactor = 100;
 	public static int trialFactor = 10000;
 
-    public static string[] tracebackHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "Time", "Index",
+    public static string[] tracebackHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "Index", "Time",
     										  "CubePosRX", "CubePosRY", "CubePosRZ",
     										  "CubeOrRX", "CubeOrRY", "CubeOrRZ",
     										  "CubePosVX", "CubePosVY", "CubePosVZ",
@@ -20,8 +20,8 @@ public static class Parameters {
     										  "score",
     										  "pause"};
 
-    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "ElapsedTime",
-                                               "TrialStartTime", "TrialEndTime", "Index",
+    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Condition",
+                                               "Index", "ElapsedTime", "TrialStartTime", "TrialEndTime",
     										   "CubePosRX", "CubePosRY", "CubePosRZ",
     										   "CubeOrRX", "CubeOrRY", "CubeOrRZ",
     										   "CubePosPX", "CubePosPY", "CubePosPZ",

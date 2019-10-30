@@ -9,6 +9,8 @@ TagManager:
   - Target
   - Obstacle
   - PhysicalCubes
+  - WarpedCubes
+  - TrackedCubes
   layers:
   - Default
   - TransparentFX

@@ -11,7 +11,6 @@ public class TrialManager : MonoBehaviour {
 
     public GameObject hand;
     public Transform armHandMetaphor, armHandTracked;
-    public GameObject trackedCube;
     public GameObject cubePrefab;
 
     public Material phantomRightMat, phantomMat, cubePassive;
@@ -29,8 +28,8 @@ public class TrialManager : MonoBehaviour {
 
     Renderer[] grabbablesR;
 
-    GameObject warpedCube;
-    GameObject[] physicalCubes;
+    GameObject[] warpedCubes;
+    GameObject[] trackedCubes;
 
     //  Reset variables
     Transform clones;
@@ -74,17 +73,14 @@ public class TrialManager : MonoBehaviour {
         phantoms = GameObject.FindGameObjectsWithTag("Phantom");
 
         grabbablesR = new Renderer[grabbables.Length];
-        for (int i = 0; i < grabbables.Length; i++)
-        {
+        for (int i = 0; i < grabbables.Length; i++) {
             grabbablesR[i] = grabbables[i].GetComponent<Renderer>();
         }
-        for (int i = 0; i < phantoms.Length; i++)
-        {
+        for (int i = 0; i < phantoms.Length; i++) {
             phantoms[i].GetComponent<Renderer>().enabled = false;
         }
 
-        foreach (Renderer r in grabbablesR)
-        {
+        foreach (Renderer r in grabbablesR) {
             r.enabled = false;
         }
         N = grabbables.Length;
@@ -98,9 +94,11 @@ public class TrialManager : MonoBehaviour {
 
         collisionSource = GetComponent<AudioSource>();
 
-
-        warpedCube = trackedCube.transform.GetChild(0).gameObject;
-        physicalCubes = GameObject.FindGameObjectsWithTag("PhysicalCubes");
+        trackedCubes = GameObject.FindGameObjectsWithTag("TrackedCubes");
+        warpedCubes = GameObject.FindGameObjectsWithTag("WarpedCubes");
+        if (trackedCubes.Length != N || warpedCubes.Length != N) {
+            print("ERROR::Incorrect number of cubes");
+        }
 
         clones = GameObject.Find("/World/Clones Cubes").transform;
 
@@ -116,7 +114,7 @@ public class TrialManager : MonoBehaviour {
 
         col = new int[N];
 
-        cubePrevPos = warpedCube.transform.position;
+        cubePrevPos = warpedCubes[0].transform.position;
         handPrevPos = hand.transform.position;
         cubeDistGone = 0f;
         handDistGone = 0f;
@@ -125,16 +123,24 @@ public class TrialManager : MonoBehaviour {
 
         print("INIT::TrialManager::DONE");
     }
+
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.D)) {
+            foreach (GameObject g in warpedCubes)
+                g.GetComponent<Renderer>().enabled = true;
+        }
+
+    }
     
     void FixedUpdate() {
         if (start) {
-            pathScript.ShowPath(index+1);
+            //pathScript.ShowPath(index+1);
 
             switch (step) {
                 case 0: // Cube is being placed
                     if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
-                        if ((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
-                            Quaternion.Angle( trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f) {
+                        if ((warpedCubes[0].transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
+                            Quaternion.Angle( warpedCubes[0].transform.rotation, phantoms[index].transform.rotation) < 10f) {
                             step = 1;
 
                             if (!soundPlayed && !collisionSource.isPlaying) {
@@ -144,8 +150,8 @@ public class TrialManager : MonoBehaviour {
                             }
                         }
                     } else {
-                        if ((physicalCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
-                            Quaternion.Angle( physicalCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f) {
+                        if ((warpedCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f &&
+                            Quaternion.Angle( warpedCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f) {
                             step = 1;
 
                             if (!soundPlayed && !collisionSource.isPlaying) {
@@ -163,16 +169,16 @@ public class TrialManager : MonoBehaviour {
                 		break;
                 	}
                     if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
-                        if (!((warpedCube.transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
-                            !(Quaternion.Angle(trackedCube.transform.rotation, phantoms[index].transform.rotation) < 10f)) {
+                        if (!((warpedCubes[0].transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
+                            !(Quaternion.Angle(warpedCubes[0].transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                             step = 0;
                             soundPlayed = false;
                         } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
                             step = 2;
                         }
                     } else {
-                        if (!((physicalCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
-                            !(Quaternion.Angle(physicalCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f)) {
+                        if (!((warpedCubes[index].transform.position - phantoms[index].transform.position).magnitude < 0.022f) ||
+                            !(Quaternion.Angle(warpedCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                             step = 0;
                             soundPlayed = false;
                         } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
@@ -192,29 +198,30 @@ public class TrialManager : MonoBehaviour {
 	                    if (paused) {
 	                    	print("Game resuming");
 	                    	paused = false;
-	                    	watch.Stop();
 	                    	prevStep = -1;
 	                    }
 
                 		if (prevStep==-1) {
-	                    	initPos = trackedCube.transform.position;
-                            warpedCube.GetComponent<Renderer>().enabled = true;
-                            warpedCube.SetActive(true);
 	                        phantoms[index].GetComponent<Renderer>().enabled = true;
 	                        if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
-                                warpedCube.GetComponent<Renderer>().enabled = true;
+                                initPos = warpedCubes[0].transform.position;
+                                warpedCubes[0].GetComponent<Renderer>().enabled = true;
+                                cubePrevPos = warpedCubes[0].transform.position;
                             } else {
-                                physicalCubes[index].SetActive(true);
+                                foreach (GameObject t in warpedCubes) {
+                                    t.GetComponent<Renderer>().enabled = false;
+                                }
+                                warpedCubes[index].GetComponent<Renderer>().enabled = true;
+                                cubePrevPos = warpedCubes[index].transform.position;
                             }
 
-					        cubePrevPos = warpedCube.transform.position;
 					        handPrevPos = hand.transform.position;
 	                        prevStep = 0;
 	                        col = new int[N];
 	                        print("Starting watch and arduinos");
-	                        uduinoScript.BroadcastCommand("CountHits", 1);
+                            watch = new Stopwatch();
+                            uduinoScript.BroadcastCommand("CountHits", 1);
 	                        startTrialTime = DateTime.Now;
-	                        watch = new Stopwatch();
 	                        watch.Start();
 	                    } else if (prevStep == 1) {
 	                        Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
@@ -223,9 +230,9 @@ public class TrialManager : MonoBehaviour {
 	                        prevStep = 0;
 	                    }
 	                    if (condition == (int)Condition.VBW) {
-	                        result = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
+	                        result = bwScript.BodyWarp(trackedCubes[0].transform.position, initPos, grabbables[index].transform.position,
 	                                                   phantoms[index].transform.position);
-                            warpedCube.transform.position = result.Key;
+                            warpedCubes[0].transform.position = result.Key;
 	                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
 	                            armHandMetaphor.GetChild(i).position = armHandTracked.GetChild(i).position + result.Value;
 	                            armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
@@ -236,6 +243,7 @@ public class TrialManager : MonoBehaviour {
                 		if (!paused) {
                 			print("Game paused");
 	                    	paused = true;
+                            watch.Stop();
                 		}
                 	}
                     
@@ -249,9 +257,9 @@ public class TrialManager : MonoBehaviour {
                         prevStep = 1;
                     }	
                     if (condition == (int)Condition.VBW) {
-                        result = bwScript.BodyWarp(trackedCube.transform.position, initPos, grabbables[index].transform.position,
+                        result = bwScript.BodyWarp(trackedCubes[0].transform.position, initPos, grabbables[index].transform.position,
                                                    phantoms[index].transform.position);
-                        warpedCube.transform.position = result.Key;
+                        warpedCubes[0].transform.position = result.Key;
                         warping = result.Value != Vector3.zero;
                         for (int i = 0; i<armHandMetaphor.childCount; i++) {
                             result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
@@ -269,20 +277,22 @@ public class TrialManager : MonoBehaviour {
 
                         print("EXEC::TrialManager::Operation over (Saving and resetting)");
                         scoreManager.AddScoreTime((int)watch.Elapsed.TotalSeconds);
-                        scoreManager.AddScoreCube((warpedCube.transform.position-phantoms[index].transform.position).magnitude);
+
                         if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                            scoreManager.AddScoreCube((warpedCubes[0].transform.position-phantoms[index].transform.position).magnitude);
                         	experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
                         								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
                         								  index,
-                                                          warpedCube.transform.position, warpedCube.transform.eulerAngles, 
+                                                          warpedCubes[0].transform.position, warpedCubes[0].transform.eulerAngles, 
                                                           phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                           cubeDistGone, handDistGone,
                                                           uduinoScript.GetHitCount(), col, scoreManager.GetScore());
                     	} else {
+                            scoreManager.AddScoreCube((warpedCubes[index].transform.position-phantoms[index].transform.position).magnitude);
                     		experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
                         								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
                         								  index,
-                                                          physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles, 
+                                                          warpedCubes[index].transform.position, warpedCubes[index].transform.eulerAngles, 
                                                           phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                           cubeDistGone, handDistGone,
                                                           uduinoScript.GetHitCount(), col, scoreManager.GetScore());
@@ -294,16 +304,16 @@ public class TrialManager : MonoBehaviour {
                         phantoms[index].GetComponent<Renderer>().enabled = false;
                         if (condition == (int)Condition.VBW) {
                             //Deactivate mesh renderer of tracked cube
-                            warpedCube.GetComponent<Renderer>().enabled = false;
+                            warpedCubes[0].GetComponent<Renderer>().enabled = false;
 
-                            GameObject tmp = Instantiate(cubePrefab, warpedCube.transform.position, warpedCube.transform.rotation);
+                            GameObject tmp = Instantiate(cubePrefab, warpedCubes[0].transform.position, warpedCubes[0].transform.rotation);
                             tmp.transform.parent = clones;
 
-                            warpedCube.transform.position = trackedCube.transform.position;
+                            warpedCubes[0].transform.position = trackedCubes[0].transform.position;
                         } else if (condition == (int)Condition.V) {
-                            Material[] tmpMat = physicalCubes[index].GetComponent<Renderer>().materials;
+                            Material[] tmpMat = warpedCubes[index].GetComponent<Renderer>().materials;
                             tmpMat[1] = cubePassive;
-                            physicalCubes[index].GetComponent<Renderer>().materials = tmpMat;
+                            warpedCubes[index].GetComponent<Renderer>().materials = tmpMat;
                         }
 
                         index++;
@@ -316,30 +326,33 @@ public class TrialManager : MonoBehaviour {
                     break;
             }
 
-            if (collisions!=0) {
-                if (!collisionSource.isPlaying) {
-                    collisionSource.clip = bump;
-                    collisionSource.Play();
-                } 
-                collisions=0;
-            	col[index] += 1;
-            }
-
             if (!pause) {
-            	if (!paused) {
-            		cubeDistGone += (warpedCube.transform.position - cubePrevPos).magnitude;
-            		handDistGone += (hand.transform.position - handPrevPos).magnitude;
-            	}
-        		cubePrevPos = warpedCube.transform.position;
-        		handPrevPos = hand.transform.position;
+                if (collisions!=0) {
+                    if (!collisionSource.isPlaying) {
+                        collisionSource.clip = bump;
+                        collisionSource.Play();
+                    } 
+                    collisions=0;
+                	col[index] += 1;
+                }
+
+                if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
+                    cubeDistGone += (warpedCubes[0].transform.position - cubePrevPos).magnitude;
+                    cubePrevPos = warpedCubes[0].transform.position;
+                } else {
+                    cubeDistGone += (warpedCubes[index].transform.position - cubePrevPos).magnitude;
+                    cubePrevPos = warpedCubes[index].transform.position;
+                }
+        		handDistGone += (hand.transform.position - handPrevPos).magnitude;
+                handPrevPos = hand.transform.position;
             }
 
             print("Step: " + step + "/" + prevStep + ". Index: " + index + "/" + grabbables.Length);
             time = DateTime.Now;
             if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
                 experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
-                                               trackedCube.transform.position, trackedCube.transform.eulerAngles,
-                                               warpedCube.transform.position, warpedCube.transform.eulerAngles,
+                                               trackedCubes[0].transform.position, trackedCubes[0].transform.eulerAngles,
+                                               warpedCubes[0].transform.position, warpedCubes[0].transform.eulerAngles,
                                                phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                warping,
                                                cubeDistGone, handDistGone,
@@ -347,8 +360,8 @@ public class TrialManager : MonoBehaviour {
                                                scoreManager.GetScore(), pause);
             } else {
                 experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
-                                               trackedCube.transform.position, trackedCube.transform.eulerAngles,
-                                               physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles,
+                                               trackedCubes[index].transform.position, trackedCubes[index].transform.eulerAngles,
+                                               warpedCubes[index].transform.position, warpedCubes[index].transform.eulerAngles,
                                                phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                warping,
                                                cubeDistGone, handDistGone,
@@ -377,10 +390,9 @@ public class TrialManager : MonoBehaviour {
             phantoms[i].GetComponent<Renderer>().enabled = false;
         }
 
-        foreach(GameObject c in physicalCubes) {
+        foreach(GameObject c in warpedCubes) {
             c.SetActive(false);
         }
-        physicalCubes[0].SetActive(true);
 
         // Détruit tous les clones du cube tracké
         foreach(Transform c in clones) {

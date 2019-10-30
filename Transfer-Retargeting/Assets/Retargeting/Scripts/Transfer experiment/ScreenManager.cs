@@ -37,7 +37,7 @@ public class ScreenManager : MonoBehaviour {
                       "\nLorsqu'il est bien positionné, le <color=#d33>cube rouge</color> devient <color=#00af40>vert</color>.\n\n- De ne pas toucher les obstacles gris semi-transparent."
                       +"\nIls deviennent <color=#d33>rouge</color> lorsque vous les touchez" +
                       "\n\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>.";
-        entries[1] = "\n\nPlacer le <color=#36c>cube bleu</color> dans le <color=#d33>cube rouge</color>\n\n, puis toucher la <color=#00af40>sphère verte</color>";
+        entries[1] = "\n\nPlacer le <color=#36c>cube bleu</color> dans le <color=#d33>cube rouge</color>,\n\npuis toucher la <color=#00af40>sphère verte</color>";
         tvTextScore.GetComponent<TextMesh>().text = entries[0];
 
         cubes = new GameObject[2];
@@ -55,25 +55,29 @@ public class ScreenManager : MonoBehaviour {
     void Update() {
         if (start) {
             if (step == 0) {
+                if (Input.GetKeyDown(KeyCode.Keypad0)) {
+                    step++;
+                    index = 1;
+                }
                 if (index == 0) {
                     if (prevStep == -1) {
                         cubes[0].GetComponent<Renderer>().enabled = true;
                         cubes[1].GetComponent<Renderer>().enabled = true;
                         obstacle.SetActive(true);
-                        tvTextScore.GetComponent<TextMesh>().text = entries[index];
+                        tvTextScore.GetComponent<TextMesh>().text = entries[0];
                         prevStep = 0;
                     }
 
                     if ((hand.position - fixedPoint.position).magnitude < 0.07f) {
                         index++;
                     }
-                } else if (prevStep == 0) {
-                    tvTextScore.GetComponent<TextMesh>().text = entries[1];
-                    prevStep = 1;
+                } else if (index == 1) {
+                    UpdateScore(0);
+                    index = 2;
                 }
 
                 if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.02f &&
-                    Quaternion.Angle( cubes[0].transform.rotation, cubes[1].transform.rotation) < 7f) {
+                    Quaternion.Angle(cubes[0].transform.rotation, cubes[1].transform.rotation) < 7f) {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                     tmpMat[1] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
@@ -100,6 +104,9 @@ public class ScreenManager : MonoBehaviour {
                     }
                     collisions=0;
                 }
+            } else {
+                cubes[1].SetActive(false);
+                step++;
             }
         }
     }
