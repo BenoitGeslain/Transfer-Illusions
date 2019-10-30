@@ -35,4 +35,6 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-*.csv
+Transfer-Retargeting/Data/config.csv
+Transfer-Retargeting/Data/discrete.csv
+Transfer-Retargeting/Data/continous.csv

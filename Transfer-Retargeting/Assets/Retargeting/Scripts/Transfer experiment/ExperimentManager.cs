@@ -70,7 +70,7 @@ public class ExperimentManager : MonoBehaviour {
 					step++;
 					uduinoScript.BroadcastCommand("Calibrate");
 					screenManager.start = true;
-					pathScript.ShowPath(0);
+					//pathScript.ShowPath(0);
 	        	}
 				break;
 			case 0:

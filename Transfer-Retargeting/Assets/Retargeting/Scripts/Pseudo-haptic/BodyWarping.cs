@@ -4,8 +4,6 @@ using UnityEngine;
 using Valve.VR;
 
 public class BodyWarping : MonoBehaviour {
-    public Transform trackedCube;
-    
     Color warpColor = new Color(0.5f, 0.1f, 0.1f);
     Color lambdaColor = new Color(0.1f, 0.1f, 0.5f);
 
@@ -27,6 +25,7 @@ public class BodyWarping : MonoBehaviour {
             Debug.DrawLine(realHandPos, virtHandPos, warpColor);
             Debug.DrawLine(virtHandPos, realHandPos + lambda, lambdaColor);
         }
+        print(realHandPos + ", " + virtHandPos);
         return new KeyValuePair<Vector3, Vector3>(virtHandPos, (D.magnitude - d.magnitude) / D.magnitude * lambda);
     }
 }

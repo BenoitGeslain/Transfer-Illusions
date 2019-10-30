@@ -29,7 +29,7 @@ public class TrialManager : MonoBehaviour {
     Renderer[] grabbablesR;
 
     GameObject[] warpedCubes;
-    GameObject[] trackedCubes;
+    GameObject[] physicalCubes;
 
     //  Reset variables
     Transform clones;
@@ -94,9 +94,9 @@ public class TrialManager : MonoBehaviour {
 
         collisionSource = GetComponent<AudioSource>();
 
-        trackedCubes = GameObject.FindGameObjectsWithTag("TrackedCubes");
+        physicalCubes = GameObject.FindGameObjectsWithTag("PhysicalCubes");
         warpedCubes = GameObject.FindGameObjectsWithTag("WarpedCubes");
-        if (trackedCubes.Length != N || warpedCubes.Length != N) {
+        if (physicalCubes.Length != N || warpedCubes.Length != N) {
             print("ERROR::Incorrect number of cubes");
         }
 
@@ -230,7 +230,7 @@ public class TrialManager : MonoBehaviour {
 	                        prevStep = 0;
 	                    }
 	                    if (condition == (int)Condition.VBW) {
-	                        result = bwScript.BodyWarp(trackedCubes[0].transform.position, initPos, grabbables[index].transform.position,
+	                        result = bwScript.BodyWarp(physicalCubes[0].transform.position, initPos, grabbables[index].transform.position,
 	                                                   phantoms[index].transform.position);
                             warpedCubes[0].transform.position = result.Key;
 	                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
@@ -257,8 +257,9 @@ public class TrialManager : MonoBehaviour {
                         prevStep = 1;
                     }	
                     if (condition == (int)Condition.VBW) {
-                        result = bwScript.BodyWarp(trackedCubes[0].transform.position, initPos, grabbables[index].transform.position,
+                        result = bwScript.BodyWarp(physicalCubes[0].transform.position, initPos, grabbables[index].transform.position,
                                                    phantoms[index].transform.position);
+                        print(result.Key);
                         warpedCubes[0].transform.position = result.Key;
                         warping = result.Value != Vector3.zero;
                         for (int i = 0; i<armHandMetaphor.childCount; i++) {
@@ -308,12 +309,11 @@ public class TrialManager : MonoBehaviour {
 
                             GameObject tmp = Instantiate(cubePrefab, warpedCubes[0].transform.position, warpedCubes[0].transform.rotation);
                             tmp.transform.parent = clones;
-
-                            warpedCubes[0].transform.position = trackedCubes[0].transform.position;
+                            warpedCubes[0].transform.localPosition = Vector3.zero;
                         } else if (condition == (int)Condition.V) {
-                            Material[] tmpMat = warpedCubes[index].GetComponent<Renderer>().materials;
-                            tmpMat[1] = cubePassive;
-                            warpedCubes[index].GetComponent<Renderer>().materials = tmpMat;
+                            warpedCubes[index].GetComponent<Renderer>().enabled = false;
+
+                            GameObject tmp = Instantiate(cubePrefab, warpedCubes[index].transform.position, warpedCubes[index].transform.rotation);
                         }
 
                         index++;
@@ -351,7 +351,7 @@ public class TrialManager : MonoBehaviour {
             time = DateTime.Now;
             if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
                 experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
-                                               trackedCubes[0].transform.position, trackedCubes[0].transform.eulerAngles,
+                                               physicalCubes[0].transform.position, physicalCubes[0].transform.eulerAngles,
                                                warpedCubes[0].transform.position, warpedCubes[0].transform.eulerAngles,
                                                phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                warping,
@@ -360,7 +360,7 @@ public class TrialManager : MonoBehaviour {
                                                scoreManager.GetScore(), pause);
             } else {
                 experimentManager.LogContinous(time.ToString("HH:mm:ss.fff"), index,
-                                               trackedCubes[index].transform.position, trackedCubes[index].transform.eulerAngles,
+                                               physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles,
                                                warpedCubes[index].transform.position, warpedCubes[index].transform.eulerAngles,
                                                phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                warping,
@@ -391,7 +391,7 @@ public class TrialManager : MonoBehaviour {
         }
 
         foreach(GameObject c in warpedCubes) {
-            c.SetActive(false);
+            c.GetComponent<Renderer>().enabled = false;
         }
 
         // Détruit tous les clones du cube tracké
