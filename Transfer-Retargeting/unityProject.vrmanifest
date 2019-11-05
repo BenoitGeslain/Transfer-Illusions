@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.transferretargeting.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\inters\\Documents\\Benoît\\Transfer-Illusions\\Transfer Retargeting - VIVE\\actions.json",
+      "action_manifest_path": "D:\\Benoit\\Transfer-Illusions\\Transfer-Retargeting\\actions.json",
       "strings": {
         "en_us": {
           "name": "Transfer Retargeting [Testing]"

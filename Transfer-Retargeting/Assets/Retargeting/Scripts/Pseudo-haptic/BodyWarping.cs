@@ -25,7 +25,6 @@ public class BodyWarping : MonoBehaviour {
             Debug.DrawLine(realHandPos, virtHandPos, warpColor);
             Debug.DrawLine(virtHandPos, realHandPos + lambda, lambdaColor);
         }
-        print(realHandPos + ", " + virtHandPos);
         return new KeyValuePair<Vector3, Vector3>(virtHandPos, (D.magnitude - d.magnitude) / D.magnitude * lambda);
     }
 }

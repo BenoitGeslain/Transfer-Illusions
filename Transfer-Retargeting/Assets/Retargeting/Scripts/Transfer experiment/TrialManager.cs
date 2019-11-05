@@ -143,7 +143,8 @@ public class TrialManager : MonoBehaviour {
                             Quaternion.Angle( warpedCubes[0].transform.rotation, phantoms[index].transform.rotation) < 10f) {
                             step = 1;
 
-                            if (!soundPlayed && !collisionSource.isPlaying) {
+                            if (!soundPlayed) {
+                                collisionSource.Stop();
                                 soundPlayed = true;
                                 collisionSource.clip = coin;
                                 collisionSource.Play();
@@ -154,7 +155,8 @@ public class TrialManager : MonoBehaviour {
                             Quaternion.Angle( warpedCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f) {
                             step = 1;
 
-                            if (!soundPlayed && !collisionSource.isPlaying) {
+                            if (!soundPlayed) {
+                                collisionSource.Stop();
                                 soundPlayed = true;
                                 collisionSource.clip = coin;
                                 collisionSource.Play();
@@ -164,7 +166,6 @@ public class TrialManager : MonoBehaviour {
                     break;
                 case 1: // Cube placé, attente du bouton
                 	if (nextCube) {
-                		print("step = 2");
                 		step = 2;
                 		break;
                 	}
@@ -217,7 +218,6 @@ public class TrialManager : MonoBehaviour {
 
 					        handPrevPos = hand.transform.position;
 	                        prevStep = 0;
-	                        col = new int[N];
 	                        print("Starting watch and arduinos");
                             watch = new Stopwatch();
                             uduinoScript.BroadcastCommand("CountHits", 1);
@@ -259,7 +259,6 @@ public class TrialManager : MonoBehaviour {
                     if (condition == (int)Condition.VBW) {
                         result = bwScript.BodyWarp(physicalCubes[0].transform.position, initPos, grabbables[index].transform.position,
                                                    phantoms[index].transform.position);
-                        print(result.Key);
                         warpedCubes[0].transform.position = result.Key;
                         warping = result.Value != Vector3.zero;
                         for (int i = 0; i<armHandMetaphor.childCount; i++) {
@@ -401,6 +400,8 @@ public class TrialManager : MonoBehaviour {
 
         if (resetScore)
             scoreManager.ResetScore();
+
+        col = new int[N];
 
         print("RESET::SceneReset::DONE");
     }

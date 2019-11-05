@@ -76,8 +76,8 @@ public class CSVSaver : MonoBehaviour {
 							collisions[0].ToString(), collisions[1].ToString(), collisions[2].ToString(), collisions[3].ToString(),
 							score.ToString()});
 
-		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4],
-							timeCube, StartTimeTrial, EndTimeTrial, index.ToString(),
+		write(new string[] {trial.parameters[0], trial.parameters[1], trial.parameters[2], trial.parameters[3], trial.parameters[4], index.ToString(),
+							timeCube, StartTimeTrial, EndTimeTrial,
 							positionR.x.ToString(), positionR.y.ToString(), positionR.z.ToString(),
 							orientationR.x.ToString(), orientationR.y.ToString(), orientationR.z.ToString(),
 							positionP.x.ToString(), positionP.y.ToString(), positionP.z.ToString(),

@@ -20,8 +20,8 @@ public static class Parameters {
     										  "score",
     										  "pause"};
 
-    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Condition",
-                                               "Index", "ElapsedTime", "TrialStartTime", "TrialEndTime",
+    public static string[] experimentHeader = {"Participant", "Practice", "Block", "Trial", "Condition", "Index",
+                                               "ElapsedTime", "TrialStartTime", "TrialEndTime",
     										   "CubePosRX", "CubePosRY", "CubePosRZ",
     										   "CubeOrRX", "CubeOrRY", "CubeOrRZ",
     										   "CubePosPX", "CubePosPY", "CubePosPZ",
@@ -30,5 +30,5 @@ public static class Parameters {
     										   "Hit", "collisions1", "collisions2", "collisions3", "collisions4",
     										   "Score"};
 
-    public static string[] sceneConfiguration = {"Name", "PX", "PY", "PZ", "RX", "RY", "RZ"};
+    public static string[] sceneConfiguration = {"Time", "Name", "PX", "PY", "PZ", "RX", "RY", "RZ"};
 }
