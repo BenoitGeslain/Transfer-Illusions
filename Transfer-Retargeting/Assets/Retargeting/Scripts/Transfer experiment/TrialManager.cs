@@ -17,7 +17,7 @@ public class TrialManager : MonoBehaviour {
 
     public int collisions = 0;
 
-    public AudioClip bump, coin;
+    public AudioClip bump, coin, fire;
 
     int condition;
 
@@ -59,13 +59,15 @@ public class TrialManager : MonoBehaviour {
     public bool nextCube = false;
     bool paused = false;
     bool soundPlayed = false;
+    bool skippable = true;
+
 
     KeyValuePair<Vector3, Vector3> result;
     bool warping = false;
 
     int N;
 
-    Stopwatch watch;
+    Stopwatch watch, wSkippable;
     DateTime time, startTrialTime;
     
     void Start() {
@@ -163,6 +165,20 @@ public class TrialManager : MonoBehaviour {
                             }
                         }
                     }
+
+                    /*if ((condition == (int)Condition.RW4 || condition == (int)Condition.RW1) && skippable) {
+                        if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.075f) {
+                            collisionSource.Stop();
+                            collisionSource.clip = fire;
+                            collisionSource.Play();
+
+                            wSkippable = new Stopwatch();
+                            wSkippable.Start();
+                            skippable = false;
+
+                            step = 2;
+                        }
+                    }*/
                     break;
                 case 1: // Cube placé, attente du bouton
                 	if (nextCube) {
@@ -174,7 +190,11 @@ public class TrialManager : MonoBehaviour {
                             !(Quaternion.Angle(warpedCubes[0].transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                             step = 0;
                             soundPlayed = false;
-                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
+                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.075f) {
+                            collisionSource.Stop();
+                            collisionSource.clip = fire;
+                            collisionSource.Play();
+
                             step = 2;
                         }
                     } else {
@@ -182,7 +202,11 @@ public class TrialManager : MonoBehaviour {
                             !(Quaternion.Angle(warpedCubes[index].transform.rotation, phantoms[index].transform.rotation) < 10f)) {
                             step = 0;
                             soundPlayed = false;
-                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.15f) {
+                        } else if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.075f) {
+                            collisionSource.Stop();
+                            collisionSource.clip = fire;
+                            collisionSource.Play();
+
                             step = 2;
                         }
                     }

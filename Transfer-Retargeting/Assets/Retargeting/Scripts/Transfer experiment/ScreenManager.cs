@@ -11,7 +11,7 @@ public class ScreenManager : MonoBehaviour {
     
     public int step = 0, prevStep = -1;
 
-    public AudioClip bump, coin;
+    public AudioClip bump, coin, fire;
 
     
 	string[] entries;
@@ -81,7 +81,11 @@ public class ScreenManager : MonoBehaviour {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
                     tmpMat[1] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
-                    if ((hand.position - fixedPoint.position).magnitude < 0.07f) {
+                    if ((hand.position - fixedPoint.position).magnitude < 0.075f) {
+                        collisionSource.Stop();
+                        collisionSource.clip = fire;
+                        collisionSource.Play();
+
                         cubes[1].SetActive(false);
                         step++;
                     }
