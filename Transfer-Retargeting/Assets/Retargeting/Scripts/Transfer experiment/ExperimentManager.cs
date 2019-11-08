@@ -96,8 +96,9 @@ public class ExperimentManager : MonoBehaviour {
 	}
 
 	public void LogContinous(string time, int index,
-							 Vector3 positionR, Vector3 orientationR, Vector3 positionV,
-							 Vector3 orientationV, Vector3 positionP, Vector3 orientationP,
+							 Vector3 positionR, Vector3 orientationR,
+							 Vector3 positionV, Vector3 orientationV,
+							 Vector3 positionP, Vector3 orientationP,
 							 bool warping,
 							 float cubeDistGone, float handDistGone,
 							 List<float> acceleration, int[] collisions,
@@ -116,6 +117,7 @@ public class ExperimentManager : MonoBehaviour {
 
 	public void LogDiscrete(string time, string startTrialTime, string endTrialTime, int index,
 							Vector3 positionR, Vector3 orientationR,
+							Vector3 positionV, Vector3 orientationV,
 							Vector3 positionP, Vector3 orientationP,
 							float cubeDistGone, float handDistGone,
 							List<int> obstaclesHit, int[] collisions,
@@ -123,6 +125,7 @@ public class ExperimentManager : MonoBehaviour {
 		csvSaver.writeDiscreteEntry(currentTrial, time, startTrialTime, endTrialTime,
 									index,
 									positionR, positionR,
+									positionV, positionV,
 									positionP, orientationP,
 									cubeDistGone, handDistGone,
 									obstaclesHit, collisions,

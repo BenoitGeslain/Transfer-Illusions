@@ -11,6 +11,7 @@ public class SceneConfiguration : MonoBehaviour
 
     GameObject[] grabbables;
     GameObject[] phantoms;
+    GameObject[] warpedCubes;
     GameObject world, button;
 
     public Vector3[] phantomPos;
@@ -18,6 +19,7 @@ public class SceneConfiguration : MonoBehaviour
     void Start() {
         grabbables = GameObject.FindGameObjectsWithTag("Grabbable");
         phantoms = GameObject.FindGameObjectsWithTag("Phantom");
+        warpedCubes = GameObject.FindGameObjectsWithTag("WarpedCubes");
         world = GameObject.Find("World");
         button = GameObject.Find("Button");
 
@@ -28,19 +30,21 @@ public class SceneConfiguration : MonoBehaviour
 
     void Update() {
         if (saveConfig || Input.GetKeyDown(KeyCode.Space)) {
+            int i=0;
         	foreach (GameObject g in grabbables) {
-        		csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), g.name, g.transform.position, g.transform.eulerAngles);
+        		csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), g.name, i++, g.transform.position, g.transform.eulerAngles);
             }
+            i=0;
         	foreach (GameObject p in phantoms) {
-        		csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), p.name, p.transform.position, p.transform.eulerAngles);
+        		csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), p.name, i++, p.transform.position, p.transform.eulerAngles);
+            }
+            i=0;
+            foreach (GameObject c in warpedCubes) {
+                csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), c.name + " " + i++, i, c.transform.position, c.transform.eulerAngles);
             }
 
-            for (int i=0; i<phantoms.Length; i++) {
-                phantomPos[i] = phantoms[i].transform.position;
-            }
-
-            csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), world.name, world.transform.position, world.transform.eulerAngles);
-            csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), button.name, button.transform.position, button.transform.eulerAngles);
+            csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), world.name, 0, world.transform.position, world.transform.eulerAngles);
+            csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), button.name, 0, button.transform.position, button.transform.eulerAngles);
         	
             saveConfig = false;
         }

@@ -307,7 +307,8 @@ public class TrialManager : MonoBehaviour {
                         	experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
                         								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
                         								  index,
-                                                          warpedCubes[0].transform.position, warpedCubes[0].transform.eulerAngles, 
+                                                          physicalCubes[0].transform.position, physicalCubes[0].transform.eulerAngles,
+                                                          warpedCubes[0].transform.position, warpedCubes[0].transform.eulerAngles,
                                                           phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                           cubeDistGone, handDistGone,
                                                           uduinoScript.GetHitCount(), col, scoreManager.GetScore());
@@ -316,6 +317,7 @@ public class TrialManager : MonoBehaviour {
                     		experimentManager.LogDiscrete(elapsed.TotalSeconds.ToString(),
                         								  startTrialTime.ToString("HH:mm:ss.fff"), DateTime.Now.ToString("HH:mm:ss.fff"),
                         								  index,
+                                                          physicalCubes[index].transform.position, physicalCubes[index].transform.eulerAngles,
                                                           warpedCubes[index].transform.position, warpedCubes[index].transform.eulerAngles, 
                                                           phantoms[index].transform.position, phantoms[index].transform.eulerAngles,
                                                           cubeDistGone, handDistGone,
@@ -343,6 +345,7 @@ public class TrialManager : MonoBehaviour {
                         prevStep = -1;
 
                         if (index==grabbables.Length) {
+                            pause = true;
                             experimentManager.EndTrial();
                         }
                     }
