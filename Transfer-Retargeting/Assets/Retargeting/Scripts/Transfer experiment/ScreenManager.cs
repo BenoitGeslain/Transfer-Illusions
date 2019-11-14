@@ -72,7 +72,7 @@ public class ScreenManager : MonoBehaviour {
                         index++;
                     }
                 } else if (index == 1) {
-                    UpdateScore(0);
+                    UpdateScore(0, false);
                     index = 2;
                 }
 
@@ -115,8 +115,12 @@ public class ScreenManager : MonoBehaviour {
         }
     }
 
-    public void UpdateScore(int newScore) {
-        tvTextScore.GetComponent<TextMesh>().text = scoreText + newScore + entries[1];
+    public void UpdatePause(bool pause) {
+        tvTextScore.GetComponent<TextMesh>().text = pause ? "Game Paused\n\n":"" + scoreText + score + entries[1];
+    }
+
+    public void UpdateScore(int newScore, bool pause) {
+        tvTextScore.GetComponent<TextMesh>().text = pause ? "Game Paused\n\n":"" + scoreText + newScore + entries[1];
         if (newScore==0) {
             sumScore += score;
             tvTextSumScore.GetComponent<TextMesh>().text = "Score total : " + sumScore;

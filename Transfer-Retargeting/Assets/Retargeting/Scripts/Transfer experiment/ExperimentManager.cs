@@ -99,6 +99,7 @@ public class ExperimentManager : MonoBehaviour {
 							 Vector3 positionR, Vector3 orientationR,
 							 Vector3 positionV, Vector3 orientationV,
 							 Vector3 positionP, Vector3 orientationP,
+							 float velocity,
 							 bool warping,
 							 float cubeDistGone, float handDistGone,
 							 List<float> acceleration, int[] collisions,
@@ -108,6 +109,7 @@ public class ExperimentManager : MonoBehaviour {
 									 positionR, orientationR,
 									 positionV, orientationV,
 									 positionP, orientationP,
+									 velocity,
 									 warping,
 									 cubeDistGone, handDistGone,
 									 acceleration, collisions,
@@ -119,6 +121,7 @@ public class ExperimentManager : MonoBehaviour {
 							Vector3 positionR, Vector3 orientationR,
 							Vector3 positionV, Vector3 orientationV,
 							Vector3 positionP, Vector3 orientationP,
+							float velocity,
 							float cubeDistGone, float handDistGone,
 							List<int> obstaclesHit, int[] collisions,
 							float score) {
@@ -127,6 +130,7 @@ public class ExperimentManager : MonoBehaviour {
 									positionR, positionR,
 									positionV, positionV,
 									positionP, orientationP,
+									velocity,
 									cubeDistGone, handDistGone,
 									obstaclesHit, collisions,
 									score);
