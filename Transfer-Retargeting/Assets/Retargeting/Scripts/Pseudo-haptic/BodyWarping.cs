@@ -27,4 +27,24 @@ public class BodyWarping : MonoBehaviour {
         }
         return new KeyValuePair<Vector3, Vector3>(virtHandPos, (D.magnitude - d.magnitude) / D.magnitude * lambda);
     }
+
+    public KeyValuePair<Vector3, Vector3> BodyWarpP(Vector3 realHandPos, float D, Vector3 wTargetReal, Vector3 wTargetVirtual) {
+        Vector3 d = realHandPos - wTargetReal;
+        Vector3 virtHandPos = realHandPos;
+
+        Vector3 lambda;
+        if (d.magnitude > D) {
+            return new KeyValuePair<Vector3, Vector3>(realHandPos, Vector3.zero);
+        } else {
+            lambda = wTargetVirtual - wTargetReal;
+
+            virtHandPos = (D - d.magnitude) / D * lambda + realHandPos;
+
+            //print("d = " + d + ", lambda = " + lambda + ", offset = " + (D.magnitude - d.magnitude) / D.magnitude * lambda);
+
+            Debug.DrawLine(realHandPos, virtHandPos, warpColor);
+            Debug.DrawLine(virtHandPos, realHandPos + lambda, lambdaColor);
+        }
+        return new KeyValuePair<Vector3, Vector3>(virtHandPos, (D - d.magnitude) / D * lambda);
+    }
 }

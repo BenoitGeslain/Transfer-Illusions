@@ -6,10 +6,12 @@ public class HandCalibration : MonoBehaviour
 {
     public Transform armHandTracked;
 
-    TrialManager trialScript;
+    // TrialManager trialScript;
+    SphereSize trialScript;
 
     void Start() {
-    	trialScript = GameObject.Find("World").GetComponent<TrialManager>();
+        // trialScript = GameObject.Find("World").GetComponent<TrialManager>();
+        trialScript = GameObject.Find("World").GetComponent<SphereSize>();
     }
     
     void Update() {

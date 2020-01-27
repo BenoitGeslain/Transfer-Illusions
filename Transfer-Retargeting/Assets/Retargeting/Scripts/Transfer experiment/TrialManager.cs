@@ -296,7 +296,7 @@ public class TrialManager : MonoBehaviour {
                                                    phantoms[index].transform.position);
                         warpedCubes[0].transform.position = result.Key;
                         warping = result.Value != Vector3.zero;
-                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
+                        for (int i = 0; i<armHandMetaphor.childCount; i++) {    //war hand using result.Value?
                             result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
                                                        phantoms[index].transform.position);
                             armHandMetaphor.GetChild(i).position = armHandTracked.GetChild(i).position + result.Value;
