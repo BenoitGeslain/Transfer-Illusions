@@ -16,6 +16,7 @@ public class HandCalibration : MonoBehaviour
     
     void Update() {
     	if (!trialScript.IsWarping()) {
+            print("Locking position");
 			for (int i = 0; i<this.transform.childCount; i++) {
 	            this.transform.GetChild(i).position = armHandTracked.GetChild(i).position;
 	            this.transform.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
