@@ -21,7 +21,7 @@ public class SphereSize : MonoBehaviour {
 
 	int state = 0, trialState = 0, indexC = 0, indexD = 0;
 
-	float[] valuesD = new float[5] {0f, 0.05f, 0.1f, 0.15f, 0.2f};
+	float[] valuesD = new float[5] {0f, 0.05f, 0.1f, 0.2f, 0.3f};
 	float delta = 0.05f;
 
 	KeyValuePair<Vector3, Vector3> result;
