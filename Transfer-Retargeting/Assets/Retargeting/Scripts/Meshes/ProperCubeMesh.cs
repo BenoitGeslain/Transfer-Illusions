@@ -6,16 +6,35 @@ using System.Collections.Generic;
 [RequireComponent(typeof (MeshRenderer))]
 public class ProperCubeMesh : MonoBehaviour {
 
-	public Material[] materials;
+	public float size = 1f;
 
+	public Material[] materials;
 	void Start () {
 		createCube ();
 	}
 
 	void createCube () {
-
-		float size = 1f;
 		Vector3[] vertices = {
+			new Vector3(-0.5f*size, size*0.5f, -size*0.5f),
+			new Vector3(-size*0.5f, -size*0.5f, -size*0.5f),
+			new Vector3(size*0.5f, size*0.5f, -size*0.5f),
+			new Vector3(size*0.5f, -size*0.5f, -size*0.5f),
+
+			new Vector3(-size*0.5f, -size*0.5f, size*0.5f),
+			new Vector3(size*0.5f, -size*0.5f, size*0.5f),
+			new Vector3(-size*0.5f, size*0.5f, size*0.5f),
+			new Vector3(size*0.5f, size*0.5f, size*0.5f),
+
+			new Vector3(-size*0.5f, size*0.5f, -size*0.5f),
+			new Vector3(size*0.5f, size*0.5f, -size*0.5f),
+
+			new Vector3(-size*0.5f, size*0.5f, -size*0.5f),
+			new Vector3(-size*0.5f, size*0.5f, size*0.5f),
+
+			new Vector3(size*0.5f, size*0.5f, -size*0.5f),
+			new Vector3(size*0.5f, size*0.5f, size*0.5f),
+		};
+		/*Vector3[] vertices = {
 			new Vector3(0, size, 0),
 			new Vector3(0, 0, 0),
 			new Vector3(size, size, 0),
@@ -34,13 +53,13 @@ public class ProperCubeMesh : MonoBehaviour {
 
 			new Vector3(size, size, 0),
 			new Vector3(size, size, size),
-		};
+		};*/
 
 		int[] triangles = {
-			1, 2, 3, // front
-			0, 2, 1,
 			4, 5, 6, // back
 			5, 7, 6,
+			1, 2, 3, // front
+			0, 2, 1,
 			6, 7, 8, //top
 			7, 9 ,8, 
 			1, 3, 4, //bottom
@@ -69,7 +88,7 @@ public class ProperCubeMesh : MonoBehaviour {
 		Vector2[] uvs = new Vector2[vertices.Length];
         for (int i = 0; i < uvs.Length; i++)
         {
-            uvs[i] = new Vector2(vertices[i].x, vertices[i].y);
+            uvs[i] = new Vector2(-vertices[i].x+0.5f, vertices[i].y+0.5f);
         }
         mesh.uv = uvs;
 		

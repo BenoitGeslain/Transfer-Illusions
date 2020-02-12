@@ -11,6 +11,7 @@ TagManager:
   - PhysicalCubes
   - WarpedCubes
   - TrackedCubes
+  - CubePivot
   layers:
   - Default
   - TransparentFX

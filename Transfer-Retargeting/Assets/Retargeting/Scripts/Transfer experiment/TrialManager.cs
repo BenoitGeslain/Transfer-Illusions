@@ -90,9 +90,11 @@ public class TrialManager : MonoBehaviour {
         /*foreach (Renderer r in grabbablesR) {
             r.enabled = false;
         }*/
-        foreach (Renderer r in grabbablesR) {
-            r.material = cubePassive;
-        }
+        /*foreach (Renderer r in grabbablesR) {
+            Material[] tmpMat = r.materials;
+            tmpMat[1] = cubePassive;
+            r.materials = tmpMat;
+        }*/
         //grabbablesR[0].enabled = false;
         N = grabbables.Length;
 
@@ -252,8 +254,8 @@ public class TrialManager : MonoBehaviour {
                                 warpedCubes[0].GetComponent<Renderer>().enabled = true;
                                 cubePrevPos = warpedCubes[0].transform.position;
                             } else {
-                                foreach (GameObject t in warpedCubes) {
-                                    t.GetComponent<Renderer>().enabled = false;
+                                foreach (GameObject g in warpedCubes) {
+                                    g.GetComponent<Renderer>().enabled = false;
                                 }
                                 warpedCubes[index].GetComponent<Renderer>().enabled = true;
                                 cubePrevPos = warpedCubes[index].transform.position;
@@ -371,6 +373,15 @@ public class TrialManager : MonoBehaviour {
                             grabbablesR[index+1].enabled = true;
                         else
                             grabbablesR[0].enabled = true;
+                        if (index<6) {
+                            Material[] tmpMat = warpedCubes[0].GetComponent<Renderer>().materials;
+                            tmpMat[0] = logosMat[index];
+                            warpedCubes[0].GetComponent<Renderer>().materials = tmpMat;
+                        } else {
+                            Material[] tmpMat = warpedCubes[0].GetComponent<Renderer>().materials;
+                            tmpMat[0] = logosMat[0];
+                            warpedCubes[0].GetComponent<Renderer>().materials = tmpMat;
+                        }
                     } else if (condition == (int)Condition.V) {
                         warpedCubes[index].GetComponent<Renderer>().enabled = false;
 

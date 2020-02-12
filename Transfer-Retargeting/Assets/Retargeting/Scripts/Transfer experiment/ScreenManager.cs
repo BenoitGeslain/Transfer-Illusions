@@ -27,12 +27,12 @@ public class ScreenManager : MonoBehaviour {
     AudioSource collisionSource;
     public int collisions = 0;
 
-    public Material phantomRightMat, phantomMat;
+    public Material phantomRightMat, phantomMat, cubeLogo1;
 
     bool soundPlayed = false;
 
     void Start() {
-        entries = new string[8];
+        entries = new string[2];
         entries[0] = "Votre objectif est de :\n\n- Prendre le <color=#36c>cube bleu</color> et de le placer, avec\n la bonne orientation (face blanche),\ndans le <color=#d33>cube rouge</color> semi-transparent." +
                       "\nLorsqu'il est bien positionné, le <color=#d33>cube rouge</color> devient <color=#00af40>vert</color>.\n\n- De ne pas toucher les obstacles gris semi-transparent."
                       +"\nIls deviennent <color=#d33>rouge</color> lorsque vous les touchez" +
@@ -87,6 +87,10 @@ public class ScreenManager : MonoBehaviour {
                         collisionSource.Play();
 
                         cubes[1].SetActive(false);
+                        tmpMat = cubes[0].GetComponent<Renderer>().materials;
+                        tmpMat[0] = cubeLogo1;
+                        cubes[0].GetComponent<Renderer>().materials = tmpMat;
+
                         step++;
                     }
                     if (!soundPlayed && !collisionSource.isPlaying) {
