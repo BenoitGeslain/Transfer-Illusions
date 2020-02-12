@@ -19,6 +19,8 @@ public class TrialManager : MonoBehaviour {
 
     public AudioClip bump, coin, fire;
 
+    public Material[] logosMat;
+
     int condition;
 
     int[] col;
@@ -85,9 +87,13 @@ public class TrialManager : MonoBehaviour {
             phantoms[i].GetComponent<Renderer>().enabled = false;
         }
 
-        foreach (Renderer r in grabbablesR) {
+        /*foreach (Renderer r in grabbablesR) {
             r.enabled = false;
+        }*/
+        foreach (Renderer r in grabbablesR) {
+            r.material = cubePassive;
         }
+        //grabbablesR[0].enabled = false;
         N = grabbables.Length;
 
         experimentManager = GetComponent<ExperimentManager>();
@@ -140,7 +146,7 @@ public class TrialManager : MonoBehaviour {
                 print("Skipping pause");
                 StopCoroutine("Pause");
                 crRunning = false;
-                scoreManager.UpdatePause(false);
+                scoreManager.UpdatePause(0);
                 pause = false;
             } else {
                 nextCube = true;
@@ -225,11 +231,17 @@ public class TrialManager : MonoBehaviour {
 
             switch (step) {
                 case 0:
+                    if (!crRunning && pause) {
+                        if ((hand.transform.position - fixedPoint.transform.position).magnitude < 0.075f) {
+                            scoreManager.UpdatePause(0);
+                            pause = false;
+                        }
+                    }
                 	if (!pause) {
 	                    if (paused) {
 	                    	print("Game resuming");
 	                    	paused = false;
-                            scoreManager.UpdatePause(false);
+                            scoreManager.UpdatePause(0);
 	                    	prevStep = -1;
 	                    }
 
@@ -277,7 +289,7 @@ public class TrialManager : MonoBehaviour {
                 		if (!paused) {
                 			print("Game paused");
 	                    	paused = true;
-                            scoreManager.UpdatePause(true);
+                            scoreManager.UpdatePause(1);
                             watch.Stop();
                 		}
                 	}
@@ -296,7 +308,7 @@ public class TrialManager : MonoBehaviour {
                                                    phantoms[index].transform.position);
                         warpedCubes[0].transform.position = result.Key;
                         warping = result.Value != Vector3.zero;
-                        for (int i = 0; i<armHandMetaphor.childCount; i++) {    //war hand using result.Value?
+                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
                             result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
                                                        phantoms[index].transform.position);
                             armHandMetaphor.GetChild(i).position = armHandTracked.GetChild(i).position + result.Value;
@@ -352,6 +364,13 @@ public class TrialManager : MonoBehaviour {
                         GameObject tmp = Instantiate(cubePrefab, warpedCubes[0].transform.position, warpedCubes[0].transform.rotation);
                         tmp.transform.parent = clones;
                         warpedCubes[0].transform.localPosition = Vector3.zero;
+
+                        print("Index = " + (index));
+                        grabbablesR[index].enabled = false;
+                        if (index<5)
+                            grabbablesR[index+1].enabled = true;
+                        else
+                            grabbablesR[0].enabled = true;
                     } else if (condition == (int)Condition.V) {
                         warpedCubes[index].GetComponent<Renderer>().enabled = false;
 
@@ -454,18 +473,23 @@ public class TrialManager : MonoBehaviour {
 
         col = new int[N];
 
+        foreach(Renderer g in grabbablesR) {
+            g.GetComponent<Renderer>().enabled = true;
+        }
+        grabbablesR[5].GetComponent<Renderer>().enabled = false;
+
         print("RESET::SceneReset::DONE");
     }
 
     IEnumerator Pause() {
         crRunning = true;
 
-        scoreManager.UpdatePause(true);
+        scoreManager.UpdatePause(1);
         pause = true;
 
-        yield return new WaitForSeconds(15);
-        pause = false;
-        scoreManager.UpdatePause(false);
+        yield return new WaitForSeconds(20);
+
+        scoreManager.UpdatePause(-1);
 
         crRunning = false;
     }

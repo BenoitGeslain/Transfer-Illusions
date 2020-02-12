@@ -40,7 +40,7 @@ public class ScoreManager : MonoBehaviour
     	return score;
     }
 
-    public void UpdatePause(bool pause) {
+    public void UpdatePause(int pause) {
         screenManager.UpdatePause(pause);
     }
 

@@ -115,12 +115,18 @@ public class ScreenManager : MonoBehaviour {
         }
     }
 
-    public void UpdatePause(bool pause) {
-        tvTextScore.GetComponent<TextMesh>().text = pause ? "Game Paused\n\n":"" + scoreText + score + entries[1];
+    public void UpdatePause(int pause) {
+        if (pause==1) {
+            tvTextScore.GetComponent<TextMesh>().text = "Jeu en pause\n\n" + scoreText + score;
+        } else if (pause==0) {
+            tvTextScore.GetComponent<TextMesh>().text = scoreText + score + entries[1];
+        } else {
+            tvTextScore.GetComponent<TextMesh>().text = "Jeu en pause\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>\n\n" + scoreText + score;
+        }
     }
 
     public void UpdateScore(int newScore, bool pause) {
-        tvTextScore.GetComponent<TextMesh>().text = pause ? "Game Paused\n\n":"" + scoreText + newScore + entries[1];
+        tvTextScore.GetComponent<TextMesh>().text = scoreText + newScore + entries[1];
         if (newScore==0) {
             sumScore += score;
             tvTextSumScore.GetComponent<TextMesh>().text = "Score total : " + sumScore;
