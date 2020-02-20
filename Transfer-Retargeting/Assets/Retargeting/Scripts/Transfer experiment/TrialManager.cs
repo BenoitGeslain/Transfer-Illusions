@@ -139,7 +139,7 @@ public class TrialManager : MonoBehaviour {
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.D)) {
-            foreach (GameObject g in warpedCubes)
+            foreach (GameObject g in warpedCubes) 
                 g.GetComponent<Renderer>().enabled = true;
         }
 
@@ -273,7 +273,7 @@ public class TrialManager : MonoBehaviour {
 	                        watch.Start();
 	                    } else if (prevStep == 1) {
 	                        Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
-	                        tmpMat[1] = phantomMat;
+	                        tmpMat[0] = phantomMat;
 	                        phantoms[index].GetComponent<Renderer>().materials = tmpMat;
 	                        prevStep = 0;
 	                    }
@@ -301,7 +301,7 @@ public class TrialManager : MonoBehaviour {
                     if (prevStep == 0) {
                         initPos = fixedPoint.transform.position;
                         Material[] tmpMat = phantoms[index].GetComponent<Renderer>().materials;
-                        tmpMat[1] = phantomRightMat;
+                        tmpMat[0] = phantomRightMat;
                         phantoms[index].GetComponent<Renderer>().materials = tmpMat;
                         prevStep = 1;
                     }	

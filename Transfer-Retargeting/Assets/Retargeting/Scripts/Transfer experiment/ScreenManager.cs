@@ -79,7 +79,7 @@ public class ScreenManager : MonoBehaviour {
                 if ((cubes[0].transform.position - cubes[1].transform.position).magnitude < 0.02f &&
                     Quaternion.Angle(cubes[0].transform.rotation, cubes[1].transform.rotation) < 7f) {
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                    tmpMat[1] = phantomRightMat;
+                    tmpMat[0] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
                     if ((hand.position - fixedPoint.position).magnitude < 0.075f) {
                         collisionSource.Stop();
@@ -101,7 +101,7 @@ public class ScreenManager : MonoBehaviour {
                 } else {
                     soundPlayed = false;
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
-                    tmpMat[1] = phantomMat;
+                    tmpMat[0] = phantomMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
                 }
 

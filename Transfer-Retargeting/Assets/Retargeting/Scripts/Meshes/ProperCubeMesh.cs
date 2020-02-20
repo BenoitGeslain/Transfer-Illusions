@@ -9,8 +9,12 @@ public class ProperCubeMesh : MonoBehaviour {
 	public float size = 1f;
 
 	public Material[] materials;
+
+	Renderer r;
+
 	void Start () {
 		createCube ();
+		r = GetComponent<Renderer>();
 	}
 
 	void createCube () {
@@ -86,8 +90,7 @@ public class ProperCubeMesh : MonoBehaviour {
 		mesh.SetTriangles(subTriangles, 1);
 
 		Vector2[] uvs = new Vector2[vertices.Length];
-        for (int i = 0; i < uvs.Length; i++)
-        {
+        for (int i = 0; i < uvs.Length; i++) {
             uvs[i] = new Vector2(-vertices[i].x+0.5f, vertices[i].y+0.5f);
         }
         mesh.uv = uvs;
@@ -99,5 +102,17 @@ public class ProperCubeMesh : MonoBehaviour {
 
 		Renderer r = GetComponent<Renderer>();
 		r.materials = materials;
+	}
+
+	void Update() {
+		if (r.enabled) {
+			foreach (Transform t in this.transform) {
+				t.gameObject.SetActive(true);
+			}
+		} else {
+			foreach (Transform t in this.transform) {
+				t.gameObject.SetActive(false);
+			}
+		}
 	}
 }
