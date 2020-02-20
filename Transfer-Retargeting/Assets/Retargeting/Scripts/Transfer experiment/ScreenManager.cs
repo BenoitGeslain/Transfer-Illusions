@@ -42,7 +42,7 @@ public class ScreenManager : MonoBehaviour {
 
         cubes = new GameObject[2];
         cubes[0] = GameObject.Find("Warped Cube");
-        cubes[1] = GameObject.Find("Cube Phantom Intro");
+        cubes[1] = GameObject.Find("Target Intro");
         obstacle = GameObject.FindGameObjectsWithTag("Obstacle")[0];
 
         cubes[0].GetComponent<Renderer>().enabled = false;

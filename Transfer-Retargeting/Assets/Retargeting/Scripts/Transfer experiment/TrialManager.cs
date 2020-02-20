@@ -278,7 +278,7 @@ public class TrialManager : MonoBehaviour {
 	                        prevStep = 0;
 	                    }
 	                    if (condition == (int)Condition.VBW) {
-	                        result = bwScript.BodyWarp(physicalCubes[0].transform.position, initPos, grabbables[index].transform.position,
+	                        result = bwScript.BodyWarpP(physicalCubes[0].transform.position, initPos, 0.025f, grabbables[index].transform.position,
 	                                                   phantoms[index].transform.position);
                             warpedCubes[0].transform.position = result.Key;
 	                        for (int i = 0; i<armHandMetaphor.childCount; i++) {
@@ -306,12 +306,12 @@ public class TrialManager : MonoBehaviour {
                         prevStep = 1;
                     }	
                     if (condition == (int)Condition.VBW) {
-                        result = bwScript.BodyWarp(physicalCubes[0].transform.position, initPos, grabbables[index].transform.position,
+                        result = bwScript.BodyWarpP(physicalCubes[0].transform.position, initPos, 0.025f, grabbables[index].transform.position,
                                                    phantoms[index].transform.position);
                         warpedCubes[0].transform.position = result.Key;
                         warping = result.Value != Vector3.zero;
                         for (int i = 0; i<armHandMetaphor.childCount; i++) {
-                            result = bwScript.BodyWarp(armHandTracked.GetChild(i).position, initPos, grabbables[index].transform.position,
+                            result = bwScript.BodyWarpP(armHandTracked.GetChild(i).position, initPos, 0.025f, grabbables[index].transform.position,
                                                        phantoms[index].transform.position);
                             armHandMetaphor.GetChild(i).position = armHandTracked.GetChild(i).position + result.Value;
                             armHandMetaphor.GetChild(i).eulerAngles = armHandTracked.GetChild(i).eulerAngles;
@@ -365,6 +365,10 @@ public class TrialManager : MonoBehaviour {
 
                         GameObject tmp = Instantiate(cubePrefab, warpedCubes[0].transform.position, warpedCubes[0].transform.rotation);
                         tmp.transform.parent = clones;
+                        Material[] tmpMat = warpedCubes[0].GetComponent<Renderer>().materials;
+                        tmpMat[1] = cubePassive;
+                        print(tmpMat[0].name);
+                        clones.GetChild(clones.childCount-1).GetComponent<Renderer>().materials = tmpMat;
                         warpedCubes[0].transform.localPosition = Vector3.zero;
 
                         print("Index = " + (index));
@@ -373,15 +377,10 @@ public class TrialManager : MonoBehaviour {
                             grabbablesR[index+1].enabled = true;
                         else
                             grabbablesR[0].enabled = true;
-                        if (index<6) {
-                            Material[] tmpMat = warpedCubes[0].GetComponent<Renderer>().materials;
-                            tmpMat[0] = logosMat[index];
-                            warpedCubes[0].GetComponent<Renderer>().materials = tmpMat;
-                        } else {
-                            Material[] tmpMat = warpedCubes[0].GetComponent<Renderer>().materials;
-                            tmpMat[0] = logosMat[0];
-                            warpedCubes[0].GetComponent<Renderer>().materials = tmpMat;
-                        }
+
+                        tmpMat = warpedCubes[0].GetComponent<Renderer>().materials;
+                        tmpMat[0] = logosMat[(index+1)%6];
+                        warpedCubes[0].GetComponent<Renderer>().materials = tmpMat;
                     } else if (condition == (int)Condition.V) {
                         warpedCubes[index].GetComponent<Renderer>().enabled = false;
 
