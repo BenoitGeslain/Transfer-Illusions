@@ -45,6 +45,10 @@ public class SceneConfiguration : MonoBehaviour
 
             csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), world.name, 0, world.transform.position, world.transform.eulerAngles);
             csvSaver.writeConfig(DateTime.Now.ToString("HH:mm:ss.fff"), button.name, 0, button.transform.position, button.transform.eulerAngles);
+
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                csvSaver.writeConfig("Good data", " ", 0, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f));
+            }
         	
             saveConfig = false;
         }

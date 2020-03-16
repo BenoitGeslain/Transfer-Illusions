@@ -32,7 +32,7 @@ public class BodyWarping : MonoBehaviour {
         float D = (wOrigin - wTargetReal).magnitude - delta;
         Vector3 virtHandPos = realHandPos;
 
-        Debug.DrawLine(wTargetReal, wTargetReal + (realHandPos - wTargetReal).normalized*D, sphereColor);
+        // Debug.DrawLine(wTargetReal, wTargetReal + (realHandPos - wTargetReal).normalized*D, sphereColor);
 
         Vector3 lambda;
         if (d.magnitude > D) {
@@ -44,7 +44,7 @@ public class BodyWarping : MonoBehaviour {
 
             //print("d = " + d + ", lambda = " + lambda + ", offset = " + (D.magnitude - d.magnitude) / D.magnitude * lambda);
 
-            Debug.DrawLine(virtHandPos, realHandPos, warpColor);
+            // Debug.DrawLine(virtHandPos, realHandPos, warpColor);
             //Debug.DrawLine(virtHandPos, realHandPos + lambda, lambdaColor);
         }
         return new KeyValuePair<Vector3, Vector3>(virtHandPos, (D - d.magnitude) / D * lambda);

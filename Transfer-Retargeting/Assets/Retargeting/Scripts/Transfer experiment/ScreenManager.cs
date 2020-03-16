@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ScreenManager : MonoBehaviour {
-	public GameObject tvTextScore, tvTextSumScore;
+	public GameObject tvTextCube, tvTextTime, tvTextCube2, tvTextTime2, tvTextInstructions;
     public int index = 0;
     public bool start = false;
     public Transform hand, fixedPoint;
@@ -12,9 +12,8 @@ public class ScreenManager : MonoBehaviour {
     public int step = 0, prevStep = -1;
 
     public AudioClip bump, coin, fire;
-
     
-	string[] entries;
+    string[] entries;
     DateTime tic;
 
     string scoreText = "Score : ";
@@ -23,6 +22,9 @@ public class ScreenManager : MonoBehaviour {
     GameObject obstacle;
 
     int score, sumScore = 0;
+    int ind = 1, count = 0;
+
+    bool changeText = false;
 
     AudioSource collisionSource;
     public int collisions = 0;
@@ -32,13 +34,18 @@ public class ScreenManager : MonoBehaviour {
     bool soundPlayed = false;
 
     void Start() {
-        entries = new string[2];
-        entries[0] = "Votre objectif est de :\n\n- Prendre le <color=#36c>cube bleu</color> et de le placer, avec\n la bonne orientation (face blanche),\ndans le <color=#d33>cube rouge</color> semi-transparent." +
-                      "\nLorsqu'il est bien positionné, le <color=#d33>cube rouge</color> devient <color=#00af40>vert</color>.\n\n- De ne pas toucher les obstacles gris semi-transparent."
-                      +"\nIls deviennent <color=#d33>rouge</color> lorsque vous les touchez" +
-                      "\n\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>.";
-        entries[1] = "\n\nPlacer le <color=#36c>cube bleu</color> dans le <color=#d33>cube rouge</color>,\n\npuis toucher la <color=#00af40>sphère verte</color>";
-        tvTextScore.GetComponent<TextMesh>().text = entries[0];
+        entries = new string[3];
+        // entries[0] = "Votre objectif est de :\n\n- Prendre le <color=#36c>cube bleu</color> et de le placer, avec\n la bonne orientation (face blanche),\ndans la <color=#36c>cible bleue</color>." +
+        //               "\nLorsqu'il est bien positionné, la <color=#36c>cible bleue</color> devient <color=#00af40>verte</color>.\n\n- De ne pas toucher les obstacles gris."
+        //               +"\nIls deviennent <color=#d33>rouge</color> lorsque vous les touchez" +
+        //               "\n\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>.";
+        // entries[1] = "\n\nPlacer le <color=#36c>cube bleu</color> dans la <color=#36c>cible bleue</color>,\n\npuis toucher la <color=#00af40>sphère verte</color>";
+        entries[0] = "<color=#FFFFFF>1</color>";
+        entries[1] = "Time";
+        entries[2] = "Placer le <color=#36c>cube bleu</color> dans la <color=#36c>cible bleue</color>,\n\npuis toucher la <color=#00af40>sphère verte</color>";
+        tvTextCube.GetComponent<TextMesh>().text = entries[0];
+        tvTextTime.GetComponent<TextMesh>().text = entries[1];
+        tvTextInstructions.GetComponent<TextMesh>().text = entries[2];
 
         cubes = new GameObject[2];
         cubes[0] = GameObject.Find("Warped Cube");
@@ -64,7 +71,7 @@ public class ScreenManager : MonoBehaviour {
                         cubes[0].GetComponent<Renderer>().enabled = true;
                         cubes[1].GetComponent<Renderer>().enabled = true;
                         obstacle.SetActive(true);
-                        tvTextScore.GetComponent<TextMesh>().text = entries[0];
+                        tvTextCube.GetComponent<TextMesh>().text = entries[0];
                         prevStep = 0;
                     }
 
@@ -72,7 +79,7 @@ public class ScreenManager : MonoBehaviour {
                         index++;
                     }
                 } else if (index == 1) {
-                    UpdateScore(0, false);
+                    // UpdateScore(0, false);
                     index = 2;
                 }
 
@@ -82,9 +89,9 @@ public class ScreenManager : MonoBehaviour {
                     tmpMat[0] = phantomRightMat;
                     cubes[1].GetComponent<Renderer>().materials = tmpMat;
                     if ((hand.position - fixedPoint.position).magnitude < 0.075f) {
-                        collisionSource.Stop();
-                        collisionSource.clip = fire;
-                        collisionSource.Play();
+                        // collisionSource.Stop();
+                        // collisionSource.clip = fire;
+                        // collisionSource.Play();
 
                         cubes[1].SetActive(false);
                         tmpMat = cubes[0].GetComponent<Renderer>().materials;
@@ -93,11 +100,11 @@ public class ScreenManager : MonoBehaviour {
 
                         step++;
                     }
-                    if (!soundPlayed && !collisionSource.isPlaying) {
-                        soundPlayed = true;
-                        collisionSource.clip = coin;
-                        collisionSource.Play();
-                    }
+                    // if (!soundPlayed && !collisionSource.isPlaying) {
+                    //     soundPlayed = true;
+                    //     collisionSource.clip = coin;
+                    //     collisionSource.Play();
+                    // }
                 } else {
                     soundPlayed = false;
                     Material[] tmpMat = cubes[1].GetComponent<Renderer>().materials;
@@ -112,29 +119,81 @@ public class ScreenManager : MonoBehaviour {
                     }
                     collisions=0;
                 }
-            } else {
+            } else if (step==1) {
                 cubes[1].SetActive(false);
                 step++;
+            } else {
+
             }
         }
     }
 
-    public void UpdatePause(int pause) {
-        if (pause==1) {
-            tvTextScore.GetComponent<TextMesh>().text = "Jeu en pause\n\n" + scoreText + score;
-        } else if (pause==0) {
-            tvTextScore.GetComponent<TextMesh>().text = scoreText + score + entries[1];
+    public void goRed() {
+        entries[0] = entries[0].Remove(entries[0].Length-24);
+        entries[0] += "<color=#FF0000>" + ind.ToString() + "</color>";
+        tvTextCube.GetComponent<TextMesh>().text = entries[0];
+    }
+
+    public void goGreen() {
+        print("!");
+        entries[0] = entries[0].Remove(entries[0].Length-24);
+        entries[0] += "<color=#00FF00>" + ind.ToString() + "</color>";
+
+        if (ind<6) {
+            ind++;
+            entries[0] += "\t<color=#FFFFFF>" + ind.ToString() + "</color>";
         } else {
-            tvTextScore.GetComponent<TextMesh>().text = "Jeu en pause\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>\n\n" + scoreText + score;
+            ind = 1;
+            count++;
+            if (count==8) {
+                changeText = true;
+            } else {
+                entries[0] += "\n<color=#FFFFFF>1</color>";
+            }
+        }
+        tvTextCube.GetComponent<TextMesh>().text = entries[0];
+    }
+
+    public void addTime(float time) {
+        entries[1] += "\n" + time.ToString("F1");
+        tvTextTime.GetComponent<TextMesh>().text = entries[1];
+        if (changeText) {
+            tvTextTime = tvTextTime2;
+            tvTextCube = tvTextCube2;
+            entries[0] = "<color=#FFFFFF>1</color>";
+            entries[1] = "Time";
+            count++;
+            tvTextCube.GetComponent<TextMesh>().text = entries[0];
+            changeText = false;
         }
     }
 
-    public void UpdateScore(int newScore, bool pause) {
-        tvTextScore.GetComponent<TextMesh>().text = scoreText + newScore + entries[1];
-        if (newScore==0) {
-            sumScore += score;
-            tvTextSumScore.GetComponent<TextMesh>().text = "Score total : " + sumScore;
+    public void Pause(int pause) {
+        if (pause==1) {
+            tvTextInstructions.GetComponent<TextMesh>().text = "Jeu en pause pendant 30 secondes";
+        } else if (pause==0) {
+            tvTextInstructions.GetComponent<TextMesh>().text = entries[2];
+        } else {
+            tvTextInstructions.GetComponent<TextMesh>().text = "Jeu en pause\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>\n\n";
         }
-        score = newScore;
     }
+
+    // public void UpdatePause(int pause) {
+    //     if (pause==1) {
+    //         tvTextCube.GetComponent<TextMesh>().text = "Jeu en pause\n\n" + scoreText + score;
+    //     } else if (pause==0) {
+    //         tvTextCube.GetComponent<TextMesh>().text = scoreText + score + entries[1];
+    //     } else {
+    //         tvTextCube.GetComponent<TextMesh>().text = "Jeu en pause\nPrêt? Appuyer sur la <color=#00af40>sphère verte</color>\n\n" + scoreText + score;
+    //     }
+    // }
+
+    // public void UpdateScore(int newScore, bool pause) {
+    //     tvTextCube.GetComponent<TextMesh>().text = scoreText + newScore + entries[1];
+    //     if (newScore==0) {
+    //         sumScore += score;
+    //         tvTextTime.GetComponent<TextMesh>().text = "Score total : " + sumScore;
+    //     }
+    //     score = newScore;
+    // }
 }

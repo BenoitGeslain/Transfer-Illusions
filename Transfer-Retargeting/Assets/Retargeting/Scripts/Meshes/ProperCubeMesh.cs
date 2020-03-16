@@ -10,6 +10,8 @@ public class ProperCubeMesh : MonoBehaviour {
 
 	public Material[] materials;
 
+	public Transform cylinders;
+
 	Renderer r;
 
 	void Start () {

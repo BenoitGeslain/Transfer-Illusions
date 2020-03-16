@@ -466,3 +466,4 @@ MonoBehaviour:
   materials:
   - {fileID: 2100000, guid: 94ff7f52e5a2c5849bc3daf382287257, type: 2}
   - {fileID: 2100000, guid: 1ddd748eafc10df45aacc7cc6945d30a, type: 2}
+  cylinders: {fileID: 0}

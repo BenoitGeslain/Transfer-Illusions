@@ -85,6 +85,7 @@ public class ExperimentManager : MonoBehaviour {
 				// Start experiment
 				trialManager.start = true;
 				applyTrial();
+				step++;
 				break;
 			default:
 				break;
@@ -99,7 +100,7 @@ public class ExperimentManager : MonoBehaviour {
 							 Vector3 positionR, Vector3 orientationR,
 							 Vector3 positionV, Vector3 orientationV,
 							 Vector3 positionP, Vector3 orientationP,
-							 float velocity,
+							 float velocity, float cubeTime, int nbError,
 							 bool warping,
 							 float cubeDistGone, float handDistGone,
 							 List<float> acceleration, int[] collisions,
@@ -109,7 +110,7 @@ public class ExperimentManager : MonoBehaviour {
 									 positionR, orientationR,
 									 positionV, orientationV,
 									 positionP, orientationP,
-									 velocity,
+									 velocity, cubeTime, nbError,
 									 warping,
 									 cubeDistGone, handDistGone,
 									 acceleration, collisions,
@@ -121,7 +122,7 @@ public class ExperimentManager : MonoBehaviour {
 							Vector3 positionR, Vector3 orientationR,
 							Vector3 positionV, Vector3 orientationV,
 							Vector3 positionP, Vector3 orientationP,
-							float velocity,
+							float velocity, float cubeTime, int nbError,
 							float cubeDistGone, float handDistGone,
 							List<int> obstaclesHit, int[] collisions,
 							float score) {
@@ -130,7 +131,7 @@ public class ExperimentManager : MonoBehaviour {
 									positionR, positionR,
 									positionV, positionV,
 									positionP, orientationP,
-									velocity,
+									velocity, cubeTime, nbError,
 									cubeDistGone, handDistGone,
 									obstaclesHit, collisions,
 									score);

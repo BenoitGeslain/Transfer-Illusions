@@ -14,7 +14,7 @@ public static class Parameters {
     										  "CubeOrVX", "CubeOrVY", "CubeOrVZ",
     										  "CubePosPX", "CubePosPY", "CubePosPZ",
     										  "CubeOrPX", "CubeOrPY", "CubeOrPZ",
-                                              "Velocity",
+                                              "Velocity", "CubeTime", "NbError",
                                               "Warping",
     										  "CubeDistGone", "HandDistGone",
     										  "Acceleration", "collisions1", "collisions2", "collisions3", "collisions4",
@@ -29,7 +29,7 @@ public static class Parameters {
                                                "CubeOrVX", "CubeOrVY", "CubeOrVZ",
     										   "CubePosPX", "CubePosPY", "CubePosPZ",
     										   "CubeOrPX", "CubeOrPY", "CubeOrPZ",
-                                               "Velocity",
+                                               "Velocity", "CubeTime", "NbError",
     										   "CubeDistGone", "HandDistGone",
     										   "Hit", "collisions1", "collisions2", "collisions3", "collisions4",
     										   "Score"};

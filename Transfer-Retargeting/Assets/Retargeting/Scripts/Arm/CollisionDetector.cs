@@ -25,14 +25,18 @@ public class CollisionDetector : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider col) {
-        contact.a = col.gameObject.GetComponent<Renderer>().material.color.a;
-        col.gameObject.GetComponent<Renderer>().material.color = contact;
-        trialManager.collisions++;
-        screenManager.collisions++;
+        if (col.gameObject.name!="Cylinder" && col.gameObject.name!="Warped Cube") {
+            contact.a = col.gameObject.GetComponent<Renderer>().material.color.a;
+            col.gameObject.GetComponent<Renderer>().material.color = contact;
+            trialManager.collisions++;
+            screenManager.collisions++;
+        }
     }
 
 	void OnTriggerExit(Collider col) {
-        noContact.a = col.gameObject.GetComponent<Renderer>().material.color.a;
-        col.gameObject.GetComponent<Renderer>().material.color = noContact;
+        if (col.gameObject.name!="Cylinder" && col.gameObject.name!="Warped Cube") {
+            noContact.a = col.gameObject.GetComponent<Renderer>().material.color.a;
+            col.gameObject.GetComponent<Renderer>().material.color = noContact;
+        }
     }
 }
