@@ -110,7 +110,7 @@ public class TrialManager : MonoBehaviour {
         physicalCubes = GameObject.FindGameObjectsWithTag("PhysicalCubes");
         warpedCubes = GameObject.FindGameObjectsWithTag("WarpedCubes");
         if (physicalCubes.Length != N || warpedCubes.Length != N) {
-            print("ERROR::Incorrect number of cubes");
+            print("ERROR::Incorrect number of cubes" + physicalCubes.Length + ", " + warpedCubes.Length + ",  " + N);
         }
 
         clones = GameObject.Find("/World/Clones Cubes").transform;
@@ -250,7 +250,14 @@ public class TrialManager : MonoBehaviour {
                 		if (prevStep==-1) {
 	                        phantoms[index].GetComponent<Renderer>().enabled = true;
 	                        if (condition == (int)Condition.VBW || condition == (int)Condition.RW1) {
-                                initPos = warpedCubes[0].transform.position;
+	                        	if ( (warpedCubes[0].transform.position-phantoms[index].transform.position).sqrMagnitude > (fixedPoint.transform.position-phantoms[index].transform.position).sqrMagnitude ) {
+	                        		initPos = fixedPoint.transform.position;
+	                        	} else {
+                               		initPos = warpedCubes[0].transform.position;
+                               	}
+                                foreach (GameObject g in warpedCubes) {
+                                    g.GetComponent<Renderer>().enabled = false;
+                                }
                                 warpedCubes[0].GetComponent<Renderer>().enabled = true;
                                 cubePrevPos = warpedCubes[0].transform.position;
                             } else {
@@ -366,9 +373,9 @@ public class TrialManager : MonoBehaviour {
                         GameObject tmp = Instantiate(cubePrefab, warpedCubes[0].transform.position, warpedCubes[0].transform.rotation);
                         tmp.transform.parent = clones;
                         Material[] tmpMat = warpedCubes[0].GetComponent<Renderer>().materials;
+                        tmpMat[0] = logosMat[(index)%6];
                         tmpMat[1] = cubePassive;
-                        print(tmpMat[0].name);
-                        clones.GetChild(clones.childCount-1).GetComponent<Renderer>().materials = tmpMat;
+                        tmp.GetComponent<Renderer>().materials = tmpMat;
                         warpedCubes[0].transform.localPosition = Vector3.zero;
 
                         print("Index = " + (index));
