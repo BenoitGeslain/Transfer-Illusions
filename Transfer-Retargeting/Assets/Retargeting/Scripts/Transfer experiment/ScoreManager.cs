@@ -17,23 +17,23 @@ public class ScoreManager : MonoBehaviour
     }
 
     public void Collision(bool pause) {
-    	score -= 10;
-        setScore(pause);
+    	// score -= 10;
+     //    setScore(pause);
     }
 
     public void AddScoreCube(float magnitude, bool pause) {
-    	score += magnitude*10;
-    	setScore(pause);
+    	// score += magnitude*10;
+    	// setScore(pause);
     }
 
     public void AddScoreTime(float time, bool pause) {
-    	score += (30 - time<30 ? time : 30)*10;
-    	setScore(pause);
+    	// score += (30 - time<30 ? time : 30)*10;
+    	// setScore(pause);
     }
 
     public void ResetScore() {
-    	score = 0;
-    	setScore(false);
+    	// score = 0;
+    	// setScore(false);
     }
 
     public float GetScore() {
@@ -41,10 +41,10 @@ public class ScoreManager : MonoBehaviour
     }
 
     public void UpdatePause(int pause) {
-        screenManager.UpdatePause(pause);
+        // screenManager.UpdatePause(pause);
     }
 
     void setScore(bool pause) {
-    	screenManager.UpdateScore((int)score, pause);
+    	// screenManager.UpdateScore((int)score, pause);
     }
 }
